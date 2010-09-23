@@ -37,6 +37,7 @@ Configuration.sets = {
 	'lsd-base': {
 		path: 'lsd-base/',
 		files: [
+		  'Base',
 			'Trait/Focus'
 		]
 	}
