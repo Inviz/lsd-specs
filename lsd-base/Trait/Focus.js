@@ -94,29 +94,46 @@ describe("Widget.Trait.Focus", function() {
   });
   
   describe("for deeply nested widgets", function() {
-    
-      it("should propagate blur to parents of previously active widget, but only up to the point of first common ancestor", function() {
-        var window = $w();
-        var header = $w(window);
-        var instance = $w(header);
-        var footer = $w(window);
-        var another = $w(footer);
-        instance.focus();
+    it("should propagate blur to parents of previously active widget, but only up to the point of first common ancestor", function() {
+      var window = $w();
+      var header = $w(window);
+      var instance = $w(header);
+      var footer = $w(window);
+      var another = $w(footer);
+      instance.focus();
+      waits(100);
+      runs(function() {
+        expect(header.focused).toBeTruthy();
+        expect(window.focused).toBeTruthy();
+        another.focus();
         waits(100);
         runs(function() {
-          expect(header.focused).toBeTruthy();
           expect(window.focused).toBeTruthy();
-          another.focus();
-          waits(100);
-          runs(function() {
-            expect(window.focused).toBeTruthy();
-            expect(footer.focused).toBeTruthy();
-            expect(another.focused).toBeTruthy();
-            expect(header.focused).toBeFalsy();
-            expect(instance.focused).toBeFalsy();
-          });
+          expect(footer.focused).toBeTruthy();
+          expect(another.focused).toBeTruthy();
+          expect(header.focused).toBeFalsy();
+          expect(instance.focused).toBeFalsy();
         });
-      })
-
-  })
-})
+      });
+    });
+    
+    it("should propagate blur to all parent elements up to the point of new active element", function() {
+      var window = $w();
+      var header = $w(window);
+      var instance = $w(header);
+      instance.focus();
+      waits(100);
+      runs(function() {
+        expect(header.focused).toBeTruthy();
+        expect(window.focused).toBeTruthy();
+        window.focus();
+        waits(100);
+        runs(function() {
+          expect(window.focused).toBeTruthy();
+          expect(header.focused).toBeFalsy();
+          expect(instance.focused).toBeFalsy();
+        });
+      });
+    })
+  });
+});
