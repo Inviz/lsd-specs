@@ -102,7 +102,7 @@ Configuration.source = {
       "../mootools-ext/Source/Drag/Drag.Limits",
       "../mootools-more/Source/Drag/Slider",
       "../mootools-ext/Source/Element/Events/Keypress",
-      "../mootools-core/Source/Utilities/DomReady",
+      "../mootools-core/Source/Utilities/DOMReady",
       "../lsd-base/Source/Widget/Base",
       "../lsd-base/Source/Widget/Trait/Animation",
       "../lsd-base/Source/Widget/Trait/Slider",
