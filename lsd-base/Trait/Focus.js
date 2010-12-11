@@ -5,13 +5,11 @@ describe("Widget.Trait.Focus", function() {
     },
     Includes: [Widget, Widget.Trait.Focus]
   });
-  var $document = new ART.Document;
-  $document.toElement = $lambda(document.body)
+  new LSD.Document;
   var instances = [];
   $w = function(parent) {
     var instance = new Focusable(new Element('div'));
     instances.push(instance)
-    instance.document = $document;
     instance.inject(parent || document.body);
     return instance;
   }
