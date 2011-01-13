@@ -1,4 +1,4 @@
-describe("Widget.Trait.Layer", function() {
+describe("LSD.Trait.Layer", function() {
   
   var Layered = new Class({
     Extends: LSD.Widget.Paint,

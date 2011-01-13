@@ -1,4 +1,4 @@
-describe("Widget.Trait.Dimensions", function() {
+describe("LSD.Trait.Dimensions", function() {
   
   var Dimensioned = new Class({
     Extends: LSD.Widget.Paint,

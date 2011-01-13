@@ -1,9 +1,9 @@
-describe("Widget.Trait.Focus", function() {
+describe("Mixin.Focus", function() {
   var Focusable = new Class({
     options: {
       tabindex: 0
     },
-    Includes: [Widget, Widget.Trait.Focus]
+    Includes: [Widget, Mixin.Focus]
   });
   new LSD.Document;
   var instances = [];
