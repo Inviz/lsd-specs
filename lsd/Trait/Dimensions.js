@@ -33,7 +33,7 @@ describe("LSD.Trait.Dimensions", function() {
         offset: {
           inside: empty,
           outside: empty,
-          padding: $merge(empty, {left: 3, bottom: 7}),
+          padding: Object.merge(empty, {left: 3, bottom: 7}),
           margin: empty
         },
         methods: {
@@ -61,7 +61,7 @@ describe("LSD.Trait.Dimensions", function() {
        offset: {
          inside: empty,
          outside: empty,
-         padding: $merge(empty, {right: 4, top: 9}),
+         padding: Object.merge(empty, {right: 4, top: 9}),
          margin: empty
        },
        methods: {
@@ -141,7 +141,7 @@ describe("LSD.Trait.Dimensions", function() {
     
   };
   
-  Hash.each(examples, function(example, description) {
+  Object.each(examples, function(example, description) {
     describe(description, function() {
       it ("should match specs", function() {
         if (example.styles) instance.setStyles(example.styles)
