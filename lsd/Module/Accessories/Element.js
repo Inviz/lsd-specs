@@ -5,7 +5,7 @@ describe("LSD.Module.Element", function() {
       var instance = new LSD.Widget(element);
       expect(instance.attached).toBeTruthy();
       expect(instance.element).toBeTruthy();
-      expect(element.retrieve('widget') == instance).toBeTruthy();
+      expect(element.retrieve('widget')).toEqual(instance);
     });
     
     it ("should not attach if no element is given to constructor", function() {
@@ -97,7 +97,7 @@ describe("LSD.Module.Element", function() {
       expect(instance.toElement()).toEqual(element);
     });
     
-    it ('should build element when no there\'s no attached element', function() {
+    it ('should build element when there\'s no attached element', function() {
       var instance = new LSD.Widget();
       expect(instance.toElement().nodeName).toEqual('DIV');
     });

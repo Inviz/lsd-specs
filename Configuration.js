@@ -5,33 +5,47 @@ var Configuration = context.Configuration = {};
 Configuration.name = 'Lovely Scalable Drawings projects';
 
 Configuration.presets = {
-  'lsd': {
-		sets: ['lsd'],
+  'full': {
+		sets: ['accessories', 'behavior'],
+		source: ['lsd']
+	},
+	'accessories': {
+		sets: ['accessories'],
+		source: ['lsd']
+	},
+	'behavior': {
+		sets: ['behavior'],
 		source: ['lsd']
 	}
 };
 
 Configuration.defaultPresets = {
-	browser: 'lsd',
-	nodejs: 'lsd',
-	jstd: 'lsd'
+	browser: 'full',
+	nodejs: 'full',
+	jstd: 'full'
 };
 
 Configuration.sets = {
 
-	'lsd': {
-		path: 'lsd/',
+	'accessories': {
+		path: 'lsd/Module/Accessories/',
 		files: [
-		  'Module/Accessories/Attributes',
-		  'Module/Accessories/Dimensions',
-		  'Module/Accessories/Element',
-		  'Module/Accessories/Events',
-		  'Module/Accessories/Options',
-		  'Module/Accessories/Shortcuts',
-		  'Module/Accessories/States',
-		  'Module/Accessories/Styles'
-		//	'Layer/InnerShadow'
+		  'Attributes',
+		  'Dimensions',
+		  'Element',
+		  'Events',
+		  'Options',
+		  'Shortcuts',
+		  'States',
+		  'Styles'
 		]
+	},
+
+	'behavior': {
+	  path: 'lsd/Module/Behavior/',
+	  files: [,
+	    'Target.Parser'
+	  ]
 	}
 };
 
