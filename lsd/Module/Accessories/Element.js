@@ -9,15 +9,15 @@ describe("LSD.Module.Element", function() {
     });
     
     it ("should not attach if no element is given to constructor", function() {
-      var instance = new LSD.Widget()
+      var instance = new LSD.Widget();
       expect(instance.attached).toBeFalsy();
       expect(instance.element).toBeFalsy();
     });
     
     it ("should let attach element after construction", function() {
       var element = new Element('div');
-      var instance = new LSD.Widget()
-      instance.attach(element)
+      var instance = new LSD.Widget();
+      instance.attach(element);
       expect(instance.attached).toBeTruthy();
       expect(instance.element).toBeTruthy();
     });
@@ -26,7 +26,7 @@ describe("LSD.Module.Element", function() {
       var element = new Element('div');
       var instance = new LSD.Widget(element, {key: 'jesus'});
       expect(element.retrieve('jesus')).toEqual(instance)
-    })
+    });
   });
   
   describe("#detach", function() {
@@ -44,18 +44,18 @@ describe("LSD.Module.Element", function() {
       expect(instance.element == element).toEqual(true);
       instance.detach();
       expect(instance.element).toEqual(null);
-      instance.attach(another)
+      instance.attach(another);
       expect(instance.element).toEqual(another);
       expect(another.retrieve('widget')).toEqual(instance);
       expect(element.retrieve('widget')).toBeFalsy();
       instance.detach();
-      instance.attach(element)
+      instance.attach(element);
       expect(instance.element).toNotEqual(another);
       expect(instance.element).toEqual(element);
       expect(element.retrieve('widget')).toEqual(instance);
       expect(another.retrieve('widget')).toBeFalsy();
-    })
-  })
+    });
+  });
   
   describe("#build", function() {
     it ('should build the attached element', function() {
@@ -87,8 +87,8 @@ describe("LSD.Module.Element", function() {
       var instance = new LSD.Widget(child);
       instance.destroy();
       expect(element.getChildren().length).toEqual(0)
-    })
-  })
+    });
+  });
   
   describe("#toElement", function() {
     it ('should pick up attached element', function() {
@@ -100,11 +100,12 @@ describe("LSD.Module.Element", function() {
     it ('should build element when no there\'s no attached element', function() {
       var instance = new LSD.Widget();
       expect(instance.toElement().nodeName).toEqual('DIV');
-    })
+    });
     
     it ('should be used in document.id (aka $ function)', function() {
       var instance = new LSD.Widget();
       expect($(instance).nodeName).toEqual('DIV');
-    })
-  })
-})
+    });
+  });
+
+});
