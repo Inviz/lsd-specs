@@ -22,8 +22,14 @@ Configuration.sets = {
 	'lsd': {
 		path: 'lsd/',
 		files: [
+		  'Module/Accessories/Attributes',
+		  'Module/Accessories/Dimensions',
 		  'Module/Accessories/Element',
-		  'Module/Accessories/Options'
+		  'Module/Accessories/Events',
+		  'Module/Accessories/Options',
+		  'Module/Accessories/Shortcuts',
+		  'Module/Accessories/States',
+		  'Module/Accessories/Styles'
 		//	'Layer/InnerShadow'
 		]
 	}
