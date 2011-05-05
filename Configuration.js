@@ -16,6 +16,10 @@ Configuration.presets = {
 	'behavior': {
 		sets: ['behavior'],
 		source: ['lsd']
+	},
+	'layout': {
+		sets: ['layout'],
+		source: ['lsd']
 	}
 };
 
@@ -45,6 +49,13 @@ Configuration.sets = {
 	  path: 'lsd/Module/Behavior/',
 	  files: [,
 	    'Target.Parser'
+	  ]
+	},
+	
+	'layout': {
+	  path: 'lsd/',
+	  files: [,
+	    'Layout'
 	  ]
 	}
 };
