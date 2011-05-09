@@ -17,7 +17,10 @@ describe("LSD.Layout", function() {
     LSD.Test.Form = new Class({
       Extends: LSD.Widget,
       options: {
-        tag: 'form'
+        tag: 'form',
+        mutations: {
+          '> meter': 'button'
+        }
       }
     });
 
@@ -27,33 +30,40 @@ describe("LSD.Layout", function() {
         tag: 'input'
       }
     });
+
+    LSD.Test.Input = new Class({
+      Extends: LSD.Widget,
+      options: {
+        tag: 'input',
+        element: {
+          tag: 'input'
+        }
+      }
+    });
     
     var layout = function(a, options) {
       return new LSD.Layout(null, null, Object.extend({context: 'test'}, options)).render(a, Body)
     }
 
-    var parse = function(html, options) {
-      var element = new Element('div', {html: html});
-      new LSD.Native.Body(element, {layout: {options: Object.extend({context: 'test'}, options)}});
-      return element.childNodes;
-    }
-    
-    var match = function(element, selector, result) {
-      if (element && element.retrieve) {
-        var widget = element.retrieve('widget');
-        if (widget) var result = Slick.match(widget, selector)
-      }
-      expect(result).toEqual(result)
+    var parse = function(element, options) {
+      if (element.indexOf) element = new Element('div', {html: element});
+      return new LSD.Widget.Body(element, {layout: {options: Object.extend({context: 'test'}, options)}});
     }
     
     it('should convert an element to widget with the same name as element\s tag name', function() {
-      var nodes = parse('<button></button>');
-      match(nodes[0], 'button', true);
+      var doc = parse('<button></button>');
+      expect(Slick.find(doc, 'button')).toBeTruthy()
     })
     
     it('should NOT convert an element based on tag- class', function() {
-      var nodes = parse('<div class="tag-button"></div>');
-      match(nodes[0], 'button', false);
+      var doc = parse('<div class="tag-button"></div>');
+      expect(Slick.find(doc, 'button')).toBeFalsy()
+    })
+    
+    it('should NOT convert an element based on tag- class', function() {
+      var doc = parse('<form><meter id="a"></meter></form><meter id="b"></meter>');
+      expect(Slick.find(doc, 'button#a')).toBeTruthy()
+      expect(Slick.find(doc, 'button#b')).toBeFalsy()
     })
   });
 
