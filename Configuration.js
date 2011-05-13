@@ -52,7 +52,8 @@ Configuration.sets = {
 	'ambient': {
 	  path: 'lsd/Module/Ambient/',
 	  files: [
-	    'Expectations'
+	    'Expectations',
+	    'DOM'
 	  ]
 	},
 

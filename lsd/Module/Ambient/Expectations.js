@@ -1,7 +1,7 @@
-describe("LSD.Module.Expectations", function() {
+describe("LSD.Module.Ambient.Expectations", function() {
   describe("#expect", function() {
 
-    it ("#single pseudo", function() {
+    it ("single pseudo", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', pseudos: [{key: 'disabled'}]}, function() { bool=true });
@@ -9,7 +9,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#single attribute", function() {
+    it ("single attribute", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', attributes: [{key: 'disabled'}]}, function() { bool=true });
@@ -17,7 +17,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#single class", function() {
+    it ("single class", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', classes: [{value: 'first'}]}, function() { bool=true });
@@ -27,7 +27,7 @@ describe("LSD.Module.Expectations", function() {
 
 
 
-    it ("#multyple pseudos", function() {
+    it ("multyple pseudos", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', pseudos: [{key: 'disabled'},{key: 'read-write'}]}, function() { bool=true });
@@ -36,7 +36,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#multyple attributes", function() {
+    it ("multyple attributes", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', attributes: [{key: 'disabled'}, {key: 'title'}]}, function() { bool=true });
@@ -45,7 +45,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#multiple classes", function() {
+    it ("multiple classes", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', classes: [{value: 'first'},{value: 'second'}]}, function() { bool=true });
@@ -54,7 +54,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#pseudo & attributes", function() {
+    it ("pseudo & attributes", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', pseudos: [{key: 'disabled'}], attributes: [{key: 'title'}]}, function() { bool=true });
@@ -63,7 +63,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#class & pseudo", function() {
+    it ("class & pseudo", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', classes: [{value: 'first'}], pseudos: [{key: 'disabled'}]}, function() { bool=true });
@@ -72,7 +72,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#class & attribute", function() {
+    it ("class & attribute", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', classes: [{value: 'first'}], attributes: [{key: 'title'}]}, function() { bool=true });
@@ -81,7 +81,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeTruthy();
     });
 
-    it ("#class & attribute & pseudo", function() {
+    it ("class & attribute & pseudo", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', classes: [{value: 'first'}], pseudos: [{key: 'disabled'}], attributes: [{key: 'title'}]}, function() { bool=true });
@@ -95,7 +95,7 @@ describe("LSD.Module.Expectations", function() {
 
   describe("#multiple", function() {
 
-    it ("#anonymous", function() {
+    it ("anonymous", function() {
       var instance = new LSD.Widget;
       var iterator = 0;
       instance.expect({tag: '*', classes: [{value: 'custom'}]}, function() { iterator++ });
@@ -104,7 +104,7 @@ describe("LSD.Module.Expectations", function() {
       expect(iterator).toEqual(2);
     });
 
-    it ("#callback", function() {
+    it ("callback", function() {
       var instance = new LSD.Widget;
       var iterator = 0;
       var callback = function() { iterator++ };
@@ -118,7 +118,7 @@ describe("LSD.Module.Expectations", function() {
 
   describe("#unexpect", function() {
 
-    it ("#all", function() {
+    it ("all", function() {
       var instance = new LSD.Widget;
       var bool = false;
       instance.expect({tag: '*', pseudos: [{key: 'disabled'}]}, function() { bool=true });
@@ -127,7 +127,7 @@ describe("LSD.Module.Expectations", function() {
       expect(bool).toBeFalsy();
     });
 
-    it ("#single", function() {
+    it ("single", function() {
       var instance = new LSD.Widget;
       var string = "";
       var callback = function() { string = "callback"; };
@@ -138,7 +138,7 @@ describe("LSD.Module.Expectations", function() {
       expect(string).toEqual("anonymous")
     });
 
-    it ("#multiple", function() {
+    it ("multiple", function() {
       var instance = new LSD.Widget;
       var bool = false;
       var callback = function() { bool=true };
@@ -147,6 +147,30 @@ describe("LSD.Module.Expectations", function() {
       instance.unexpect({tag: '*', pseudos: [{key: 'disabled'}]}, callback);
       instance.addPseudo('disabled');
       expect(bool).toBeFalsy();
+    });
+  });
+
+  describe("#watch", function() {
+    it ("111", function() {
+      var bool = false;
+      var doc = new LSD.Document;
+
+
+      var form = new LSD.Widget({tag: 'form'});
+      doc.appendChild(form);
+
+      var button1 = new LSD.Widget({tag: 'button'});
+      form.appendChild(button1);
+      var button2 = new LSD.Widget({tag: 'button'});
+      form.appendChild(button2);
+
+      doc.watch("form button + button", function(){
+        console.log(Array.from(arguments))
+      });
+
+      expect(bool).toBeFalsy();
+      //doc.watch()
+      //console.log(Slick.search(doc, 'button'))
     });
   });
 
