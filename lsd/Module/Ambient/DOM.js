@@ -318,7 +318,9 @@ describe("LSD.Module.Ambient.DOM", function() {
       pane2.inject(pane1, "top");
       pane2.inject(pane3, "bottom");
 
-      expect(doc.getChildren("pane > pane > pane")).toEqual(pane3);
+      expect(doc.firstChild).toEqual(pane1);
+      expect(pane1.firstChild).toEqual(pane2);
+      expect(pane2.firstChild).toEqual(pane3);
     });
 
     it ("extractDocument", function() {
@@ -326,8 +328,6 @@ describe("LSD.Module.Ambient.DOM", function() {
       doc.inject(document.body);
 
       var pane1 = new LSD.Widget({tag: 'pane'});
-      var pane2 = new LSD.Widget({tag: 'pane'});
-      var pane3 = new LSD.Widget({tag: 'pane'});
 
       doc.appendChild(pane1);
 
