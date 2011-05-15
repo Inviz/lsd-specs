@@ -5,30 +5,23 @@ describe("LSD.Type", function() {
 
   });
   
-  describe("#define", function() { 
-    it ("should define the lazy class", function() {
-      LSD.Test.define('Input', {});
-      expect(LSD.Test.Input).toBeTruthy();
+  describe("#find", function() {
+    var Widget = new LSD.Type('Applet');
+    Widget.Button = new Number(1);
+    Widget.Button.Submit = new Number(2);
+    it ("should find widget by simple query", function() {
+      expect(Widget.find('button')).toEqual(1);
     })
-    
-    it ("should define deep lazy class", function() {
-      LSD.Test.define('Input.File.Dialog', {});
-      expect(LSD.Test.Input.File.Dialog).toBeTruthy();
+    it ("should find widget by a nested query", function() {
+      expect(Widget.find('button-submit')).toEqual(2);
     })
-    
-    it ("should keep the properties assigned to prototype", function() {
-      LSD.Test.define('Button', {});
-      LSD.Test.Button.prototype.profanity = true;
-      expect(LSD.Test.Button.prototype.profanity).toBeTruthy();
+    it ("should find widget by a raw array query", function() {
+      expect(Widget.find(['button'])).toEqual(1);
+      expect(Widget.find(['button', 'submit'])).toEqual(2);
     })
-    
-    it ("should keep the properties assigned to object", function() {
-      var z = {}
-      LSD.Test.define('Glutton', z);
-      z.profanity = 87;
-      expect(LSD.Test.Glutton.prototype.profanity).toEqual(87);
+    it ("should find widget by excessive raw array query", function() {
+      expect(Widget.find(['button', 'submit', 'ding', 'dong'])).toEqual(2);    
     })
-    
-  })
+  });
   
-})
+});
