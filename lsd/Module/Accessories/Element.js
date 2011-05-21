@@ -17,6 +17,7 @@ describe("LSD.Module.Element", function() {
     it ("should let attach element after construction", function() {
       var element = new Element('div');
       var instance = new LSD.Widget();
+      
       instance.attach(element);
       expect(instance.attached).toBeTruthy();
       expect(instance.element).toBeTruthy();
@@ -65,7 +66,7 @@ describe("LSD.Module.Element", function() {
     });
     
     it ("should attach the built element", function() {
-      var instance = new LSD.Widget;
+      var instance = new LSD.Widget({tag: 'h2'});
       instance.build();
       expect(instance.element).toBeTruthy();
       expect(instance.attached).toBeTruthy();    
@@ -98,13 +99,13 @@ describe("LSD.Module.Element", function() {
     });
     
     it ('should build element when there\'s no attached element', function() {
-      var instance = new LSD.Widget();
+      var instance = new LSD.Widget({inline: false});
       expect(instance.toElement().nodeName).toEqual('DIV');
     });
     
     it ('should be used in document.id (aka $ function)', function() {
-      var instance = new LSD.Widget();
-      expect($(instance).nodeName).toEqual('DIV');
+      var instance = new LSD.Widget({inline: true});
+      expect($(instance).nodeName).toEqual('SPAN');
     });
   });
 

@@ -1,4 +1,5 @@
 describe("LSD.Module.Ambient.Expectations", function() {
+  LSD.Widget.Doc = LSD.Document;
   describe("#expect", function() {
 
     it ("single pseudo", function() {
@@ -153,7 +154,7 @@ describe("LSD.Module.Ambient.Expectations", function() {
   describe("#watch", function() {
     it ("111", function() {
       var bool = false;
-      var doc = new LSD.Document;
+      var doc = new LSD.Widget({tag: 'doc'});
 
 
       var form = new LSD.Widget({tag: 'form'});
