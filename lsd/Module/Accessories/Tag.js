@@ -57,6 +57,28 @@ describe("LSD.Module.Tag", function() {
       expect(widget.getBody).toBeTruthy()
     })
     
+    it("should not fail", function() {
+      var clicked = false;
+
+      LSD.Widget.Buttonesque = new Class({
+        options: {
+          events: {
+            element: {
+              'click': 'onClick'
+            }
+          }
+        },
+
+        onClick: function(event) {
+          clicked = true;
+        }
+      });
+      var element = new Element('div');
+      var instance = new LSD.Widget(element, {tag:'buttonesque', context: 'widget'});
+      element.fireEvent("click");
+      expect(clicked).toBeTruthy();
+    })
+    
   });
   
 });
