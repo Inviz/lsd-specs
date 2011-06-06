@@ -49,11 +49,11 @@ describe("LSD.Module.Attributes", function() {
     });
 
     it ("should manage classes via states", function() {
-      var instance = new LSD.Widget;
+      var instance = new LSD.Widget({tag: 'div'});
       instance.setState("custom");
       expect(instance.hasClass("is-custom")).toBeTruthy();
       instance.setState("empty");
-      expect(instance.hasClass(LSD.States.Classes["empty"])).toBeTruthy();
+      expect(instance.hasClass('empty')).toBeTruthy();
     });
 
     it ("should create selector", function() {

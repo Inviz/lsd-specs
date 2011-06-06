@@ -320,18 +320,6 @@ describe("LSD.Module.Ambient.DOM", function() {
       expect(pane2.firstChild).toEqual(pane3);
     });
 
-    it ("extractDocument", function() {
-      var doc = new LSD.Widget({tag: 'doc'});
-      doc.document = doc;
-
-      var pane1 = new LSD.Widget({tag: 'pane'});
-
-      pane1.inject(doc);
-
-      expect(LSD.Module.DOM.findDocument(pane1)).toEqual(doc);
-    });
-
-
 
   });
 

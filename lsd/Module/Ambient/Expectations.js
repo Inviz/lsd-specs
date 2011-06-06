@@ -103,15 +103,19 @@ describe("LSD.Module.Ambient.Expectations", function() {
       instance.expect({tag: '*', classes: [{value: 'custom'}]}, function() { iterator++ });
       instance.addClass("custom");
       expect(iterator).toEqual(2);
+      instance.addClass("custom");
+      expect(iterator).toEqual(2);
     });
 
-    it ("callback", function() {
+    it ("should not fire callbacks on excessive setting of class", function() {
       var instance = new LSD.Widget;
       var iterator = 0;
       var callback = function() { iterator++ };
       instance.expect({tag: '*', classes: [{value: 'custom'}]}, callback);
       instance.expect({tag: '*', classes: [{value: 'custom'}]}, callback);
       instance.expect({tag: '*', classes: [{value: 'custom'}]}, callback);
+      instance.addClass("custom");
+      expect(iterator).toEqual(3);
       instance.addClass("custom");
       expect(iterator).toEqual(3);
     });

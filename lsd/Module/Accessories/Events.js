@@ -67,7 +67,7 @@ describe("LSD.Module.Accessories.Events", function() {
       var widget = new LSD.Widget(new Element('test'), {context:'widget'});
 
       parent.appendChild(widget);
-      parent.click();
+      parent.fireEvent('click');
 
       expect(clicked).toBeTruthy();
     });
