@@ -19,7 +19,6 @@ describe("LSD.Module.Accessories.Events", function() {
 
       var element = new Element('test');
       var widget = new LSD.Widget(element, {context:'widget'});
-
       widget.fireEvent('touch');
       expect(clicked).toBeTruthy();
     });
@@ -42,7 +41,7 @@ describe("LSD.Module.Accessories.Events", function() {
 
       var element = new Element('test');
       new LSD.Widget(element, {context:'widget'});
-
+      console.error(element.retrieve('events'), element.retrieve('widget').events.element)
       element.fireEvent("click");
       expect(clicked).toBeTruthy();
     });
@@ -89,12 +88,8 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      var doc = new LSD.Widget({tag: 'doc'});
-      doc.document = doc;
-
-      var widget = new LSD.Widget(new Element('test'), {context:'widget'});
-      widget.inject(doc);
-
+      var doc = new LSD.Document;
+      var widget = new LSD.Widget(new Element('test'), {context:'widget', document: doc});
       doc.fireEvent("click");
       expect(clicked).toBeTruthy();
     });
@@ -132,7 +127,7 @@ describe("LSD.Module.Accessories.Events", function() {
         options: {
           events: {
             element: {
-              'click:relay(button)': 'onClick'
+              'click:relay(buttog)': 'onClick'
             }
           }
         },
@@ -144,8 +139,7 @@ describe("LSD.Module.Accessories.Events", function() {
 
 
       var widget = new LSD.Widget(new Element('test'), {context:'widget'});
-      var button = new LSD.Widget({tag: 'button'});
-
+      var button = new LSD.Widget({tag: 'buttog', inline: null});
       button.inject(widget);
       widget.element.fireEvent('click', {target: button.element});
 

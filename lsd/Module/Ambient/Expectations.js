@@ -1,5 +1,12 @@
 describe("LSD.Module.Ambient.Expectations", function() {
-  LSD.Widget.Doc = LSD.Document;
+  if (!LSD.document) new LSD.Document;
+  LSD.Widget.Root = new Class({
+    options: {
+      tag: 'root',
+      pseudos: ['root'],
+      document: LSD.document
+    }
+  });
   describe("#expect", function() {
 
     it ("single pseudo", function() {
@@ -158,24 +165,24 @@ describe("LSD.Module.Ambient.Expectations", function() {
   describe("#watch", function() {
     it ("111", function() {
       var bool = false;
-      var doc = new LSD.Widget({tag: 'doc'});
+      var root = new LSD.Widget({tag: 'root'});
 
 
       var form = new LSD.Widget({tag: 'form'});
-      doc.appendChild(form);
+      root.appendChild(form);
 
       var button1 = new LSD.Widget({tag: 'button'});
       form.appendChild(button1);
       var button2 = new LSD.Widget({tag: 'button'});
       form.appendChild(button2);
 
-      doc.watch("form button + button", function(){
+      root.watch("form button + button", function(){
         console.log(Array.from(arguments))
       });
 
       expect(bool).toBeFalsy();
-      //doc.watch()
-      //console.log(Slick.search(doc, 'button'))
+      //root.watch()
+      //console.log(Slick.search(root, 'button'))
     });
   });
 
