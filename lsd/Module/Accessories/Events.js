@@ -41,7 +41,6 @@ describe("LSD.Module.Accessories.Events", function() {
 
       var element = new Element('test');
       new LSD.Widget(element, {context:'widget'});
-      console.error(element.retrieve('events'), element.retrieve('widget').events.element)
       element.fireEvent("click");
       expect(clicked).toBeTruthy();
     });

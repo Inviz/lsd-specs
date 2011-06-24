@@ -6,7 +6,7 @@ Configuration.name = 'Lovely Scalable Drawings projects';
 
 Configuration.presets = {
   'full': {
-		sets: ['accessories', 'behavior', 'ambient', 'type', 'relations', 'actions'],
+		sets: ['accessories', 'behavior', 'ambient', 'type', 'layout', 'relations', 'actions'],
 		source: ['lsd']
 	},
 	'accessories': {
@@ -22,7 +22,7 @@ Configuration.presets = {
 		source: ['lsd']
 	},
 	'layout': {
-		sets: [/*'layout', */'type'],
+		sets: ['layout'],
 		source: ['lsd']
 	},
 	'type': {

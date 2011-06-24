@@ -153,9 +153,18 @@ describe("LSD.Module.Ambient.Expectations", function() {
     it ("multiple", function() {
       var instance = new LSD.Widget;
       var bool = false;
-      var callback = function() { bool=true };
+      var callback = function(widget, state) { bool=state };
       instance.expect({tag: '*', pseudos: [{key: 'disabled'}]}, callback);
       instance.expect({tag: '*', pseudos: [{key: 'disabled'}]}, callback);
+      instance.addPseudo('disabled');
+      expect(bool).toBeTruthy();
+      instance.removePseudo('disabled');
+      expect(bool).toBeFalsy();
+      instance.unexpect({tag: '*', pseudos: [{key: 'disabled'}]}, callback);
+      instance.addPseudo('disabled');
+      expect(bool).toBeTruthy();
+      instance.removePseudo('disabled');
+      expect(bool).toBeFalsy();
       instance.unexpect({tag: '*', pseudos: [{key: 'disabled'}]}, callback);
       instance.addPseudo('disabled');
       expect(bool).toBeFalsy();
