@@ -1,0 +1,872 @@
+{
+  "LSD": {
+    "desc": "LSD namespace definition",
+    "requires": [
+      "Core/Class",
+      "Core/Events",
+      "Core/Options",
+      "Core/Browser",
+      "Core/Object",
+      "Ext/Macro",
+      "Ext/States",
+      "Ext/Class.mixin",
+      "Ext/Object.Array"
+    ],
+    "provides": [
+      "LSD"
+    ]
+  },
+  "Tools": {
+    "Command": {
+      "desc": "A triggerable interaction abstraction",
+      "requires": [
+        "LSD"
+      ],
+      "provides": [
+        "LSD.Command"
+      ]
+    },
+    "Helpers": {
+      "desc": "Some useful functions that are used internally",
+      "requires": [
+        "LSD"
+      ],
+      "provides": [
+        "LSD.Helpers"
+      ]
+    },
+    "Object": {
+      "desc": "An observable object",
+      "requires": [
+        "LSD"
+      ],
+      "provides": [
+        "LSD.Object"
+      ]
+    },
+    "Microdata": {
+      "desc": "Data that comes from specially html5 formatted elements",
+      "requires": [
+        "LSD",
+        "LSD.Object",
+        "Ext/Element.Item"
+      ],
+      "provides": [
+        "LSD.Microdata"
+      ]
+    },
+    "Interpolation": {
+      "desc": "Variable piece of html that can be asynchronously replaced with content",
+      "requires": [
+        "LSD",
+        "Sheet/SheetParser.Value"
+      ],
+      "provides": [
+        "LSD.Interpolation"
+      ]
+    },
+    "Behavior": {
+      "desc": "Defines global selectors that mix the mixins in",
+      "requires": [
+        "LSD",
+        "Slick/Slick.Parser"
+      ],
+      "provides": [
+        "LSD.Behavior"
+      ]
+    }
+  },
+  "Action": {
+    "desc": "Action encapsulates a single external node manipulation with the logic to revert it",
+    "requires": [
+      "LSD",
+      "LSD.Helpers"
+    ],
+    "provides": [
+      "LSD.Action"
+    ],
+    "Invoke": {
+      "desc": "Invokes a widget and breaks execution chain",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.p"
+      ]
+    },
+    "Counter": {
+      "desc": "Increments the number and the label in html element",
+      "requires": [
+        "LSD.Action",
+        "StringInflections/String.camelize"
+      ],
+      "provides": [
+        "LSD.Action.Counter",
+        "LSD.Action.Increment",
+        "LSD.Action.Decrement"
+      ]
+    },
+    "Focus": {
+      "desc": "Brings attention to element",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Focus"
+      ]
+    },
+    "History": {
+      "desc": "History Action Management.",
+      "requires": [
+        "LSD.Action",
+        "History/History"
+      ],
+      "provides": [
+        "LSD.Action.History"
+      ]
+    },
+    "Clone": {
+      "desc": "Clones an element and inserts it back to parent again",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Clone"
+      ]
+    },
+    "Toggle": {
+      "desc": "Changes the checkedness state of a checkbox",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Toggle",
+        "LSD.Action.Check",
+        "LSD.Action.Uncheck"
+      ]
+    },
+    "Display": {
+      "desc": "Shows or hides things",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Display",
+        "LSD.Action.Show",
+        "LSD.Action.Hide"
+      ]
+    },
+    "List": {
+      "desc": "Shows or hides things",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.List",
+        "LSD.Action.Next",
+        "LSD.Action.Previous"
+      ]
+    },
+    "Set": {
+      "desc": "Changes or synchronizes values",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Set"
+      ]
+    },
+    "State": {
+      "desc": "Changes the state of a widget",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.State"
+      ]
+    },
+    "Submit": {
+      "desc": "Does a request or navigates url to the link",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Submit"
+      ]
+    },
+    "Delete": {
+      "desc": "Deletes a widget or element",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Delete"
+      ]
+    },
+    "Update": {
+      "desc": "Update widget with html or json",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Update",
+        "LSD.Action.Append",
+        "LSD.Action.Replace",
+        "LSD.Action.Before",
+        "LSD.Action.After"
+      ]
+    },
+    "Create": {
+      "desc": "Creates a layout based on selector object or DOM elements",
+      "requires": [
+        "LSD.Action"
+      ],
+      "provides": [
+        "LSD.Action.Create"
+      ]
+    },
+    "Edit": {
+      "desc": "Turn element into editable mode",
+      "requires": [
+        "LSD.Action",
+        "Widgets/LSD.Widget.Body",
+        "Widgets/LSD.Widget.Form",
+        "Widgets/LSD.Widget.Input.HTML",
+        "LSD.Mixin.Fieldset",
+        "LSD.Mixin.Resource"
+      ],
+      "provides": [
+        "LSD.Action.Edit"
+      ]
+    }
+  },
+  "Layout": {
+    "desc": "A logic to render (and nest) widgets out of the key-value hash or dom tree",
+    "requires": [
+      "LSD",
+      "LSD.Interpolation",
+      "LSD.Helpers",
+      "LSD.Microdata",
+      "More/Object.Extras"
+    ],
+    "provides": [
+      "LSD.Layout"
+    ]
+  },
+  "Type": {
+    "desc": "A base class for all class pools",
+    "requires": [
+      "LSD.Behavior",
+      "LSD.Helpers",
+      "More/Object.Extras"
+    ],
+    "provides": [
+      "LSD.Type",
+      "LSD.Module",
+      "LSD.Trait",
+      "LSD.Mixin",
+      "LSD.Element",
+      "LSD.Native"
+    ]
+  },
+  "Trait": {
+    "Date": {
+      "desc": "Work with dates like a boss",
+      "requires": [
+        "LSD.Trait",
+        "More/Date"
+      ],
+      "provides": [
+        "LSD.Trait.Date"
+      ]
+    },
+    "Slider": {
+      "desc": "Because sometimes slider is the answer",
+      "requires": [
+        "LSD.Trait",
+        "More/Slider",
+        "Ext/Slider.prototype.update",
+        "Ext/Class.hasParent"
+      ],
+      "provides": [
+        "LSD.Trait.Slider"
+      ]
+    },
+    "Menu": {
+      "desc": "Dropdowns should be easy to use.",
+      "requires": [
+        "LSD.Trait",
+        "Widgets/LSD.Widget.Menu.Context"
+      ],
+      "provides": [
+        "LSD.Trait.Menu"
+      ]
+    },
+    "Input": {
+      "desc": "Make it easy to use regular native input for the widget",
+      "requires": [
+        "LSD.Trait",
+        "LSD.Mixin.Focusable"
+      ],
+      "provides": [
+        "LSD.Trait.Input"
+      ]
+    }
+  },
+  "Module": {
+    "Graphics": {
+      "desc": "All visual rendering aspects under one umbrella",
+      "requires": [
+        "LSD.Module.Layers",
+        "LSD.Module.Render",
+        "LSD.Module.Shape"
+      ],
+      "provides": [
+        "LSD.Module.Graphics"
+      ]
+    },
+    "Accessories": {
+      "desc": "Things that change the widget in one module",
+      "requires": [
+        "LSD.Module.Options",
+        "LSD.Module.States",
+        "LSD.Module.Attributes",
+        "LSD.Module.Events",
+        "LSD.Module.Dimensions",
+        "LSD.Module.Styles",
+        "LSD.Module.Shortcuts",
+        "LSD.Module.Element",
+        "LSD.Module.Selectors",
+        "LSD.Module.Tag",
+        "LSD.Module.Chain",
+        "LSD.Module.Actions"
+      ],
+      "provides": [
+        "LSD.Module.Accessories"
+      ]
+    },
+    "Ambient": {
+      "desc": "When it needs to know what's going on around",
+      "requires": [
+        "LSD.Module.DOM",
+        "LSD.Module.Layout",
+        "LSD.Module.Expectations",
+        "LSD.Module.Mutations",
+        "LSD.Module.Allocations",
+        "LSD.Module.Relations",
+        "LSD.Module.Proxies",
+        "LSD.Module.Container",
+        "LSD.Module.Interpolations"
+      ],
+      "provides": [
+        "LSD.Module.Ambient"
+      ],
+      "Selectors": {
+        "desc": "Define a widget associations",
+        "requires": [
+          "LSD.Module",
+          "Core/Slick.Finder"
+        ],
+        "provides": [
+          "LSD.Module.Selectors"
+        ]
+      }
+    }
+  },
+  "Sheet": {
+    "desc": "Code to extract style rule definitions from the stylesheet",
+    "requires": [
+      "Core/Element",
+      "Core/Request",
+      "Sheet/Sheet",
+      "Sheet/SheetParser.Value",
+      "Sheet/SheetParser.Property",
+      "Sheet/SheetParser.Styles",
+      "LSD.Module.Element",
+      "LSD.Module.Options"
+    ],
+    "provides": [
+      "LSD.Sheet"
+    ]
+  },
+  "Layer": {
+    "desc": "Adds a piece of SVG that can be drawn with widget styles",
+    "requires": [
+      "ART/ART.Shape",
+      "LSD.Module.Styles",
+      "Sheet/SheetParser.Styles"
+    ],
+    "provides": [
+      "LSD.Layer",
+      "LSD.Layer.Shaped"
+    ],
+    "Scale": {
+      "desc": "Adds a way to set scale level to the layer",
+      "requires": [
+        "LSD.Layer"
+      ],
+      "provides": [
+        "LSD.Layer.Scale"
+      ]
+    },
+    "Size": {
+      "desc": "Base layer that provides shape",
+      "requires": [
+        "LSD.Layer"
+      ],
+      "provides": [
+        "LSD.Layer.Size"
+      ]
+    },
+    "Shape": {
+      "desc": "Base layer that provides shape",
+      "requires": [
+        "LSD.Layer",
+        "ART/ART.Shape"
+      ],
+      "provides": [
+        "LSD.Layer.Shape"
+      ]
+    },
+    "Shadow": {
+      "desc": "Drops outer shadow with offsets. Like a box shadow!",
+      "requires": [
+        "LSD.Layer",
+        "Ext/Element.Properties.boxShadow",
+        "Ext/Element.Properties.borderRadius"
+      ],
+      "provides": [
+        "LSD.Layer.Shadow",
+        "LSD.Layer.Shadow.Layer"
+      ]
+    },
+    "Shadow.Onion": {
+      "desc": "Draws shadow with layers stack upon each others",
+      "requires": [
+        "LSD.Layer.Shadow"
+      ],
+      "provides": [
+        "LSD.Layer.Shadow.Onion"
+      ]
+    },
+    "Shadow.Native": {
+      "desc": "CSS powered shadow",
+      "requires": [
+        "LSD.Layer.Shadow"
+      ],
+      "provides": [
+        "LSD.Layer.Shadow.Native"
+      ]
+    },
+    "Shadow.Inset": {
+      "desc": "Drops inner shadow",
+      "requires": [
+        "LSD.Layer.Shadow"
+      ],
+      "provides": [
+        "LSD.Layer.Shadow.Inset"
+      ]
+    },
+    "Shadow.Blur": {
+      "desc": "SVG Filter powered shadow",
+      "requires": [
+        "LSD.Layer.Shadow"
+      ],
+      "provides": [
+        "LSD.Layer.Shadow.Blur"
+      ]
+    },
+    "Radius": {
+      "desc": "Rounds shapes corners",
+      "requires": [
+        "LSD.Layer"
+      ],
+      "provides": [
+        "LSD.Layer.Radius"
+      ]
+    },
+    "Position": {
+      "desc": "Positions layer in the box",
+      "requires": [
+        "LSD.Layer"
+      ],
+      "provides": [
+        "LSD.Layer.Position"
+      ]
+    },
+    "Offset": {
+      "desc": "Positions layer around the canvas",
+      "requires": [
+        "LSD.Layer"
+      ],
+      "provides": [
+        "LSD.Layer.Offset"
+      ]
+    },
+    "Color": {
+      "desc": "Fills shape with color",
+      "requires": [
+        "LSD.Layer"
+      ],
+      "provides": [
+        "LSD.Layer.Color",
+        "LSD.Layer.Fill"
+      ]
+    },
+    "Stroke": {
+      "desc": "Fills shape with color and strokes with a stroke",
+      "requires": [
+        "LSD.Layer",
+        "LSD.Layer.Color"
+      ],
+      "provides": [
+        "LSD.Layer.Stroke"
+      ]
+    }
+  },
+  "Relation": {
+    "desc": "An unsettable relation that dispatches options to specific widgets",
+    "requires": [
+      "LSD",
+      "LSD.Module.Events"
+    ],
+    "provides": [
+      "LSD.Relation"
+    ]
+  },
+  "Mixin": {
+    "Command": {
+      "desc": "A command getter that watches attributes to redefine command",
+      "requires": [
+        "LSD.Module.Expectations",
+        "LSD.Command"
+      ],
+      "provides": [
+        "LSD.Mixin.Command"
+      ]
+    },
+    "Invokable": {
+      "desc": "Makes widget submit into another widget",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Invokable"
+      ]
+    },
+    "Sortable": {
+      "desc": "Reorder widgets as you please",
+      "requires": [
+        "More/Sortables",
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Sortable"
+      ]
+    },
+    "Root": {
+      "desc": "The topmost widget easily accessible.",
+      "requires": [
+        "LSD.Mixin",
+        "LSD.Behavior"
+      ],
+      "provides": [
+        "LSD.Mixin.Root"
+      ]
+    },
+    "Target": {
+      "desc": "Functions to fetch and parse target into action chains",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Target"
+      ]
+    },
+    "List": {
+      "desc": "Mixin that makes it simple to work with a list of item (and select one of them)",
+      "requires": [
+        "LSD.Mixin",
+        "Core/Element",
+        "Ext/Element.Properties.item"
+      ],
+      "provides": [
+        "LSD.Mixin.List"
+      ]
+    },
+    "Choice": {
+      "desc": "Mixin that adds List. Allows one item to be chosen and one selected (think navigating to a menu item to select)",
+      "requires": [
+        "LSD.Mixin.List"
+      ],
+      "provides": [
+        "LSD.Mixin.Choice"
+      ]
+    },
+    "Uploader": {
+      "desc": "Add your widget have a real form value.",
+      "requires": [
+        "LSD.Mixin",
+        "Widgets/LSD.Widget.Button",
+        "Widgets/LSD.Widget.Progress",
+        "Uploader/*",
+        "LSD.Mixin.List",
+        "Core/JSON"
+      ],
+      "provides": [
+        "LSD.Mixin.Uploader"
+      ]
+    },
+    "ContentEditable": {
+      "desc": "Animated ways to show/hide widget",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.ContentEditable"
+      ]
+    },
+    "Unselectable": {
+      "desc": "DisableS in browser native selection for element",
+      "requires": [
+        "LSD.Mixin",
+        "Ext/Element.disableSelection"
+      ],
+      "provides": [
+        "LSD.Mixin.Unselectable"
+      ]
+    },
+    "Animation": {
+      "desc": "Animated ways to show/hide widget",
+      "requires": [
+        "LSD.Mixin",
+        "Core/Fx.Tween"
+      ],
+      "provides": [
+        "LSD.Mixin.Animation"
+      ]
+    },
+    "Value": {
+      "desc": "Add your widget have a real form value.",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Value"
+      ]
+    },
+    "Validity": {
+      "desc": "Validates widgets against preset rules",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Validity"
+      ]
+    },
+    "Resource": {
+      "desc": "Make various requests to back end",
+      "requires": [
+        "LSD.Mixin",
+        "Resource/*",
+        "More/URI"
+      ],
+      "provides": [
+        "LSD.Mixin.Resource"
+      ]
+    },
+    "Request": {
+      "desc": "Make various requests to back end",
+      "requires": [
+        "LSD.Mixin",
+        "Core/Request",
+        "Ext/Request.Form",
+        "Ext/Request.Auto",
+        "Ext/document.createFragment"
+      ],
+      "provides": [
+        "LSD.Mixin.Request"
+      ]
+    },
+    "Focusable": {
+      "desc": "A mixin to make widget take focus like a regular input (even in Safari)",
+      "requires": [
+        "LSD.Mixin",
+        "QFocuser/QFocuser"
+      ],
+      "provides": [
+        "LSD.Mixin.Focusable",
+        "LSD.Mixin.Focusable.Propagation"
+      ]
+    },
+    "Placeholder": {
+      "desc": "Placeholder for form fileds.",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Placeholder"
+      ]
+    },
+    "Touchable": {
+      "desc": "A mousedown event that lasts even when you move your mouse over.",
+      "requires": [
+        "LSD.Mixin",
+        "Mobile/Mouse",
+        "Mobile/Click",
+        "Mobile/Touch"
+      ],
+      "provides": [
+        "LSD.Mixin.Touchable"
+      ]
+    },
+    "Scrollable": {
+      "desc": "For all the scrollbars you always wanted",
+      "requires": [
+        "LSD.Mixin",
+        "LSD.Behavior",
+        "Widgets/LSD.Widget.Scrollbar"
+      ],
+      "provides": [
+        "LSD.Mixin.Scrollable"
+      ]
+    },
+    "Resizable": {
+      "desc": "Resize widget with the mouse freely",
+      "requires": [
+        "LSD.Mixin",
+        "More/Drag"
+      ],
+      "provides": [
+        "LSD.Mixin.Resizable"
+      ]
+    },
+    "Draggable": {
+      "desc": "Drag widget around the screen",
+      "requires": [
+        "LSD.Mixin",
+        "More/Drag"
+      ],
+      "provides": [
+        "LSD.Mixin.Draggable"
+      ]
+    },
+    "Fieldset": {
+      "desc": "Wrapper around set of form fields",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Fieldset"
+      ]
+    },
+    "Submittable": {
+      "desc": "Makes widget result in either submission or cancellation",
+      "requires": [
+        "LSD.Mixin"
+      ],
+      "provides": [
+        "LSD.Mixin.Submittable"
+      ]
+    }
+  },
+  "Widget": {
+    "desc": "Base widget with all modules included",
+    "requires": [
+      "LSD.Type",
+      "LSD.Module.Accessories",
+      "LSD.Module.Ambient",
+      "LSD.Module.Graphics",
+      "LSD.Mixin.Value"
+    ],
+    "provides": [
+      "LSD.Widget"
+    ]
+  },
+  "Document": {
+    "desc": "Provides a virtual root to all the widgets. DOM-Compatible for Slick traversals.",
+    "requires": [
+      "LSD.Widget",
+      "Core/DomReady",
+      "Core/Options",
+      "Core/Events",
+      "More/String.QueryString",
+      "LSD",
+      "LSD.Module.Attributes",
+      "LSD.Module.Selectors"
+    ],
+    "provides": [
+      "LSD.Document"
+    ]
+  },
+  "ART": {
+    "ART.Shape.Star": {
+      "desc": "A star with variable number of edges",
+      "requires": [
+        "ART/ART.Shape"
+      ],
+      "provides": [
+        "ART/ART.Shape.Star"
+      ]
+    },
+    "ART.Shape.Rectangle": {
+      "desc": "Rectangles with rounded corners",
+      "requires": [
+        "ART/ART.Shape"
+      ],
+      "provides": [
+        "ART.Shape.Rectangle"
+      ]
+    },
+    "ART.Shape.Flower": {
+      "desc": "Ever wanted a flower button? Here you go",
+      "requires": [
+        "ART/ART.Shape"
+      ],
+      "provides": [
+        "ART.Shape.Flower"
+      ]
+    },
+    "ART.Shape.Ellipse": {
+      "desc": "Draw ellipses and circles without a hassle",
+      "requires": [
+        "ART/ART.Shape"
+      ],
+      "provides": [
+        "ART.Shape.Ellipse"
+      ]
+    },
+    "ART.Shape.Arrow": {
+      "desc": "An arrow shape. Useful for all the chat bubbles and validation errors.",
+      "requires": [
+        "ART/ART.Shape"
+      ],
+      "provides": [
+        "ART.Shape.Arrow"
+      ]
+    },
+    "ART.Glyphs": {
+      "desc": "Glyph library",
+      "requires": [
+        "ART/ART"
+      ],
+      "provides": [
+        "ART.Glyphs"
+      ]
+    },
+    "ART": {
+      "desc": "ART extensions",
+      "requires": [
+        "ART/ART.Path",
+        "ART/ART.SVG",
+        "ART/ART.VML",
+        "ART/ART.Base",
+        "Core/Browser"
+      ],
+      "provides": [
+        "ART",
+        "ART.Features"
+      ]
+    }
+  }
+}
