@@ -19,7 +19,7 @@ describe("LSD.Layout", function() {
       }
     })
     
-    var doc = new LSD.Document
+    var doc = LSD.document || new LSD.Document
     var parse = function(element, options) {
       if (element.indexOf) element = new Element('div', {html: element});
       return new LSD.Widget(element, Object.append({context: 'test', document: doc}, options));
@@ -133,13 +133,98 @@ describe("LSD.Layout", function() {
       expect(Slick.search(clone .element, '*').length).toEqual(17)
     });
     
-    it ("should pickup mutations even if layout has started in the middle", function() {
+    xit ("should pickup mutations even if layout has started in the middle", function() {
       var element = new Element('div', {html: superform});
       new LSD.Widget(element.getFirst()) //make superform
       var clone = element.cloneNode(true);
       var target = Slick.find(clone, '#bc');
       var widget = new LSD.Widget(target);
       expect(widget.tagName).toEqual('meter');
+    })
+    
+    
+    it ("should create layouts from objects", function() {
+      var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
+      var result = widget.buildLayout({
+        'form#c': {
+          'label': 'Hello world',
+          'fieldset': {
+            'label': 'Your name:',
+            'input[type=text]': true
+          }
+        }
+      });
+      expect(widget.getElements('form#c').length).toEqual(1);
+      expect(widget.getElements('fieldset').length).toEqual(0);
+      expect(widget.getElements('label').length).toEqual(0);
+      expect(widget.getElements('input').length).toEqual(0);
+      expect(widget.element.getElements('fieldset').length).toEqual(1);
+      expect(widget.element.getElements('label').length).toEqual(2);
+      expect(widget.element.getElements('input').length).toEqual(1);
+    })
+    
+    it ("should create layout from objects with branches", function() {
+      var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
+      var result = widget.buildLayout({
+        'form#c': {
+          'summary': 'Hello world',
+          'fieldset': {
+            'if (a > 1)': {
+              'label': 'Your name:',
+              'input[type=text]': true
+            }, 
+            'else': {
+              'h2': 'Welcome back again!'
+            }
+          }
+        }
+      });
+      expect(widget.getElements('form#c').length).toEqual(1);
+      expect(result['form#c'][1]['summary'][0].tagName.toLowerCase()).toEqual('summary');
+      expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].options.keyword).toEqual('if');
+      expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].options.expression).toEqual('(a > 1)');
+      expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].interpolation.name).toEqual('>');
+      expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].checked).toBeFalsy();
+      expect(result['form#c'][1]['fieldset'][1]['else'][0].options.keyword).toEqual('else');
+      expect(result['form#c'][1]['fieldset'][1]['else'][0].checked).toBeTruthy();
+      expect(widget.element.getElement('label')).toBeFalsy();
+      expect(widget.element.getElement('input')).toBeFalsy();
+      expect(widget.element.getElement('h2')).toBeTruthy();
+      widget.interpolations['a'][0](2);
+      expect(widget.element.getElement('label')).toBeTruthy();
+      expect(widget.element.getElement('input')).toBeTruthy();
+      expect(widget.element.getElement('h2')).toBeFalsy();
+      widget.interpolations['a'][0](0);
+      expect(widget.element.getElement('label')).toBeFalsy();
+      expect(widget.element.getElement('input')).toBeFalsy();
+      expect(widget.element.getElement('h2')).toBeTruthy();
+      widget.interpolations['a'][0](2);
+      expect(widget.element.getElement('label')).toBeTruthy();
+      expect(widget.element.getElement('input')).toBeTruthy();
+      expect(widget.element.getElement('h2')).toBeFalsy();
+      widget.interpolations['a'][0](0);
+      expect(widget.element.getElement('label')).toBeFalsy();
+      expect(widget.element.getElement('input')).toBeFalsy();
+      expect(widget.element.getElement('h2')).toBeTruthy();
+    });
+    
+    
+    it ("should parse comments and interpolate them", function() {
+      var element = new Element('div', {html: '\
+        <!-- if &:urgent -->\
+        <!--\
+          <h2>This is so urgent...</h2>\
+        -->\
+        <!-- else -->\
+          <h3>That only takes 5 minutes to do! Come on, copy and paste what we have already</h3>\
+        <!-- end -->\
+      '});
+      var widget = new LSD.Widget(element);
+      expect(element.getElement('h2')).toBeFalsy();
+      expect(element.getElement('h3')).toBeTruthy();
+      widget.addPseudo('urgent');
+      expect(element.getElement('h2')).toBeTruthy();
+      expect(element.getElement('h3')).toBeFalsy();
     })
   });
 

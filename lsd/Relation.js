@@ -1,5 +1,5 @@
 describe("LSD.Relation", function() {
-  var doc = new LSD.Document
+  var doc = LSD.document || new LSD.Document
   
   it ("should initialize with origin", function() {
     var list = new LSD.Widget({tag: 'list', document: doc});
@@ -116,18 +116,18 @@ describe("LSD.Relation", function() {
   });
   
   it ("should set up lazy expectation for known target that is yet not preset", function() {
+    var body = new LSD.Widget({tag: 'body', pseudos: ['root']})
     var list = new LSD.Widget({tag: 'list'});
-    var item = new LSD.Widget({tag: 'item'})
-    var d = new LSD.Document;
-    d.setBody(new Element('div'));
-    item.inject(d.body)
+    var item = new LSD.Widget({tag: 'item'});
+    item.inject(body)
     var relation = new LSD.Relation('items', list, {
       selector: 'item',
       multiple: true,
-      target: 'document'
+      target: 'root'
     });
     expect(list.items).toEqual([]);
-    list.setDocument(d);
+    list.inject(body);
+    expect(list.root).toEqual(body)
     expect(list.items).toEqual([item]);
   });
   

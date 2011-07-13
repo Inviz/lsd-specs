@@ -83,6 +83,7 @@ describe("LSD.Mixin.Target.Parser", function() {
       expect(parsed.length).toEqual(3)
       expect(parsed[0].action).toEqual('dialog');;
       expect(parsed[0].keyword).toEqual('before');
+      expect(parsed[0].selector.expressions[0][0].tag).toEqual('*');;
       expect(parsed[1].action).toEqual('state');
       expect(parsed[1].keyword).toEqual('then');
       expect(parsed[1].arguments).toEqual('followed');

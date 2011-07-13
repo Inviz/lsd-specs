@@ -1,5 +1,5 @@
 describe("LSD.Module.Ambient.Expectations", function() {
-  if (!LSD.document) new LSD.Document;
+  var doc = LSD.document || new LSD.Document
   LSD.Widget.Root = new Class({
     options: {
       tag: 'root',

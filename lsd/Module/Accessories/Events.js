@@ -87,7 +87,7 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      var doc = new LSD.Document;
+      var doc = LSD.document || new LSD.Document;
       var widget = new LSD.Widget(new Element('test'), {context:'widget', document: doc});
       doc.fireEvent("click");
       expect(clicked).toBeTruthy();
