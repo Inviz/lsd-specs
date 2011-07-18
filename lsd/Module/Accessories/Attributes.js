@@ -2,21 +2,27 @@ describe("LSD.Module.Attributes", function() {
   describe("#attributes", function() {
 
     it ("should manage attributes", function() {
-      var instance = new LSD.Widget;
+      var instance = new LSD.Widget({tag: 'div'});
+      instance.build();
       instance.setAttribute("disabled", true);
+      expect(instance.element["disabled"]).toBeTruthy();
       expect(instance.attributes["disabled"]).toBeTruthy();
       instance.removeAttribute("disabled");
+      expect(instance.element["disabled"]).toBeFalsy();
       expect(instance.attributes["disabled"]).toBeFalsy();
     });
 
     it ("should manage pseudos via attributes", function() {
-      var instance = new LSD.Widget;
+      var instance = new LSD.Widget({tag: 'div'});
       instance.setAttribute("disabled", true);
       expect(instance.pseudos["disabled"]).toBeTruthy();
       expect(instance.attributes["disabled"]).toBeTruthy();
-      instance.setAttribute("disabled", false);
+      instance.build();
+      expect(instance.element["disabled"]).toBeTruthy();
+      instance.removeAttribute("disabled");
       expect(instance.pseudos["disabled"]).toBeFalsy();
       expect(instance.attributes["disabled"]).toBeFalsy();
+      expect(instance.element["disabled"]).toBeFalsy();
     });
 
     it ("should manage pseudos", function() {

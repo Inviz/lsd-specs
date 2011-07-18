@@ -211,20 +211,67 @@ describe("LSD.Layout", function() {
     
     it ("should parse comments and interpolate them", function() {
       var element = new Element('div', {html: '\
-        <!-- if &:urgent -->\
-        <!--\
-          <h2>This is so urgent...</h2>\
-        -->\
+        <!-- if a > 1 -->\
+          <!--\
+            <!- if urgency ->\
+              <!- <h2>This is so urgent...</h2> ->\
+            <!- else ->\
+              <h2>This is not urgent, but hell, we need this today</h2>\
+            <!- end ->\
+          -->\
         <!-- else -->\
-          <h3>That only takes 5 minutes to do! Come on, copy and paste what we have already</h3>\
+          <!-- unless urgency -->\
+            <h3>That only takes 5 minutes to do! Come on, copy and paste what we have already</h3>\
+          <!-- else -->\
+            <!--\
+              <h3>I want it right now</h3>\
+            -->\
+          <!-- end -->\
         <!-- end -->\
       '});
-      var widget = new LSD.Widget(element);
+      $e = element
+      var widget = $w = new LSD.Widget(element);
+      widget.addInterpolator(widget.attributes);
       expect(element.getElement('h2')).toBeFalsy();
-      expect(element.getElement('h3')).toBeTruthy();
-      widget.addPseudo('urgent');
-      expect(element.getElement('h2')).toBeTruthy();
+      expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+      expect(element.getElements('h3').length).toEqual(1);
+      
+     widget.attributes.set('urgency', true)
+     //console.log([element])
+     expect(element.getElement('h2')).toBeFalsy();
+     expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+     expect(element.getElements('h3').length).toEqual(1);
+     widget.attributes.unset('urgency')
+    expect(element.getElement('h2')).toBeFalsy();
+    expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+    expect(element.getElements('h3').length).toEqual(1);
+    widget.attributes.set('urgency', true)
+    expect(element.getElement('h2')).toBeFalsy();
+    expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+    expect(element.getElements('h3').length).toEqual(1);
+    widget.attributes.unset('urgency')
+    expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+   expect(element.getElements('h3').length).toEqual(1);
+    widget.interpolations['a'][0](2)
+     expect(element.getElements('h2').length).toEqual(1);
+    expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
+    expect(element.getElement('h3')).toBeFalsy();
+   widget.attributes.set('urgency', true); 
+      expect(element.getElements('h2').length).toEqual(1);
+    expect(element.getElement('h2').innerHTML).toEqual('This is so urgent...');
+    expect(element.getElement('h3')).toBeFalsy();
+      widget.interpolations['a'][0](1)
+      expect(element.getElement('h2')).toBeFalsy();
+     expect(element.getElements('h3').length).toEqual(1);
+      expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+      widget.interpolations['a'][0](2)
+     expect(element.getElements('h2').length).toEqual(1);
+      expect(element.getElement('h2').innerHTML).toEqual('This is so urgent...');
       expect(element.getElement('h3')).toBeFalsy();
+     widget.interpolations['urgency'][0](false);
+     expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
+     expect(element.getElement('h3')).toBeFalsy();
+    expect(element.getElements('h2').length).toEqual(1);
     })
   });
 
