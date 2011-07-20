@@ -333,10 +333,18 @@ describe("LSD.Interpolation", function() {
     expect(element.childNodes[5].textContent).toEqual('2');
     expect(element.childNodes[7].textContent).toEqual('1');
     expect(element.childNodes[9].textContent).toEqual('4');
+    widget.getElement('menu[type=toolbar] button').dispose();
+    expect(element.childNodes[5].textContent).toEqual('2');
+    expect(element.childNodes[7].textContent).toEqual('1');
+    expect(element.childNodes[9].textContent).toEqual('3');
     widget.getElement('menu[type=toolbar]').dispose();
     expect(element.childNodes[4].textContent).toEqual('1');
     expect(element.childNodes[6].textContent).toEqual('0');
     expect(element.childNodes[8].textContent).toEqual('2');
+    widget.getElement('menu').dispose();
+    expect(element.childNodes[3].textContent).toEqual('0');
+    expect(element.childNodes[5].textContent).toEqual('0');
+    expect(element.childNodes[7].textContent).toEqual('0');
   });
   
   it ("should interpolate attributes", function() {

@@ -5,11 +5,11 @@ describe("LSD.Layout", function() {
       options: {
         tag: 'form',
         mutations: {
-          '> progresz': 'meter'
+          '> progresz': 'meter',
+          'i': true
         }
       }
     });
-    
     LSD.Test.Meter = new Class({
       options: {
         mutations: {
@@ -36,9 +36,15 @@ describe("LSD.Layout", function() {
     })
     
     it('should mutate elements based on mutations from widget', function() {
-      var fragment = parse('<form><progresz id="a"></progresz></form><progresz id="b"></progresz>');
+      var fragment = parse('<form>\
+        <progresz id="a"></progresz>\
+        <i>Jesus</i>\
+        </form>\
+        <progresz id="b"></progresz>\
+        <i>Jesus</i>');
       expect(Slick.find(fragment, 'meter#a')).toBeTruthy()
       expect(Slick.find(fragment, 'meter#b')).toBeFalsy()
+      expect(Slick.search(fragment, 'i').length).toEqual(1)
     });
     
     it('should mutate elements to the right of the widget (+ and ~ combinators)', function() {
@@ -59,10 +65,15 @@ describe("LSD.Layout", function() {
         <progresz id="d"></progresz>\
         <strong></strong>\
         <strong></strong>\
-      </form><progresz id="e"></progresz><strong></strong>');
+        <i>Jesus</i>\
+      </form>\
+      <progresz id="e"></progresz>\
+      <i>Jesus</i>\
+      <strong></strong>');
       expect(Slick.search(fragment, 'meter').length).toEqual(7)
       expect(Slick.search(fragment, 'button').length).toEqual(3)
       expect(Slick.search(fragment, 'icon').length).toEqual(2)
+      expect(Slick.search(fragment, 'i').length).toEqual(1)
     });
     
     LSD.Test.Superform = new Class({
@@ -207,6 +218,57 @@ describe("LSD.Layout", function() {
       expect(widget.element.getElement('input')).toBeFalsy();
       expect(widget.element.getElement('h2')).toBeTruthy();
     });
+    
+    LSD.Test.Body = new Class({
+      options: {
+        tag: 'body'
+      }
+    })
+    LSD.Test.Body.Dialog = new Class({
+      Implements: LSD.Test.Body
+    })
+    
+    it ("should build widgets off expressions with pseudo-elements allocation queries", function() {
+      var widget = new LSD.Widget({tag: 'input', document: doc, context: 'test'});
+      var result = widget.buildLayout({
+        '::dialog:of-kind(input-date)': {
+          'h2': 'Hello world',
+          'p': 'Jesus saves!'
+        }
+      });
+      expect(widget.getElements('*').length).toEqual(1);
+      expect(widget.getElements('body[type=dialog]').length).toEqual(1);
+      //widget.dispose();
+      //expect(document.body.getElements('body')).toEqual(0)
+    })
+    
+    it ("should build widgets conditionally", function() {
+      var widget = new LSD.Widget({tag: 'input', document: doc, context: 'test'});
+      var result = widget.buildLayout({
+        'if &:expanded': {
+          '::dialog:of-kind(input-time)': {
+            'h2': 'Hello world',
+            'p': 'Jesus saves!'
+          }
+        }
+      });
+      expect(widget.getElements('*').length).toEqual(0)
+      expect(widget.getElements('body[type=dialog]').length).toEqual(0);
+      widget.addPseudo('expanded');
+      expect(widget.getElements('*').length).toEqual(1)
+      expect(widget.getElements('body[type=dialog]').length).toEqual(1);
+      expect(widget.getElement('body').element.getElement('h2').innerHTML).toEqual('Hello world');
+      widget.removePseudo('expanded');
+      expect(widget.getElements('*').length).toEqual(0)
+      expect(widget.getElements('body[type=dialog]').length).toEqual(0);
+      widget.addPseudo('expanded');
+      expect(widget.getElements('*').length).toEqual(1)
+      expect(widget.getElements('body[type=dialog]').length).toEqual(1);
+      expect(widget.getElement('body').element.getElement('h2').innerHTML).toEqual('Hello world');
+      widget.removePseudo('expanded');
+      expect(widget.getElements('*').length).toEqual(0)
+      expect(widget.getElements('body[type=dialog]').length).toEqual(0);
+    })
     
     
     it ("should parse comments and interpolate them", function() {

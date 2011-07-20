@@ -195,5 +195,65 @@ describe("LSD.Module.Ambient.Expectations", function() {
     });
   });
 
+  describe("when custom referential combinators are used", function() {
+    describe ("and & combinator is given", function() {
+      it ("should relate to the widget itself", function() {
+        var form = new LSD.Widget({tag: 'form'});
+        var button = new LSD.Widget({tag: 'button'});
+        button.inject(form);
+        var favoured, found;
+        var callback = function(widget, state) {
+          favoured = state;
+          found = widget;
+        };
+        form.watch('&:favoured', callback);
+        expect(favoured).toBeFalsy();
+        expect(found).toBeFalsy();
+        form.addPseudo('favoured');
+        button.addPseudo('favoured');
+        expect(favoured).toBeTruthy();
+        expect(found).toEqual(form);
+        form.removePseudo('favoured');
+        button.removePseudo('favoured');
+        expect(favoured).toBeFalsy();
+        expect(found).toEqual(form);
+        form.unwatch('&:favoured', callback);
+        form.addPseudo('favoured');
+        button.addPseudo('favoured');
+        expect(favoured).toBeFalsy();
+      });
+    })
+    
+    describe("and && combinator is given", function() {
+      it ("should relate to the root widget", function() {
+        var form = new LSD.Widget({tag: 'form', pseudos: ['root']});
+        var button = new LSD.Widget({tag: 'button'});
+        var callback = function(widget, state) {
+          working = state;
+          found = widget;
+        };
+        var working, found;
+        button.watch('&&:working', callback);
+        expect(working).toBeFalsy();
+        expect(found).toBeFalsy();
+        button.inject(form);
+        expect(working).toBeFalsy();
+        expect(found).toBeFalsy();
+        form.addPseudo('working')
+        expect(working).toBeTruthy();
+        expect(found).toEqual(form);
+        form.removePseudo('working')
+        expect(working).toBeFalsy();
+        form.addPseudo('working');
+        expect(working).toBeTruthy();
+        button.dispose();
+        expect(working).toBeFalsy();
+        button.inject(form);
+        expect(working).toBeTruthy();
+        form.removePseudo('working')
+        expect(working).toBeFalsy();
+      })
+    })
+  })
 
 });
