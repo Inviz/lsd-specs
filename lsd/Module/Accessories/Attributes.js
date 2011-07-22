@@ -70,5 +70,21 @@ describe("LSD.Module.Attributes", function() {
       expect(instance.getSelector()).toEqual("div.first:read-only:disabled[disabled=disabled]");
     });
 
+    it ("should set state when state was already defined and class with the name of the state was added", function() {
+      var element = new Element('div');
+      var instance = new LSD.Widget(element);
+      instance.addState('selected');
+      instance.addClass('selected');
+      expect(instance.selected).toBeTruthy();
+    });
+
+    it ("should set state when class with the name of the state was added and state was already defined", function() {
+      var element = new Element('div');
+      var instance = new LSD.Widget(element);
+      instance.addClass('selected');
+      instance.addState('selected');
+      expect(instance.selected).toBeTruthy();
+    });
+
   });
 });
