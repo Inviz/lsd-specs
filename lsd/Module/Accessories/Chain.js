@@ -382,4 +382,92 @@ describe("LSD.Module.Chain", function() {
     //slap.xhr.fireEvent('complete').fireEvent('success');
     //expect(kiss.count).toEqual(1);
   });
+
+  it ("should parse target expression and watch LSD selectors, so it may perform action on widgets that were in there ", function() {
+    var doc = LSD.document || new LSD.Document;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
+    doc.body = root;
+    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);
+    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "&& #slave :check()"}), {pseudos: ['checkbox']}).inject(root);
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+    expect(master.getCommandType()).toEqual('checkbox');
+    master.click()
+    expect(slave.checked).toBeTruthy()
+    master.click();
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+    master.click()
+    expect(master.checked).toBeTruthy()
+    expect(slave.checked).toBeTruthy()
+    master.click();
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+  });
+  
+  it ("should parse target expression and watch LSD selectors, so it may perform action on widgets that were added after action execution took part", function() {
+    var doc = LSD.document || new LSD.Document;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
+    doc.body = root;
+    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "&& #slave :check()"}), {pseudos: ['checkbox']}).inject(root);
+    expect(master.getCommandType()).toEqual('checkbox');
+    master.click()
+    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);
+    expect(slave.checked).toBeTruthy()
+    master.click();
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+    master.click()
+    expect(master.checked).toBeTruthy()
+    expect(slave.checked).toBeTruthy()
+    master.click();
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+  });
+  
+  it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on widgets", function() {
+    var doc = LSD.document || new LSD.Document;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
+    doc.body = root;
+    var element = new Element('input[type=radio][name=section]', {target: "do && #slave :check()"});
+    var master = new LSD.Widget(element, {pseudos: ['checkbox', 'checked']}).inject(root);
+    expect(master.getCommandType()).toEqual('checkbox');
+    expect(master.checked).toBeTruthy()
+    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);
+    expect(slave.checked).toBeTruthy()
+    master.click();
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+    master.click()
+    expect(master.checked).toBeTruthy()
+    expect(slave.checked).toBeTruthy()
+    master.click();
+    expect(master.checked).toBeFalsy()
+    expect(slave.checked).toBeFalsy()
+  });
+  
+  it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on elements", function() {
+    var doc = LSD.document || new LSD.Document;
+    var root = $root = doc.body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], lazy: true});
+      var cooking = new Element('section#cooking').inject(root);
+      var baking = new Element('section#baking').inject(root);
+    var showCooking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #cooking :show()'}), {pseudos: ['radio']}).inject(root)
+    var showBaking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #baking :show()'}), {pseudos: ['radio']}).inject(root)
+    expect(cooking.attributes.hidden).toBeTruthy();
+    expect(baking.attributes.hidden).toBeTruthy();
+    expect(showCooking.getCommandType()).toEqual('radio')
+    expect(showCooking.checked).toBeFalsy()
+    showCooking.click()
+    expect(showCooking.checked).toBeTruthy()
+    expect(cooking.attributes.hidden).toBeFalsy();
+    expect(baking.attributes.hidden).toBeTruthy();
+    showCooking.click()
+    expect(cooking.attributes.hidden).toBeFalsy();
+    expect(baking.attributes.hidden).toBeTruthy();
+    showBaking.click()
+    expect(showCooking.checked).toBeFalsy()
+    expect(showBaking.checked).toBeTruthy()
+    expect(cooking.attributes.hidden).toBeTruthy();
+    expect(baking.attributes.hidden).toBeFalsy();
+  });
 })

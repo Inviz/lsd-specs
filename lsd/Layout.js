@@ -25,6 +25,21 @@ describe("LSD.Layout", function() {
       return new LSD.Widget(element, Object.append({context: 'test', document: doc}, options));
     }
     
+    it('should clone parts of initialized layout', function() {
+      var fragment = parse('<form>Test<h2>Test</h2><progresz id="a"></progresz></form>');
+      expect(Slick.search(fragment, '*').length).toEqual(2)
+      expect(Slick.search(fragment.element, '*').length).toEqual(3)
+      var div = new Element('div');
+      var widget = new LSD.Widget(div, {document: fragment.document})
+      var clone = fragment.getLayout().render(fragment.element, widget, {clone: true})
+      expect(Slick.search(clone, '*').length).toEqual(2)
+      expect(Slick.search(clone.element, '*').length).toEqual(3)
+      expect(fragment.element.getElements('h2').length).toEqual(1);
+      expect(fragment.element.getElement('h2')).toNotEqual(clone.element.getElement('h2'));
+      expect(clone.element.childNodes[0].childNodes[0].textContent).toEqual('Test')
+      expect(clone.element.childNodes[0].childNodes[1].childNodes[0].textContent).toEqual('Test')
+    })
+    
     it('should convert an element to widget with the same name as element\s tag name', function() {
       var fragment = parse('<meter></meter>');
       expect(Slick.find(fragment, 'meter')).toBeTruthy()
