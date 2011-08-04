@@ -313,27 +313,27 @@ describe("LSD.Layout", function() {
       expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
       expect(element.getElements('h3').length).toEqual(1);
       
-     widget.attributes.set('urgency', true)
+     widget.setAttribute('urgency', true);
      //console.log([element])
      expect(element.getElement('h2')).toBeFalsy();
      expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
      expect(element.getElements('h3').length).toEqual(1);
-     widget.attributes.unset('urgency')
+     widget.removeAttribute('urgency')
     expect(element.getElement('h2')).toBeFalsy();
     expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
     expect(element.getElements('h3').length).toEqual(1);
-    widget.attributes.set('urgency', true)
+   widget.setAttribute('urgency', true);
     expect(element.getElement('h2')).toBeFalsy();
     expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
     expect(element.getElements('h3').length).toEqual(1);
-    widget.attributes.unset('urgency')
+     widget.removeAttribute('urgency')
     expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
    expect(element.getElements('h3').length).toEqual(1);
     widget.interpolations['a'][0](2)
      expect(element.getElements('h2').length).toEqual(1);
     expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
     expect(element.getElement('h3')).toBeFalsy();
-   widget.attributes.set('urgency', true); 
+   widget.setAttribute('urgency', true);
       expect(element.getElements('h2').length).toEqual(1);
     expect(element.getElement('h2').innerHTML).toEqual('This is so urgent...');
     expect(element.getElement('h3')).toBeFalsy();

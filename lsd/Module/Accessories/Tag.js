@@ -81,4 +81,26 @@ describe("LSD.Module.Tag", function() {
     
   });
   
+  describe("mixin", function() {
+    it ("should respect multiple mixin requests", function() {
+      LSD.Mixin.Zizzoro = new Class({
+        bang: function() {};
+      })
+      var instance = new LSD.Widget;
+      expect(instance.bang).toBeFalsy()
+      instance.mixins.add('zizzoro');
+      expect(instance.bang).toBeTruthy()
+      instance.mixins.remove('zizzoro');
+      expect(instance.bang).toBeFalsy()
+      instance.mixins.add('zizzoro');
+      expect(instance.bang).toBeTruthy()
+      instance.mixins.add('zizzoro');
+      expect(instance.bang).toBeTruthy()
+      instance.mixins.remove('zizzoro');
+      expect(instance.bang).toBeTruthy()
+      instance.mixins.remove('zizzoro');
+      expect(instance.bang).toBeFalsy()
+    })
+  })
+  
 });

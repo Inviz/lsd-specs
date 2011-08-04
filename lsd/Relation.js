@@ -116,7 +116,8 @@ describe("LSD.Relation", function() {
   });
   
   it ("should set up lazy expectation for known target that is yet not preset", function() {
-    var body = new LSD.Widget({tag: 'body', pseudos: ['root']})
+    var doc = LSD.document || new LSD.Document;
+    var body = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc})
     var list = new LSD.Widget({tag: 'list'});
     var item = new LSD.Widget({tag: 'item'});
     item.inject(body)

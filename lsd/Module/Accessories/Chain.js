@@ -379,8 +379,8 @@ describe("LSD.Module.Chain", function() {
     slap.xhr.fireEvent('complete').fireEvent('success');
     expect(cat.chainPhase).toEqual(0);
     expect(kiss.count).toEqual(1);
-    //slap.xhr.fireEvent('complete').fireEvent('success');
-    //expect(kiss.count).toEqual(1);
+    slap.xhr.fireEvent('complete').fireEvent('success');
+    expect(kiss.count).toEqual(1);
   });
 
   it ("should parse target expression and watch LSD selectors, so it may perform action on widgets that were in there ", function() {
@@ -393,6 +393,7 @@ describe("LSD.Module.Chain", function() {
     expect(slave.checked).toBeFalsy()
     expect(master.getCommandType()).toEqual('checkbox');
     master.click()
+    expect(master.checked).toBeTruthy()
     expect(slave.checked).toBeTruthy()
     master.click();
     expect(master.checked).toBeFalsy()
@@ -413,6 +414,7 @@ describe("LSD.Module.Chain", function() {
     expect(master.getCommandType()).toEqual('checkbox');
     master.click()
     var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);
+    expect(master.checked).toBeTruthy()
     expect(slave.checked).toBeTruthy()
     master.click();
     expect(master.checked).toBeFalsy()
@@ -435,9 +437,17 @@ describe("LSD.Module.Chain", function() {
     expect(master.checked).toBeTruthy()
     var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);
     expect(slave.checked).toBeTruthy()
+    expect(master.attributes.checked).toBeTruthy();
+    expect(slave.attributes.checked).toBeTruthy();
+    expect(master.pseudos.checked).toBeTruthy();
+    expect(slave.pseudos.checked).toBeTruthy();
     master.click();
     expect(master.checked).toBeFalsy()
     expect(slave.checked).toBeFalsy()
+    expect(master.attributes.checked).toBeFalsy();
+    expect(slave.attributes.checked).toBeFalsy();
+    expect(master.pseudos.checked).toBeFalsy();
+    expect(slave.pseudos.checked).toBeFalsy();
     master.click()
     expect(master.checked).toBeTruthy()
     expect(slave.checked).toBeTruthy()

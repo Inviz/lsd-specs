@@ -157,9 +157,7 @@ describe("LSD.Interpolation", function() {
     var widget = new LSD.Widget(element);
     expect(element.childNodes[1].textContent).toEqual('{name}');
     expect(widget.interpolators).toBeFalsy();
-    expect(widget.dataset._change).toBeFalsy();
     widget.addInterpolator(widget.dataset);
-    expect(widget.dataset._change.length).toEqual(1);
     expect(widget.interpolators).toBeFalsy();
     expect(element.childNodes[1].textContent).toEqual('{name}');
     expect(widget.interpolations['name'].length).toEqual(1);
