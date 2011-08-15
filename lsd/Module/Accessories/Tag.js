@@ -84,7 +84,7 @@ describe("LSD.Module.Tag", function() {
   describe("mixin", function() {
     it ("should respect multiple mixin requests", function() {
       LSD.Mixin.Zizzoro = new Class({
-        bang: function() {};
+        bang: function() {}
       })
       var instance = new LSD.Widget;
       expect(instance.bang).toBeFalsy()

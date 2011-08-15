@@ -126,7 +126,7 @@ describe("LSD.Module.Accessories.Events", function() {
         options: {
           events: {
             element: {
-              'click:relay(buttog)': 'onClick'
+              'click:relay(span)': 'onClick'
             }
           }
         },
@@ -138,7 +138,7 @@ describe("LSD.Module.Accessories.Events", function() {
 
 
       var widget = new LSD.Widget(new Element('test'), {context:'widget'});
-      var button = new LSD.Widget({tag: 'buttog', inline: null});
+      var button = new LSD.Widget({tag: 'span', inline: null});
       button.inject(widget);
       widget.element.fireEvent('click', {target: button.element});
 

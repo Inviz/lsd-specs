@@ -479,5 +479,7 @@ describe("LSD.Module.Chain", function() {
     expect(showBaking.checked).toBeTruthy()
     expect(cooking.attributes.hidden).toBeTruthy();
     expect(baking.attributes.hidden).toBeFalsy();
+    showBaking.destroy();
+    showCooking.destroy();
   });
 })

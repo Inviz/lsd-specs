@@ -59,17 +59,97 @@ describe("LSD.Module.Element", function() {
   });
   
   describe("#build", function() {
-    it ('should build the attached element', function() {
-      var element = new Element('div');
-      var instance = new LSD.Widget(element);
-      expect(instance.built).toBeTruthy();
-    });
+    describe("with element given", function() {
+      describe("and tag is not set", function() {
+        it ('should build the attached element with the tag of that element', function() {
+          var element = new Element('div');
+          var instance = new LSD.Widget(element);
+          expect(instance.built).toBeTruthy();
+          expect(instance.tagName).toEqual('div');
+        });
+      })
+      
+      describe("and tag is set through options", function() {
+        describe("and element.tag option is set", function() {
+          it ('should replace that element with the new element with the tag of the widget', function() {
+            var element = new Element('div');
+            var instance = new LSD.Widget(element, {tag: 'button', element: {tag: 'button'}});
+            expect(instance.element.tagName).toEqual('BUTTON');
+            expect(instance.element).toNotEqual(element);
+          })
+        })
+        describe("and inline option is not set", function() {
+          it ('should use that element', function() {
+            var element = new Element('div');
+            var instance = new LSD.Widget(element, {tag: 'button', inline: true});
+            expect(instance.element.tagName).toEqual('DIV');
+            expect(instance.element).toEqual(element);
+          })
+        })
+        describe("and inline option set to true", function() {
+          it ('should use that element', function() {
+            var element = new Element('div');
+            var instance = new LSD.Widget(element, {tag: 'button', inline: true});
+            expect(instance.element.tagName).toEqual('DIV');
+            expect(instance.element).toEqual(element);
+          })
+        })
+      })
+      describe("tag is not set", function() {
+        describe("and inline option is not set", function() {
+          it("should use the element and its tag", function() {
+            var element = new Element('div');
+            var instance = new LSD.Widget(element);
+            expect(instance.tagName).toEqual('div');
+            expect(instance.element).toEqual(element);
+          })
+        })
+      })
+    })
     
-    it ("should attach the built element", function() {
-      var instance = new LSD.Widget({tag: 'h2'});
-      instance.build();
-      expect(instance.element).toBeTruthy();
-      expect(instance.attached).toBeTruthy();    
+    describe("without element", function() {
+      it ("should attach the built element", function() {
+        var instance = new LSD.Widget({tag: 'h2'});
+        instance.build();
+        expect(instance.element).toBeTruthy();
+        expect(instance.attached).toBeTruthy();    
+      });
+      
+      describe("with inline option set to true", function() {
+        it ("should build inline span element", function() {
+          var instance = new LSD.Widget({inline: true});
+          instance.build();
+          expect(instance.element.tagName).toEqual('SPAN');
+        })
+      });
+      
+      describe("with inline option set to false", function() {
+        it ("should build block div element", function() {
+          var instance = new LSD.Widget({inline: false});
+          instance.build();
+          expect(instance.element.tagName).toEqual('DIV');
+          expect(instance.tagName).toBeFalsy()
+        })
+      })
+      
+      describe("with inline option set to null", function() {
+        describe("when tag is given too", function() {
+          describe("and it's a standart html tag", function() {
+            it ("should use that tag for the element", function() {
+              var instance = new LSD.Widget({inline: null, tag: 'h2'});
+              instance.build();
+              expect(instance.element.tagName).toEqual('H2');
+            })
+          });
+          describe("and it's a custom tag that is not in html", function() {
+            it ("should build a div element", function() {
+              var instance = new LSD.Widget({inline: null, tag: 'h177'});
+              instance.build();
+              expect(instance.element.tagName).toEqual('DIV');
+            })
+          })
+        })
+      })
     });
   });
   

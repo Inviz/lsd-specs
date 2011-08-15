@@ -226,7 +226,7 @@ describe("LSD.Interpolation", function() {
     expect($(widget).getLast().childNodes[7].textContent).toEqual('http://heaven.org/')
     $(widget).getFirst().retrieve('microdata:scope').set('name', 'Claudius');
     expect($(widget).getLast().childNodes[1].textContent).toEqual('Claudius');
-    expect($(widget).getElement('[itemprop=name]').innerText).toEqual('Claudius');
+    expect($(widget).getElement('[itemprop=name]').innerHTML).toEqual('Claudius');
   });
   
   it ("will create a local variable scope for widgets with itemscope and will not do it for itemscope elements", function() {

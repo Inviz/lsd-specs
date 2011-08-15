@@ -391,4 +391,20 @@ describe("LSD.Module.Ambient.DOM", function() {
   });
 
 
+
+
+  describe(".destroy()", function() {
+    describe("when given an tree of elements", function() {
+      it ("should call destroy method on all containing widget and destroy all elements removing events", function() {
+        var wrapper = new Element('div#wrapper');
+        var target = new Element('section#target').inject(wrapper)
+        var link = new Element('a').inject(target).addEvent('click', function(){});
+        var widget = new LSD.Widget({tag: 'button'}).inject(link);
+        expect(link.retrieve('events')).toBeTruthy();
+        LSD.Module.DOM.destroy(target);
+        expect(link.retrieve('events')).toBeFalsy(0);
+      })
+    });
+  });
+
 });

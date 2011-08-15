@@ -132,9 +132,7 @@ describe("LSD.Module.Attributes", function() {
       element.setAttribute('checked', 'checked');
       var instance = new LSD.Widget(element, {states: ['checked']});
       expect(instance.checked).toBeTruthy();
-      console.log(1)
       instance.uncheck();
-      console.log(1)
       expect(instance.checked).toBeFalsy();
       expect(instance.pseudos.checked).toBeFalsy();
       expect(instance.attributes.checked).toBeFalsy();

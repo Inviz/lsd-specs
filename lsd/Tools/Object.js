@@ -68,16 +68,18 @@ describe("LSD.Object", function() {
             expect(counter).toEqual(2)
           });
           describe("and then set again", function() {
-            var object = new LSD.Object;
-            var counter = 0;
-            var callback = function(value) {
-              counter++;
-            };
-            object.set('dongs', 'honks');
-            object.watch('dongs', callback);
-            object.unset('dongs', 'honks');
-            object.set('dongs', 'honks');
-            expect(counter).toEqual(3)
+            it ("should execute callback each time value is changed", function() {
+              var object = new LSD.Object;
+              var counter = 0;
+              var callback = function(value) {
+                counter++;
+              };
+              object.set('dongs', 'honks');
+              object.watch('dongs', callback);
+              object.unset('dongs', 'honks');
+              object.set('dongs', 'honks');
+              expect(counter).toEqual(3)
+            })
           })
         });
         describe("and unset before the watch call", function() {
@@ -93,16 +95,18 @@ describe("LSD.Object", function() {
             expect(counter).toEqual(0)
           })  
           describe("but set again", function() {
-            var object = new LSD.Object;
-            var counter = 0;
-            var callback = function(value) {
-              counter++;
-            };
-            object.set('dongs', 'honks');
-            object.unset('dongs', 'honks');
-            object.set('dongs', 'honks');
-            object.watch('dongs', callback);
-            expect(counter).toEqual(1)
+            it ("should execute callback", function() {
+              var object = new LSD.Object;
+              var counter = 0;
+              var callback = function(value) {
+                counter++;
+              };
+              object.set('dongs', 'honks');
+              object.unset('dongs', 'honks');
+              object.set('dongs', 'honks');
+              object.watch('dongs', callback);
+              expect(counter).toEqual(1)
+            })
           })
         })
       });
@@ -220,18 +224,20 @@ describe("LSD.Object", function() {
           })
         })
         describe("when a property was set and unset before", function() {
-          var stack = [];
-          var callback = function(value) {
-            stack.push(value);
-          };
-          var object = new LSD.Object;
-          object.watch('cash', callback);
-          object.set('cash', 666);
-          expect(stack).toEqual([666]);
-          object.unset('cash', 666);
-          expect(stack).toEqual([666, null]);
-          object.unwatch('cash', callback);
-          expect(stack).toEqual([666, null]);
+          it ("should execute callback on changes", function() {
+            var stack = [];
+            var callback = function(value) {
+              stack.push(value);
+            };
+            var object = new LSD.Object;
+            object.watch('cash', callback);
+            object.set('cash', 666);
+            expect(stack).toEqual([666]);
+            object.unset('cash', 666);
+            expect(stack).toEqual([666, null]);
+            object.unwatch('cash', callback);
+            expect(stack).toEqual([666, null]);
+          })
         })
       })
       describe("over a complex property", function() {
