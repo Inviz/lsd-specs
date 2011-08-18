@@ -410,7 +410,7 @@ describe("LSD.Module.Chain", function() {
     var doc = LSD.document || new LSD.Document;
     var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
     doc.body = root;
-    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "&& #slave :check()"}), {pseudos: ['checkbox']}).inject(root);
+    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "watch && #slave :check()"}), {pseudos: ['checkbox']}).inject(root);
     expect(master.getCommandType()).toEqual('checkbox');
     master.click()
     var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);

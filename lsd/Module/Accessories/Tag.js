@@ -20,7 +20,7 @@ describe("LSD.Module.Tag", function() {
         context: 'applet'
       });
       expect(widget.getBody).toBeFalsy();
-      widget.setTag('body');
+      widget.properties.set('tag', 'body');
       expect(widget.getBody).toBeTruthy();
     });
     
@@ -29,11 +29,11 @@ describe("LSD.Module.Tag", function() {
         context: 'applet'
       });
       widget.property = 1;
-      widget.setTag('body');
+      widget.properties.set('tag', 'body');
       expect(widget.clickaz).toBeFalsy();
       expect(widget.getBody).toBeTruthy();
       expect(widget.property).toEqual(1);
-      widget.setTag('button');
+      widget.properties.set('tag', 'button');
       expect(widget.clickaz).toBeTruthy();
       expect(widget.getBody).toBeFalsy();
       expect(widget.property).toEqual(1);
@@ -45,7 +45,7 @@ describe("LSD.Module.Tag", function() {
         context: 'applet',
         inline: null
       });
-      widget.setTag('button');
+      widget.properties.set('tag', 'button');
       widget.build()
       expect(widget.element.tagName.toLowerCase()).toEqual('button');
     })
@@ -88,17 +88,17 @@ describe("LSD.Module.Tag", function() {
       })
       var instance = new LSD.Widget;
       expect(instance.bang).toBeFalsy()
-      instance.mixins.add('zizzoro');
+      instance.mixins.include('zizzoro');
       expect(instance.bang).toBeTruthy()
-      instance.mixins.remove('zizzoro');
+      instance.mixins.erase('zizzoro');
       expect(instance.bang).toBeFalsy()
-      instance.mixins.add('zizzoro');
+      instance.mixins.include('zizzoro');
       expect(instance.bang).toBeTruthy()
-      instance.mixins.add('zizzoro');
+      instance.mixins.include('zizzoro');
       expect(instance.bang).toBeTruthy()
-      instance.mixins.remove('zizzoro');
+      instance.mixins.erase('zizzoro');
       expect(instance.bang).toBeTruthy()
-      instance.mixins.remove('zizzoro');
+      instance.mixins.erase('zizzoro');
       expect(instance.bang).toBeFalsy()
     })
   })

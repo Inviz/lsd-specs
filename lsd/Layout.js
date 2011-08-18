@@ -291,7 +291,7 @@ describe("LSD.Layout", function() {
           })
         })
         describe("when a ^ combinator is used", function() {
-          it("should render the child next to the widget", function() {
+          it("should render the child as a first child in widget", function() {
             var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
             var result = widget.buildLayout({
               'form#c': {

@@ -35,10 +35,10 @@ describe("LSD.Module.Attributes", function() {
 
     it ("should manage attributes & pseudos via states", function() {
       var instance = new LSD.Widget;
-      instance.states.add("disabled");
+      instance.states.include("disabled");
       expect(instance.pseudos["disabled"]).toBeTruthy();
       expect(instance.attributes["disabled"]).toBeTruthy();
-      instance.states.remove("disabled");
+      instance.states.erase("disabled");
       expect(instance.pseudos["disabled"]).toBeFalsy();
       expect(instance.attributes["disabled"]).toBeFalsy();
     });
@@ -56,9 +56,9 @@ describe("LSD.Module.Attributes", function() {
 
     it ("should manage classes via states", function() {
       var instance = new LSD.Widget({tag: 'div'});
-      instance.states.add("custom");
+      instance.states.include("custom");
       expect(instance.hasClass("is-custom")).toBeTruthy();
-      instance.states.add("empty");
+      instance.states.include("empty");
       expect(instance.hasClass('empty')).toBeTruthy();
     });
 
@@ -66,7 +66,7 @@ describe("LSD.Module.Attributes", function() {
       var element = new Element('div');
       var instance = new LSD.Widget(element);
       instance.addClass("first");
-      instance.states.add("disabled");
+      instance.states.include("disabled");
       expect(instance.getSelector()).toEqual("div.first:read-only:disabled[disabled]");
     });
 
