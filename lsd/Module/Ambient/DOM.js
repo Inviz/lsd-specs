@@ -58,8 +58,8 @@ describe("LSD.Module.Ambient.DOM", function() {
       expect(root.getChildren()).toEqual([pane2, pane3]);
     });
 
-    it ("getRoot", function() {
-      var root = new LSD.Widget({tag: 'root'});
+    it (".root", function() {
+      var root = new LSD.Widget({tag: 'root', pseudos: ['root']});
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
@@ -68,22 +68,27 @@ describe("LSD.Module.Ambient.DOM", function() {
       root.appendChild(pane1);
       pane1.appendChild(pane2);
       pane2.appendChild(pane3);  // d > 1 > 2 > 3
-      expect(pane1.getRoot()).toEqual(root);
-      expect(pane2.getRoot()).toEqual(root);
-      expect(pane3.getRoot()).toEqual(root);
+      expect(pane1.root).toEqual(root);
+      expect(pane2.root).toEqual(root);
+      expect(pane3.root).toEqual(root);
 
       root.removeChild(pane1); // d & 1 > 2 > 3
-      expect(pane1.getRoot()).toEqual(pane1);
-      expect(pane2.getRoot()).toEqual(pane1);
-      expect(pane3.getRoot()).toEqual(pane1);
+      expect(pane1.root).toBeFalsy();
+      expect(pane2.root).toBeFalsy();
+      expect(pane3.root).toBeFalsy();
 
       pane2.removeChild(pane3); // 1 > 2 & 3
       expect(pane1.contains(pane3)).toBeFalsy();
 
       pane3.appendChild(pane1); // 3 > 1 > 2
-      expect(pane1.getRoot()).toEqual(pane3);
-      expect(pane2.getRoot()).toEqual(pane3);
-      expect(pane3.getRoot()).toEqual(pane3);
+      expect(pane1.root).toBeFalsy();
+      expect(pane2.root).toBeFalsy();
+      expect(pane3.root).toBeFalsy();
+      
+      root.appendChild(pane3);
+      expect(pane1.root).toEqual(root);
+      expect(pane2.root).toEqual(root);
+      expect(pane3.root).toEqual(root);
 
       // test with setParent unsetParent
 
@@ -208,7 +213,7 @@ describe("LSD.Module.Ambient.DOM", function() {
       expect(root.firstChild).toBeUndefined();
       expect(root.lastChild).toBeUndefined();
 
-      expect(pane1.getRoot()).toEqual(pane1);
+      expect(pane1.parentNode).toBeFalsy();
       expect(pane1.previousSibling).toBeUndefined();
       expect(pane1.nextSibling).toBeUndefined();
 
@@ -277,7 +282,7 @@ describe("LSD.Module.Ambient.DOM", function() {
       expect(root.firstChild).toBeUndefined();
       expect(root.lastChild).toBeUndefined();
 
-      expect(pane1.getRoot()).toEqual(pane1);
+      expect(pane1.parentNode).toBeFalsy();
       expect(pane1.previousSibling).toBeUndefined();
       expect(pane1.nextSibling).toBeUndefined();
 

@@ -458,7 +458,7 @@ describe("LSD.Module.Chain", function() {
   
   it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on elements", function() {
     var doc = LSD.document || new LSD.Document;
-    var root = $root = doc.body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], lazy: true});
+    var root = $root = doc.body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], lazy: true, document: doc});
       var cooking = new Element('section#cooking').inject(root);
       var baking = new Element('section#baking').inject(root);
     var showCooking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #cooking :show()'}), {pseudos: ['radio']}).inject(root)

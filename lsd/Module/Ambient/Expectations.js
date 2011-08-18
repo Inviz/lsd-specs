@@ -172,7 +172,7 @@ describe("LSD.Module.Ambient.Expectations", function() {
   });
 
   describe("#watch", function() {
-    it ("111", function() {
+    it ("should watch a complex combinator", function() {
       var bool = false;
       var root = new LSD.Widget({tag: 'root'});
 
@@ -186,12 +186,10 @@ describe("LSD.Module.Ambient.Expectations", function() {
       form.appendChild(button2);
 
       root.watch("form button + button", function(){
-        console.log(Array.from(arguments))
+        bool = true;
       });
 
-      expect(bool).toBeFalsy();
-      //root.watch()
-      //console.log(Slick.search(root, 'button'))
+      expect(bool).toBeTruthy();
     });
   });
 

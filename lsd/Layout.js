@@ -26,6 +26,8 @@ describe("LSD.Layout", function() {
       return new LSD.Widget(element, Object.append({context: 'test', document: doc}, options));
     }
     
+    new LSD.Type('Clean');
+    
 
     LSD.Test.Superform = new Class({
       options: {
@@ -259,7 +261,7 @@ describe("LSD.Layout", function() {
       });
       describe("and combinators are used to tell where the children go", function() {
         describe("when a + combinator is used", function() {
-          it("should render the child next to the widget", function() {
+          it("should render the child next to the parent element", function() {
             var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
             var result = widget.buildLayout({
               'form#c': {
@@ -269,9 +271,24 @@ describe("LSD.Layout", function() {
                 'input[type=text]': true
               }
             });
-            console.log(widget.element)
             expect(widget.element.getElements('*').map(function(e) { return e.get('tag')})).toEqual(['form', 'label', 'label', 'input', 'fieldset'])
           });
+          it("should match the node next to the parent element", function() {
+            var element = new Element('section').adopt(
+              new Element('form'),
+              new Element('fieldset')
+            )
+            var widget = new LSD.Widget(element, {
+              document: doc, 
+              layout: {
+                'form': {
+                  '+ fieldset': 'Dead',
+                  'label#hey': 'Hello world'
+                }
+              }
+            });
+            expect(element.getElements('*').map(function(e) { return e.get('tag')})).toEqual(['form', 'label', 'fieldset'])
+          })
         })
         describe("when a ^ combinator is used", function() {
           it("should render the child next to the widget", function() {
@@ -353,13 +370,11 @@ describe("LSD.Layout", function() {
             expect(widget.element.getElement('p')).toBeFalsy()
             widget.interpolations['a'][0]('bad');
             expect(widget.element.getElement('form + p')).toBeTruthy()
-            console.log(widget.element)
             widget.interpolations['a'][0]('good');
             expect(widget.element.getElement('p')).toBeFalsy()
             expect(widget.element.getElement('form + p')).toBeFalsy()
             widget.interpolations['a'][0]('bad');
             expect(widget.element.getElement('form + p')).toBeTruthy()
-            console.log(widget.element)
             widget.interpolations['a'][0]('good');
             expect(widget.element.getElement('p')).toBeFalsy()
             expect(widget.element.getElement('form + p')).toBeFalsy()
@@ -1163,7 +1178,9 @@ describe("LSD.Layout", function() {
                             'menu ~ ': null,
                             'button': null,
                             '::container': null
-                          }
+                          },
+                          document: doc || new LSD.Document,
+                          context: 'clean'
                         });
                         expect(element.getChildren().map(function(e) { return e.get('tag')})).toEqual(['menu', 'button', 'div']);
                         expect(element.getElement('div.container').innerText).toEqual('LolKrist');
@@ -1184,7 +1201,9 @@ describe("LSD.Layout", function() {
                             'menu ~ ': null,
                             '::container ~': null,
                             'button': null
-                          }
+                          },
+                          document: doc || new LSD.Document,
+                          context: 'clean'
                         });
                         expect(element.getChildren().map(function(e) { return e.get('tag')})).toEqual(['menu', 'div', 'button']);
                         expect(element.getElement('div.container').innerText).toEqual('LolKrist');
@@ -1203,7 +1222,9 @@ describe("LSD.Layout", function() {
                             '::container +': null,
                             'button +': null,
                             'menu': null
-                          }
+                          },
+                          document: doc || new LSD.Document,
+                          context: 'clean'
                         });
                         expect(element.getChildren().map(function(e) { return e.get('tag')})).toEqual(['div', 'button', 'menu']);
                         expect(element.getElement('div.container').innerText).toEqual('LolKrist');

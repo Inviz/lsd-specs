@@ -230,7 +230,6 @@ describe("LSD.Interpolation", function() {
   });
   
   it ("will create a local variable scope for widgets with itemscope and will not do it for itemscope elements", function() {
-    this.microdata
     var html = "\
       <article itemscope='itemscope' itemtype='Article' itemprop='article'>\
       {article.name} - <h2 itemprop='name'>Article of the year</h2> - {name}\
