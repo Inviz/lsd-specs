@@ -227,7 +227,6 @@ describe("LSD.Module.Ambient.Expectations", function() {
         var form = new LSD.Widget({tag: 'form', pseudos: ['root']});
         var button = new LSD.Widget({tag: 'button'});
         var callback = function(widget, state) {
-          console.error(widget, state)
           working = state;
           found = widget;
         };
