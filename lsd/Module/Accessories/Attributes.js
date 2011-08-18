@@ -237,5 +237,20 @@ describe("LSD.Module.Attributes", function() {
       expect(instance.states._stack.checked.length).toEqual(0);
       expect(instance.states._stack.selected.length).toEqual(0);
     })
+    
+    new LSD.Type('Checkboxtest');
+    
+    it ("should make attribute type='checkbox'", function() {
+      var element = new Element('input', {type: 'checkbox'});
+      var instance = new LSD.Widget(element, {
+        context: 'checkboxtest',
+        element: {tag: 'div'}
+      });
+      expect(instance.tagName).toEqual('input');
+      expect(instance.element.get('tag')).toEqual('div');
+      expect(instance.attributes.type).toEqual('checkbox');
+      expect(instance.getAttribute('type')).toEqual('checkbox');
+      expect(instance.element.getAttribute('type')).toEqual('checkbox');
+    })
   });
 });
