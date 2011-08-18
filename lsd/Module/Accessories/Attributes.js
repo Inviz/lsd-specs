@@ -240,17 +240,24 @@ describe("LSD.Module.Attributes", function() {
     
     new LSD.Type('Checkboxtest');
     
-    it ("should make attribute type='checkbox'", function() {
+    it ("should make attributes type='checkbox' and checked='checked'", function() {
       var element = new Element('input', {type: 'checkbox'});
+      element.setAttribute('checked', 'checked');
       var instance = new LSD.Widget(element, {
         context: 'checkboxtest',
         element: {tag: 'div'}
       });
       expect(instance.tagName).toEqual('input');
       expect(instance.element.get('tag')).toEqual('div');
+      
       expect(instance.attributes.type).toEqual('checkbox');
       expect(instance.getAttribute('type')).toEqual('checkbox');
       expect(instance.element.getAttribute('type')).toEqual('checkbox');
+      
+      expect(instance.checked).toBeTruthy();
+      expect(instance.attributes.checked).toBeTruthy();
+      expect(instance.getAttribute('checked')).toBeTruthy();
+      expect(instance.element.getAttribute('checked')).toBeTruthy();
     })
   });
 });
