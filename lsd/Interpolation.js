@@ -297,10 +297,10 @@ describe("LSD.Interpolation", function() {
     widget.firstChild.dispose()
   });
   
-  it ("should translate selectors", function() {
-    expect(LSD.Interpolation.translate(':expected')).toEqual({type: 'selector', value: ':expected'})
-    expect(LSD.Interpolation.translate(':expected > div')).toEqual({type: 'selector', value: ':expected > div'})
-    expect(LSD.Interpolation.translate('& :expected > div')).toEqual({type: 'selector', value: '& :expected > div'})
+  it ("should parse selectors", function() {
+    expect(LSD.Script.parse(':expected')).toEqual({type: 'selector', value: ':expected'})
+    expect(LSD.Script.parse(':expected > div')).toEqual({type: 'selector', value: ':expected > div'})
+    expect(LSD.Script.parse('& :expected > div')).toEqual({type: 'selector', value: '& :expected > div'})
   });
 
   it ("should watch selectors", function() {
