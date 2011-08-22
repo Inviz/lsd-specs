@@ -72,7 +72,7 @@ describe("LSD.Layout", function() {
           expect(Slick.search(fragment.element, '*').length).toEqual(3)
           var div = new Element('div');
           var widget = new LSD.Widget(div, {document: fragment.document})
-          var clone = fragment.getLayout().render(fragment.element, widget, {clone: true})
+          var clone = fragment.document.layout.render(fragment.element, widget, {clone: true})
           expect(Slick.search(clone, '*').length).toEqual(2)
           expect(Slick.search(clone.element, '*').length).toEqual(3)
           expect(fragment.element.getElements('h2').length).toEqual(1);
@@ -162,12 +162,12 @@ describe("LSD.Layout", function() {
 
         it ("should pickup mutations even if layout has started in the middle", function() {
           var fragment = parse(superform);
-          var form =$form= new LSD.Widget(fragment.element.getFirst(), {document: fragment.document, layout: fragment.layout, context: 'test'});
+          var form =$form= new LSD.Widget(fragment.element.getFirst(), {document: fragment.document, context: 'test'});
           var element = form.element;
           var target = Slick.find(element, '#bc');
           var copy = target.cloneNode(false);
           target.parentNode.insertBefore(copy, target);
-          var widget = form.layout.render(copy, [form, target.parentNode]);
+          var widget = form.document.layout.render(copy, [form, target.parentNode]);
           expect(widget.tagName).toEqual('meter');
         })
       })
@@ -195,7 +195,7 @@ describe("LSD.Layout", function() {
             <!-- end -->\
           '});
           $e = element
-          var widget = $w = new LSD.Widget(element);
+          var widget = $w = new LSD.Widget(element, {document: doc});
           widget.addInterpolator(widget.attributes);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
@@ -520,7 +520,7 @@ describe("LSD.Layout", function() {
               expect(article.element.getElements('> button').length).toEqual(1);
               expect(article.element.getElements('div.container button').length).toEqual(1);
               expect(article.element.getElements('div.container img').length).toEqual(1);
-              expect(article.element.getElement('div.container').innerText.trim().replace(/\s+/gm, ' ')).toEqual('You have come a long way, buddy. Here is a pic for you: See');
+              expect(article.element.getElement('div.container').get('text').trim().replace(/\s+/gm, ' ')).toEqual('You have come a long way, buddy. Here is a pic for you: See');
             })
           });
         })
@@ -1183,7 +1183,7 @@ describe("LSD.Layout", function() {
                           context: 'clean'
                         });
                         expect(element.getChildren().map(function(e) { return e.get('tag')})).toEqual(['menu', 'button', 'div']);
-                        expect(element.getElement('div.container').innerText).toEqual('LolKrist');
+                        expect(element.getElement('div.container').get('text')).toEqual('LolKrist');
                       });
                     })
                     describe("and container order is enforced", function() {
@@ -1206,7 +1206,7 @@ describe("LSD.Layout", function() {
                           context: 'clean'
                         });
                         expect(element.getChildren().map(function(e) { return e.get('tag')})).toEqual(['menu', 'div', 'button']);
-                        expect(element.getElement('div.container').innerText).toEqual('LolKrist');
+                        expect(element.getElement('div.container').get('text')).toEqual('LolKrist');
                       });
                       it ("should reuse elements and proxy all others", function() {
                         var element = new Element('section').adopt(
@@ -1227,7 +1227,7 @@ describe("LSD.Layout", function() {
                           context: 'clean'
                         });
                         expect(element.getChildren().map(function(e) { return e.get('tag')})).toEqual(['div', 'button', 'menu']);
-                        expect(element.getElement('div.container').innerText).toEqual('LolKrist');
+                        expect(element.getElement('div.container').get('text')).toEqual('LolKrist');
                       });
                     });
                   });

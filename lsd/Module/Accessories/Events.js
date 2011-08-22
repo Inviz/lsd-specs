@@ -1,9 +1,10 @@
 describe("LSD.Module.Accessories.Events", function() {
+  new LSD.Type('EventTest');
   describe("#simple", function() {
 
     it ("self", function() {
       var clicked = false;
-      LSD.Widget.Test = new Class({
+      LSD.EventTest.Selftest = new Class({
         options: {
           events: {
             self: {
@@ -17,15 +18,15 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      var element = new Element('test');
-      var widget = new LSD.Widget(element, {context:'widget'});
+      var element = new Element('selftest');
+      var widget = new LSD.Widget(element, {context:'event_test'});
       widget.fireEvent('touch');
       expect(clicked).toBeTruthy();
     });
 
     it ("element", function() {
       var clicked = false;
-      LSD.Widget.Test = new Class({
+      LSD.EventTest.Elementtest = new Class({
         options: {
           events: {
             element: {
@@ -39,15 +40,15 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      var element = new Element('test');
-      new LSD.Widget(element, {context:'widget'});
+      var element = new Element('elementtest');
+      new LSD.Widget(element, {context:'event_test'});
       element.fireEvent("click");
       expect(clicked).toBeTruthy();
     });
 
     it ("parent", function() {
       var clicked = false;
-      LSD.Widget.Test = new Class({
+      LSD.EventTest.Parenttest = new Class({
         options: {
           events: {
             parent: {
@@ -61,8 +62,8 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      var parent = new LSD.Widget(new Element('button'), {context:'widget'});
-      var widget = new LSD.Widget(new Element('test'), {context:'widget'});
+      var parent = new LSD.Widget
+      var widget = new LSD.Widget(new Element('parenttest'), {context:'event_test'});
 
       parent.appendChild(widget);
       parent.fireEvent('click');
@@ -73,7 +74,7 @@ describe("LSD.Module.Accessories.Events", function() {
     it ("document", function() {
       var clicked = false;
 
-      LSD.Widget.Test = new Class({
+      LSD.EventTest.Documenttest = new Class({
         options: {
           events: {
             document: {
@@ -88,7 +89,7 @@ describe("LSD.Module.Accessories.Events", function() {
       });
 
       var doc = LSD.document || new LSD.Document;
-      var widget = new LSD.Widget(new Element('test'), {context:'widget', document: doc});
+      var widget = new LSD.Widget(new Element('documenttest'), {context:'event_test', document: doc});
       doc.fireEvent("click");
       expect(clicked).toBeTruthy();
     });
@@ -96,7 +97,7 @@ describe("LSD.Module.Accessories.Events", function() {
     it ("window", function() {
       var resized = false;
 
-      LSD.Widget.Test = new Class({
+      LSD.EventTest.Windowtest = new Class({
         options: {
           events: {
             window: {
@@ -110,7 +111,7 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      new LSD.Widget(new Element('test'), {context:'widget'});
+      new LSD.Widget(new Element('windowtest'), {context:'event_test'});
 
       window.fireEvent("resize");
       expect(resized).toBeTruthy();
@@ -122,7 +123,7 @@ describe("LSD.Module.Accessories.Events", function() {
 
     it ("click:relay", function() {
       var clicked = false;
-      LSD.Widget.Test = new Class({
+      LSD.EventTest.Relaytest = new Class({
         options: {
           events: {
             element: {
@@ -137,7 +138,7 @@ describe("LSD.Module.Accessories.Events", function() {
       });
 
 
-      var widget = new LSD.Widget(new Element('test'), {context:'widget'});
+      var widget = new LSD.Widget(new Element('relaytest'), {context:'event_test'});
       var button = new LSD.Widget({tag: 'span', inline: null});
       button.inject(widget);
       widget.element.fireEvent('click', {target: button.element});

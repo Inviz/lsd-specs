@@ -1,5 +1,6 @@
 describe("LSD.Relation", function() {
   var doc = LSD.document || new LSD.Document
+  new LSD.Type('RelationTest');
   
   it ("should initialize with origin", function() {
     var list = new LSD.Widget({tag: 'list', document: doc});
@@ -79,12 +80,12 @@ describe("LSD.Relation", function() {
   });
   
   it ("should mutate elements and use them as related", function() {
-    LSD.Widget.Item = new Class({
+    LSD.RelationTest.Item = new Class({
       options: {
         tag: 'item'
       }
     })
-    var list = new LSD.Widget({tag: 'list', context: 'widget', document: doc});
+    var list = new LSD.Widget({tag: 'list', context: 'relation_test', document: doc});
     var item = new Element('div').inject(list);
     var relation = new LSD.Relation('items', list);
     relation.setOptions({
@@ -95,7 +96,7 @@ describe("LSD.Relation", function() {
     });
     var mutated = item.retrieve('widget');
     expect(mutated).toBeTruthy();
-    expect(mutated.role).toEqual(LSD.Widget.Item);
+    expect(mutated.role).toEqual(LSD.RelationTest.Item);
     expect(mutated.source).toEqual('item');
     expect(list.items).toEqual([mutated]);
   });
