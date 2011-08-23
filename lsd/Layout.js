@@ -162,7 +162,7 @@ describe("LSD.Layout", function() {
 
         it ("should pickup mutations even if layout has started in the middle", function() {
           var fragment = parse(superform);
-          var form =$form= new LSD.Widget(fragment.element.getFirst(), {document: fragment.document, context: 'test'});
+          var form = fragment.childNodes[0]
           var element = form.element;
           var target = Slick.find(element, '#bc');
           var copy = target.cloneNode(false);
