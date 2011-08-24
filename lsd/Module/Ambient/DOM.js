@@ -219,40 +219,6 @@ describe("LSD.Module.Ambient.DOM", function() {
 
     });
 
-
-    it ("appendChild", function() {
-      var root = new LSD.Widget({tag: 'root'});
-
-      var pane1 = new LSD.Widget({tag: 'pane'});
-      var pane2 = new LSD.Widget({tag: 'pane'});
-      var pane3 = new LSD.Widget({tag: 'pane'});
-
-      root.appendChild(pane1);
-      expect(root.firstChild).toEqual(pane1);
-      expect(root.lastChild).toEqual(pane1);
-      expect(pane1.previousSibling).toBeUndefined();
-      expect(pane1.nextSibling).toBeUndefined();
-
-      root.appendChild(pane2);
-      expect(root.firstChild).toEqual(pane1);
-      expect(root.lastChild).toEqual(pane2);
-      expect(pane1.previousSibling).toBeUndefined();
-      expect(pane1.nextSibling).toEqual(pane2);
-      expect(pane2.previousSibling).toEqual(pane1);
-      expect(pane2.nextSibling).toBeUndefined();
-
-      root.appendChild(pane3);
-      expect(root.firstChild).toEqual(pane1);
-      expect(root.lastChild).toEqual(pane3);
-      expect(pane1.previousSibling).toBeUndefined();
-      expect(pane1.nextSibling).toEqual(pane2);
-      expect(pane2.previousSibling).toEqual(pane1);
-      expect(pane2.nextSibling).toEqual(pane3);
-      expect(pane3.previousSibling).toEqual(pane2);
-      expect(pane3.nextSibling).toBeUndefined();
-
-    });
-
     it ("removeChild", function() {
       var root = new LSD.Widget({tag: 'root'});
 
@@ -391,6 +357,333 @@ describe("LSD.Module.Ambient.DOM", function() {
       expect(pane1.firstChild).toEqual(pane2);
       expect(pane2.firstChild).toEqual(pane3);
     });
+    
+    describe("appendChild", function() {
+      describe("without proxies", function() {
+        describe("when given widget", function() {
+          it ("should set all the links around", function() {
+            var root = new LSD.Widget({tag: 'root'});
+
+            var pane1 = new LSD.Widget({tag: 'pane'});
+            var pane2 = new LSD.Widget({tag: 'pane'});
+            var pane3 = new LSD.Widget({tag: 'pane'});
+
+            root.appendChild(pane1);
+            expect(root.firstChild).toEqual(pane1);
+            expect(root.lastChild).toEqual(pane1);
+            expect(pane1.previousSibling).toBeUndefined();
+            expect(pane1.nextSibling).toBeUndefined();
+
+            root.appendChild(pane2);
+            expect(root.firstChild).toEqual(pane1);
+            expect(root.lastChild).toEqual(pane2);
+            expect(pane1.previousSibling).toBeUndefined();
+            expect(pane1.nextSibling).toEqual(pane2);
+            expect(pane2.previousSibling).toEqual(pane1);
+            expect(pane2.nextSibling).toBeUndefined();
+
+            root.appendChild(pane3);
+            expect(root.firstChild).toEqual(pane1);
+            expect(root.lastChild).toEqual(pane3);
+            expect(pane1.previousSibling).toBeUndefined();
+            expect(pane1.nextSibling).toEqual(pane2);
+            expect(pane2.previousSibling).toEqual(pane1);
+            expect(pane2.nextSibling).toEqual(pane3);
+            expect(pane3.previousSibling).toEqual(pane2);
+            expect(pane3.nextSibling).toBeUndefined();
+          })
+        })
+        describe("when given element", function() {
+          it ("should append element", function() {
+            var element = new Element('li');
+            var widget = new LSD.Widget({tag: 'ul'});
+            widget.appendChild(element);
+            expect(widget.element.getFirst()).toEqual(element);
+          })
+        })
+      })
+      describe("with proxy", function() {
+        describe("given explicity", function() {
+          describe("targeted on widget", function() {
+            describe("having widget as a container", function() {
+              it ("should redirect widget into that container widget", function() {
+                var list = new LSD.Widget({tag: 'list'});
+                var table = new LSD.Widget({tag: 'table'});
+                table.addProxy('redirection', {
+                  selector: 'li',
+                  container: list
+                });
+                var item = new LSD.Widget({tag: 'li'});
+                table.appendChild(item);
+                expect(table.childNodes).toEqual([]);
+                expect(list.childNodes).toEqual([item])
+              })
+            })
+            describe("having element as a container", function() {
+              it ("should redirect widget into that element", function() {
+                var list = new Element('ul');
+                var table = new LSD.Widget({tag: 'table'});
+                table.addProxy('redirection', {
+                  selector: 'li',
+                  container: list
+                });
+                var item = new LSD.Widget({tag: 'li'});
+                table.appendChild(item);
+                expect(table.childNodes).toEqual([item]);
+                expect(list.childNodes[0]).toEqual(item.element)
+              })
+            })
+          })
+          describe("targeted on element", function() {
+            describe("having widget as a container", function() {
+              it ("should redirect element into that container widget", function() {
+                var list = new LSD.Widget({tag: 'list'});
+                var table = new LSD.Widget({tag: 'table'});
+                table.addProxy('redirection', {
+                  mutation: 'li',
+                  container: list
+                });
+                var item = new Element('li');
+                table.appendChild(item);
+                expect(table.childNodes).toEqual([]);
+                expect(list.element.childNodes[0]).toEqual(item)
+              })
+            })
+            describe("having element as a container", function() {
+              it ("should redirect element into that container element", function() {
+                var list = new Element('ul');
+                var table = new LSD.Widget({tag: 'table'});
+                table.addProxy('redirection', {
+                  mutation: 'li',
+                  container: list
+                });
+                var item = new Element('li');
+                table.appendChild(item);
+                expect(table.childNodes).toEqual([]);
+                expect(list.childNodes[0]).toEqual(item)
+              })
+            })
+          })
+        })
+      })
+    });
+    describe("insertBefore", function() {
+      describe("without proxies", function() {
+        describe("when inserted node is a widget", function() {
+          describe("and before hook is a widget", function() {
+            it("should insert the widget before the target", function() {
+              var root = new LSD.Widget({tag: 'root'});
+              var header = new LSD.Widget({tag: 'header'});
+              var section = new LSD.Widget({tag: 'section'});
+              var footer = new LSD.Widget({tag: 'footer'});
+              root.appendChild(header);
+              root.appendChild(footer);
+
+              root.insertBefore(section, footer);
+              expect(root.childNodes).toEqual([header, section, footer]);
+              expect(root.element.getChildren().slice(0)).toEqual([header.element, section.element, footer.element]);
+            })
+          })
+          describe("and before hook is an element", function() {
+            describe("which has an initialized widget too", function() {
+              it ("should insert the widget before the target element's widget", function() {
+                var root = new LSD.Widget({tag: 'root'});
+                var header = new LSD.Widget({tag: 'header'});
+                var section = new LSD.Widget({tag: 'section'});
+                var footer = new LSD.Widget({tag: 'footer'});
+                root.appendChild(header);
+                root.appendChild(footer);
+                root.insertBefore(section, footer.element);
+                expect(root.childNodes).toEqual([header, section, footer]);
+                expect(root.element.getChildren().slice(0)).toEqual([header.element, section.element, footer.element]);
+              })
+            })
+            describe("which is not widget", function() {
+              describe("and there is a widget after it", function() {
+                it("should insert the widget before the element and the widget", function() {
+                  var root = new LSD.Widget({tag: 'root'});
+                  var header = new LSD.Widget({tag: 'header'});
+                  var section = new LSD.Widget({tag: 'section'});
+                  var nav = new Element('nav');
+                  var footer = new LSD.Widget({tag: 'footer'});
+                  root.appendChild(header);
+                  root.appendChild(nav);
+                  root.appendChild(footer);
+                  root.insertBefore(section, nav);
+                  expect(root.childNodes).toEqual([header, section, footer]);
+                })
+              });
+              describe("and there's no widget after it", function() {
+                it("should insert the widget before the element and the widget", function() {
+                  var root = new LSD.Widget({tag: 'root'});
+                  var header = new LSD.Widget({tag: 'header'});
+                  var section = new LSD.Widget({tag: 'section'});
+                  var nav = new Element('nav');
+                  var footer = new LSD.Widget({tag: 'footer'});
+                  root.appendChild(header);
+                  root.appendChild(footer);
+                  root.appendChild(nav);
+                  root.insertBefore(section, nav);
+                  expect(root.childNodes).toEqual([header, footer, section]);
+                  expect(root.element.getChildren().slice(0)).toEqual([header.element, footer.element, section.element, nav]);
+                })
+              })
+            })
+          });
+          describe("and before hook is not given", function() {
+            it ("should append that child", function() {
+              var root = new LSD.Widget({tag: 'root'});
+              var header = new LSD.Widget({tag: 'header'});
+              var section = new LSD.Widget({tag: 'section'});
+              var footer = new LSD.Widget({tag: 'footer'});
+              root.appendChild(header);
+              root.appendChild(footer);
+              root.insertBefore(section);
+              expect(root.childNodes).toEqual([header, footer, section]);
+              expect(root.element.getChildren().slice(0)).toEqual([header.element, footer.element, section.element]);
+            })
+          })
+        });
+        describe("when inserted node is an element", function() {
+          describe("and before hook is a widget", function() {
+            it("should insert the node before the target", function() {
+              var root = new LSD.Widget({tag: 'root'});
+              var header = new LSD.Widget({tag: 'header'});
+              var section = new Element('section');
+              var footer = new LSD.Widget({tag: 'footer'});
+              root.appendChild(header);
+              root.appendChild(footer);
+              root.insertBefore(section, footer);
+              expect(root.childNodes).toEqual([header, footer]);
+              expect(root.element.getChildren().slice(0)).toEqual([header.element, section, footer.element]);
+            })
+          })
+          describe("and before hook is an element", function() {
+            describe("which has an initialized widget too", function() {
+              it ("should insert the widget before the target element's widget", function() {
+                var root = new LSD.Widget({tag: 'root'});
+                var header = new LSD.Widget({tag: 'header'});
+                var section = new Element('section');
+                var footer = new LSD.Widget({tag: 'footer'});
+                root.appendChild(header);
+                root.appendChild(footer);
+                root.insertBefore(section, footer.element);
+                expect(root.childNodes).toEqual([header, footer]);
+                expect(root.element.getChildren().slice(0)).toEqual([header.element, section, footer.element]);
+              })
+            })
+            describe("which is not widget", function() {
+              it("should insert the node before the element", function() {
+                var root = new LSD.Widget({tag: 'root'});
+                var header = new LSD.Widget({tag: 'header'});
+                var section = new Element('section');
+                var nav = new Element('nav');
+                var footer = new LSD.Widget({tag: 'footer'});
+                root.appendChild(header);
+                root.appendChild(footer);
+                root.appendChild(nav);
+                root.insertBefore(section, nav);
+                expect(root.childNodes).toEqual([header, footer]);
+                expect(root.element.getChildren().slice(0)).toEqual([header.element, footer.element, section, nav]);
+              })
+            })
+          });
+          describe("and before hook is not given", function() {
+            it ("should append that child", function() {
+              var root = new LSD.Widget({tag: 'root'});
+              var header = new LSD.Widget({tag: 'header'});
+              var section = new Element('section');
+              var footer = new LSD.Widget({tag: 'footer'});
+              root.appendChild(header);
+              root.appendChild(footer);
+              root.insertBefore(section);
+              expect(root.childNodes).toEqual([header, footer]);
+              expect(root.element.getChildren().slice(0)).toEqual([header.element, footer.element, section]);
+            })
+          })
+        })
+      });
+      describe("with proxy", function() {
+        describe("given explicity", function() {
+          describe("targeted on widget", function() {
+            describe("having widget as a container", function() {
+              it ("should redirect widget into that container widget", function() {
+                var list = new LSD.Widget({tag: 'list'});
+                var table = new LSD.Widget({tag: 'table'});
+                var thead = new LSD.Widget({tag: 'thead'});
+                var tbody = new LSD.Widget({tag: 'tbody'});
+                table.addProxy('redirection', {
+                  selector: 'li',
+                  container: list
+                });
+                var item = new LSD.Widget({tag: 'li'});
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                table.insertBefore(item, tbody);
+                expect(table.childNodes).toEqual([thead, tbody]);
+                expect(list.childNodes).toEqual([item])
+              })
+            })
+            describe("having element as a container", function() {
+              it ("should redirect widget into that element", function() {
+                var list = new Element('ul');
+                var table = new LSD.Widget({tag: 'table'});
+                var thead = new LSD.Widget({tag: 'thead'});
+                var tbody = new LSD.Widget({tag: 'tbody'});
+                table.addProxy('redirection', {
+                  selector: 'li',
+                  container: list
+                });
+                var item = new LSD.Widget({tag: 'li'});
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                table.insertBefore(item, tbody);
+                expect(table.childNodes).toEqual([thead, tbody, item]);
+                expect(list.childNodes[0]).toEqual(item.element)
+              })
+            })
+          })
+          describe("targeted on element", function() {
+            describe("having widget as a container", function() {
+              it ("should redirect element into that container widget", function() {
+                var list = new LSD.Widget({tag: 'list'});
+                var table = new LSD.Widget({tag: 'table'});
+                var thead = new LSD.Widget({tag: 'thead'});
+                var tbody = new LSD.Widget({tag: 'tbody'});
+                table.addProxy('redirection', {
+                  mutation: 'li',
+                  container: list
+                });
+                var item = new Element('li');
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                table.appendChild(item);
+                expect(table.childNodes).toEqual([thead, tbody]);
+                expect(list.element.childNodes[0]).toEqual(item)
+              })
+            })
+            describe("having element as a container", function() {
+              it ("should redirect element into that container element", function() {
+                var list = new Element('ul');
+                var table = new LSD.Widget({tag: 'table'});
+                var thead = new LSD.Widget({tag: 'thead'});
+                var tbody = new LSD.Widget({tag: 'tbody'});
+                table.addProxy('redirection', {
+                  mutation: 'li',
+                  container: list
+                });
+                var item = new Element('li');
+                table.appendChild(thead);
+                table.appendChild(tbody);
+                table.appendChild(item);
+                expect(table.childNodes).toEqual([thead, tbody]);
+                expect(list.childNodes[0]).toEqual(item)
+              })
+            })
+          })
+        })
+      })
+    })
 
 
   });
