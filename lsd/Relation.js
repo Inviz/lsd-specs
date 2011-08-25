@@ -11,10 +11,11 @@ describe("LSD.Relation", function() {
   
   it ("should watch the origin when selector is given", function() {
     var list = new LSD.Widget({tag: 'list', document: doc});
-    var item = new LSD.Widget({tag: 'item'}).inject(list);
     var relation = new LSD.Relation('items', list);
     relation.setOptions({selector: 'item', multiple: true});
     expect(list.expectations[' ']['item']).toBeTruthy();
+    expect(list.items).toEqual([]);
+    var item = new LSD.Widget({tag: 'item'}).inject(list);
     expect(list.items).toEqual([item]);
     expect(item.expectations['!::']['items'].indexOf(list)).toEqual(0)
   });
@@ -35,7 +36,7 @@ describe("LSD.Relation", function() {
     expect(item.supper).toEqual([list, menu]);
   });
 
-  it ("should watch the same element in two different relations", function() {
+  it ("should watch the same widget in two different relations", function() {
     var list = new LSD.Widget({tag: 'list', document: doc});
     var item = new LSD.Widget({tag: 'item'}).inject(list);
     var item1 = new LSD.Relation('items', list, {selector: 'item', multiple: true});
@@ -133,7 +134,7 @@ describe("LSD.Relation", function() {
     expect(list.items).toEqual([item]);
   });
   
-  it ("should notify a pseudo element expectations when related widget gets related or unrelated", function() {
+  it ("should notify pseudo element expectations when related widget gets related or unrelated", function() {
     var list = new LSD.Widget({tag: 'list', document: doc});
     var i = 0;
     var item = new LSD.Widget({tag: 'item'}).inject(list);
