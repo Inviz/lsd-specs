@@ -391,6 +391,20 @@ describe("LSD.Module.Ambient.DOM", function() {
             expect(pane2.nextSibling).toEqual(pane3);
             expect(pane3.previousSibling).toEqual(pane2);
             expect(pane3.nextSibling).toBeUndefined();
+          });
+          
+          it ("may be called repeatedly on one widget", function() {
+            var root1 = new LSD.Widget({tag: 'root'});
+            var root2 = new LSD.Widget({tag: 'root'});
+            var child = new LSD.Widget({tag: 'child'});
+            root1.appendChild(child);
+            expect(root1.childNodes).toEqual([child]);
+            expect(root1.element.getElements('*').slice(0)).toEqual([child.element])
+            root2.appendChild(child);
+            expect(root1.childNodes).toEqual([]);
+            expect(root1.element.getElements('*').slice(0)).toEqual([])
+            expect(root2.childNodes).toEqual([child]);
+            expect(root2.element.getElements('*').slice(0)).toEqual([child.element])
           })
         })
         describe("when given element", function() {

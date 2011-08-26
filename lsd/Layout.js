@@ -454,7 +454,10 @@ describe("LSD.Layout", function() {
               var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc, context: 'container1'});
               var built = root.buildLayout(fragment)
               var article = root.childNodes[0];
-              expect(article.element.getElement('div.container').innerHTML.trim()).toEqual('Sometimes I wish this never ends');
+              var container = article.element.getElement('div.container');
+              expect(container.getAttribute('type')).toBeFalsy();
+              expect(container.getAttribute('kind')).toBeFalsy();
+              expect(container.innerHTML.trim()).toEqual('Sometimes I wish this never ends');
             })
           });
           describe("when contents is text nodes and elements", function() {
@@ -483,6 +486,8 @@ describe("LSD.Layout", function() {
               expect(article.element.getElements('button').length).toEqual(2);
               expect(article.element.getElements('div.container button').length).toEqual(0);
               expect(article.element.getElement('div.container').innerHTML.trim()).toEqual('This is going to be over soon');
+              expect(article.element.getElements('button')[0].get('text')).toEqual('Agree');
+              expect(article.element.getElements('button')[1].get('text')).toEqual('Disagree');
             })
           });
           describe("when contents is widgets and elements", function() {
@@ -498,7 +503,8 @@ describe("LSD.Layout", function() {
               (new LSD.Type('Container3')).Article = new Class({
                 options: {
                   layout: {
-                    '::container': true
+                    '::container': true,
+                    'button': 'Glowspoke'
                   },
                   mutations: {
                     'button': true
@@ -516,13 +522,35 @@ describe("LSD.Layout", function() {
               var built = root.buildLayout(fragment)
               var article = root.childNodes[0];
               expect(article.getElements('button').length).toEqual(2);
-              expect(article.element.getElements('button').length).toEqual(2);
-              expect(article.element.getElements('> button').length).toEqual(1);
+              expect(article.element.getElements('button').length).toEqual(3);
+              expect(article.element.getElements('> button').length).toEqual(2);
               expect(article.element.getElements('div.container button').length).toEqual(1);
               expect(article.element.getElements('div.container img').length).toEqual(1);
               expect(article.element.getElement('div.container').get('text').trim().replace(/\s+/gm, ' ')).toEqual('You have come a long way, buddy. Here is a pic for you: See');
             })
           });
+          describe("when tag is given with pseudo element", function() {
+            it ("should be able to create a container of that tag", function() {
+              var fragment = document.createFragment('\
+                <article>\
+                  Sometimes I wish this never ends\
+                </article>\
+              ');
+              (new LSD.Type('Container4')).Article = new Class({
+                options: {
+                  layout: {
+                    'span.booty::container': true
+                  }
+                }
+              });
+              var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc, context: 'container4'});
+              var built = root.buildLayout(fragment)
+              var article = root.childNodes[0];
+              var container = article.element.getElement('span.booty.container');
+              expect(container).toBeTruthy();
+              expect(container.innerHTML.trim()).toEqual('Sometimes I wish this never ends');
+            })
+          })
         })
       });
       
@@ -590,6 +618,54 @@ describe("LSD.Layout", function() {
                     expect(element.getElement('h2').innerHTML).toEqual('Pro tennis');
                   })
                 })
+                describe("and a widget layout has a conditional branch", function() {
+                  it ("should initialize branch and render layout", function() {
+                    var element = new Element('section').adopt(new Element('div.wrapper', {html: 'Haters '}));
+                    var instance = new LSD.Widget(element, {
+                      layout: {
+                        'div.wrapper': [
+                          'gonna ',
+                          {'if 1': 'hate'}
+                        ],
+                        'h2': 'Pro tennis',
+                      }
+                    });
+                    expect(element.getElements('div.wrapper').length).toEqual(1);
+                    expect(element.getElement('div.wrapper').innerHTML).toEqual('Haters gonna hate');
+                    expect(element.getElements('div.wrapper').getNext('h2')).toBeTruthy();
+                    expect(element.getElements('h2').length).toEqual(1);
+                    expect(element.getElement('h2').innerHTML).toEqual('Pro tennis');
+                  });
+                  
+                  describe("and condition value changes", function() {
+                    it ("should remove layout", function() {
+                      var element = new Element('section').adopt(new Element('div.wrapper', {html: 'Haters'}));
+                      var instance = new LSD.Widget(element, {
+                        layout: {
+                          'div.wrapper': [
+                            ' gonna',
+                            {'if &:bong': ' hate'}
+                          ],
+                          'h2': 'Pro tennis',
+                        }
+                      });
+                      expect(element.getElements('div.wrapper').length).toEqual(1);
+                      expect(element.getElements('div.wrapper').getNext('h2')).toBeTruthy();
+                      expect(element.getElements('h2').length).toEqual(1);
+                      expect(element.getElement('h2').innerHTML).toEqual('Pro tennis');
+                      expect(element.getElement('div.wrapper').innerHTML).toEqual('Haters gonna');
+                      instance.states.include('bong');
+                      expect(element.getElement('div.wrapper').innerHTML).toEqual('Haters gonna hate');
+                      instance.states.erase('bong');
+                      expect(element.getElement('div.wrapper').innerHTML).toEqual('Haters gonna');
+                      instance.states.include('bong');
+                      expect(element.getElement('div.wrapper').innerHTML).toEqual('Haters gonna hate');
+                      instance.states.erase('bong');
+                      expect(element.getElement('div.wrapper').innerHTML).toEqual('Haters gonna');
+                    })
+                  })
+                })
+                
                 describe("and nodes that are on the same level are given nested", function() {
                   describe("and the level is not enforced", function() {
                     it ("should reuse element", function() {

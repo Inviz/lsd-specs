@@ -168,9 +168,6 @@ describe("LSD.Interpolation", function() {
     var html = "Hello there {name}!";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    expect(element.childNodes[1].textContent).toEqual('{name}');
-    expect(widget.interpolators).toBeFalsy();
-    widget.addInterpolator(widget.dataset);
     expect(widget.interpolators).toBeFalsy();
     expect(element.childNodes[1].textContent).toEqual('{name}');
     expect(widget.interpolations['name'].length).toEqual(1);
