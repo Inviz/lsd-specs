@@ -1177,6 +1177,72 @@ describe("LSD.Layout", function() {
                   })
                 })
                 
+                describe("and layout contains interpolated patterns", function() {
+                  it("should parse html contents and extract values", function() {
+                    var element = new Element('article').adopt(
+                      new Element('header').adopt(
+                        new Element('h1', {html: '<span>Boobs</span> Dawgs at War'})
+                      ),
+                      new Element('section', {
+                        html: 'Hey {object}, you are at {deed}! '
+                      })
+                    );
+                    var instance = new LSD.Widget(element, {
+                      layout: {
+                        'header': {
+                          'h1': '{object} at {deed}'
+                        },
+                        'section': {
+                          'summary': 'Press for {deed} to happen'
+                        },
+                        'footer': [
+                          {'p': 'Listen up here, {deed}-kid'},
+                          {'p': 'We dunnae like {toLowerCase(object)} like you here'}
+                        ]
+                      }
+                    });
+                    expect(element.getElement('header h1').get('text')).toEqual('BoobsDawgs at War');
+                    expect(element.getElement('section').get('text')).toEqual('Hey Dawgs, you are at War! Press for War to happen');
+                    expect(element.getElement('section summary').get('text')).toEqual('Press for War to happen');
+                    expect(element.getElements('footer p')[0].get('text')).toEqual('Listen up here, War-kid');
+                    expect(element.getElements('footer p')[1].get('text')).toEqual('We dunnae like dawgs like you here');
+                  })
+                  
+                  describe("and the values are in the repeating selector", function() {
+                    it("should parse html contents and extract values", function() {
+                      var element = new Element('article').adopt(
+                        new Element('footer').adopt(
+                          new Element('h3', {
+                            html: 'Listen up here, bull-kid'
+                          }),
+                          new Element('p', {
+                            html: 'We dunnae like dongs like you here'
+                          })
+                        )
+                      );
+                      var instance = new LSD.Widget(element, {
+                        layout: {
+                          'header': {
+                            'h1': '{object} at {deed}'
+                          },
+                          'section': {
+                            'summary': 'Press for {deed} to happen'
+                          },
+                          'footer': [
+                            {'h3': 'Listen up here, {deed}-kid'},
+                            {'p': 'We dunnae like {object} like you here'}
+                          ]
+                        }
+                      });
+                      expect(element.getElement('header h1').get('text')).toEqual('dongs at bull');
+                      expect(element.getElement('section').get('text')).toEqual('Press for bull to happen');
+                      expect(element.getElement('section summary').get('text')).toEqual('Press for bull to happen');
+                      expect(element.getElement('footer h3').get('text')).toEqual('Listen up here, bull-kid');
+                      expect(element.getElement('footer p').get('text')).toEqual('We dunnae like dongs like you here');
+                    })
+                  })
+                });
+                
                 describe("and layout is complex", function() {
                   describe("and the order is wrong on many levels :)", function() {
                     it("should reorder things", function() {
