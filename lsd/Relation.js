@@ -27,6 +27,17 @@ describe("LSD.Relation", function() {
     expect(item.ownzor).toEqual(list);
   });
   
+  it ("should not rewrite relation origin when as option is given but it was claimed by other widget", function() {
+    var form = new LSD.Widget({tag: 'form', document: doc});
+    var list = new LSD.Widget({tag: 'list'}).inject(form)
+    var relation1 = new LSD.Relation('itemio', form, {as: 'ownzor', selector: 'item'});
+    var relation2 = new LSD.Relation('itemio', list, {as: 'ownzor', selector: 'item'});
+    var item = new LSD.Widget({tag: 'item'}).inject(list);
+    expect(item.ownzor).toEqual(list);
+    expect(form.itemio).toBeUndefined()
+    expect(list.itemio).toEqual(item)
+  });
+  
   it ("should write relation origin into array on matched widget when collection option is set", function() {
     var list = new LSD.Widget({tag: 'list', document: doc});
     var menu = new LSD.Widget({tag: 'menu', document: doc}).inject(list);
