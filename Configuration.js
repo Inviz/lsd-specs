@@ -122,7 +122,8 @@ Configuration.sets = {
 	'actions': {
 	  path: 'lsd/',
 	  files: [
-	    'Action/Counter'
+	    'Action/Counter',
+	    'Action/Update'
 	  ]
 	},
 	
