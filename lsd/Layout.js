@@ -100,6 +100,7 @@ describe("LSD.Layout", function() {
             </form>\
             <progresz id="b"></progresz>\
             <i>Jesus</i>');
+          expect(Slick.find(fragment, 'form')).toBeTruthy()
           expect(Slick.find(fragment, 'meter#a')).toBeTruthy()
           expect(Slick.find(fragment, 'meter#b')).toBeFalsy()
           expect(Slick.search(fragment, 'i').length).toEqual(1)
@@ -169,6 +170,47 @@ describe("LSD.Layout", function() {
           target.parentNode.insertBefore(copy, target);
           var widget = form.document.layout.render(copy, [form, target.parentNode]);
           expect(widget.tagName).toEqual('meter');
+        })
+      })
+      
+      describe("and mutations are all deep", function() {
+        it("should not match elements that are too deep", function() {
+          var element = new Element('div', {
+            html: 
+            '<section class=content>    \
+              <ul>                      \
+                <li id=#aaa>            \
+                  <menu type=toolbar>   \
+                    <li>123</li>        \
+                    <li>123</li>        \
+                  </menu>               \
+                </li>                   \
+                <li id=bbb>             \
+                  <menu type=toolbar>   \
+                    <li>                \
+                     <menu type=toolbar>\
+                        <li>123</li>    \
+                        <li>123</li>    \
+                      </menu>           \
+                    </li>               \
+                    <li>123</li>        \
+                  </menu>               \
+                </li>                   \
+              </ul>                     \
+              </section>'
+          })
+          var widget = new LSD.Widget(element, {
+            mutations: {
+              '> section.content > ul': 'list',
+              '> section.content > ul menu': 'menu',
+              '> section.content > ul > li': 'item',
+              'menu[type=toolbar]': 'menu'
+            },
+            context: 'test'
+          });
+          expect(widget.getElements('list').length).toEqual(1);
+          expect(widget.getElements('item').length).toEqual(2);
+          expect(widget.getElements('menu').length).toEqual(3);
         })
       })
 
