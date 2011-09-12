@@ -389,8 +389,10 @@ describe("LSD.Module.Chain", function() {
     var doc = LSD.document || new LSD.Document;
     var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
     doc.body = root;
-    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox'], context: 'clean'}).inject(root);
-    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "&& #slave :check()"}), {pseudos: ['checkbox'], context: 'clean'}).inject(root);
+    var slaveEl = new Element('input#slave[type=checkbox][name=section]');
+    var masterEl = new Element('input[type=checkbox][name=section]', {target: "&& #slave :check()"});
+    var slave = new LSD.Widget(slaveEl, {pseudos: ['checkbox'], context: 'clean'}).inject(root);
+    var master = new LSD.Widget(masterEl, {pseudos: ['checkbox'], context: 'clean'}).inject(root);
     expect(master.checked).toBeFalsy()
     expect(slave.checked).toBeFalsy()
     expect(master.getCommandType()).toEqual('checkbox');
@@ -412,10 +414,10 @@ describe("LSD.Module.Chain", function() {
     var doc = LSD.document || new LSD.Document;
     var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
     doc.body = root;
-    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "watch && #slave :check()"}), {pseudos: ['checkbox']}).inject(root);
+    var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "watch && #slave :check()"}), {pseudos: ['checkbox'], context: 'clean'}).inject(root);
     expect(master.getCommandType()).toEqual('checkbox');
     master.click()
-    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox']}).inject(root);
+    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox'], context: 'clean'}).inject(root);
     expect(master.checked).toBeTruthy()
     expect(slave.checked).toBeTruthy()
     master.click();
@@ -463,8 +465,8 @@ describe("LSD.Module.Chain", function() {
     var root = $root = doc.body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], document: doc, traverse: false});
       var cooking = new Element('section#cooking').inject(root);
       var baking = new Element('section#baking').inject(root);
-    var showCooking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #cooking :show()'}), {pseudos: ['radio']}).inject(root)
-    var showBaking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #baking :show()'}), {pseudos: ['radio']}).inject(root)
+    var showCooking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #cooking :show()'}), {pseudos: ['radio'], context: 'clean'}).inject(root)
+    var showBaking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #baking :show()'}), {pseudos: ['radio'], context: 'clean'}).inject(root)
     expect(cooking.attributes.hidden).toBeTruthy();
     expect(baking.attributes.hidden).toBeTruthy();
     expect(showCooking.getCommandType()).toEqual('radio')
