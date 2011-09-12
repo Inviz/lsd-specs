@@ -302,7 +302,37 @@ describe('LSD.Module.Tag', function() {
           });
         })
       });
-    })
+      
+      describe("when given an element", function() {
+        describe("with type and kind", function() {
+          it ("should find a deep subclass", function() {
+            var element = document.createElement('button');
+            element.setAttribute('type', 'submit');
+            element.setAttribute('kind', 'bang')
+            var instance = new LSD.Widget(element, {context: 'source_test'});
+            expect(instance.role).toEqual(LSD.SourceTest.Button.Submit.Bang);
+          });
+          describe("and source is given too", function() {
+            it ("should find a deep subclass", function() {
+              var element = document.createElement('body');
+              element.setAttribute('type', 'submit');
+              element.setAttribute('kind', 'bang')
+              var instance = new LSD.Widget(element, {context: 'source_test', source: 'button'});
+              expect(instance.role).toEqual(LSD.SourceTest.Button.Submit.Bang);
+            });
+            describe("but the role path doesnt match", function() {
+              it ("should find whatever it matches", function() {
+                var element = document.createElement('button');
+                element.setAttribute('type', 'submit');
+                element.setAttribute('kind', 'bang')
+                var instance = new LSD.Widget(element, {context: 'source_test', source: 'body'});
+                expect(instance.role).toEqual(LSD.SourceTest.Body);
+              })
+            })
+          })
+        })
+      })
+    });
     
     it ('should create a widget off an element and replace it when tag is changed', function() {
       var element = document.createElement('body');
@@ -332,6 +362,7 @@ describe('LSD.Module.Tag', function() {
       });
       var element = new Element('div');
       var instance = new LSD.Widget(element, {tag:'buttonesque', context: 'widget'});
+      expect(instance.role).toEqual(LSD.Widget.Buttonesque)
       element.fireEvent('click');
       expect(clicked).toBeTruthy();
     });
