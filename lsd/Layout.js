@@ -284,7 +284,7 @@ describe("LSD.Layout", function() {
     describe("when object is used as layout template", function() {
       it ("should create layouts from objects", function() {
         var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
-        var result = widget.buildLayout({
+        var result = widget.addLayout(null, {
           'form#c': {
             'label': 'Hello world',
             'fieldset': {
@@ -305,7 +305,7 @@ describe("LSD.Layout", function() {
         describe("when a + combinator is used", function() {
           it("should render the child next to the parent element", function() {
             var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
-            var result = widget.buildLayout({
+            var result = widget.addLayout(null, {
               'form#c': {
                 'label#hey': 'Hello world',
                 '+ fieldset': null,
@@ -335,7 +335,7 @@ describe("LSD.Layout", function() {
         describe("when a ^ combinator is used", function() {
           it("should render the child as a first child in widget", function() {
             var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
-            var result = widget.buildLayout({
+            var result = widget.addLayout(null, {
               'form#c': {
                 'label#hey': 'Hello world',
                 'fieldset': null,
@@ -351,7 +351,7 @@ describe("LSD.Layout", function() {
       describe("and parts of the layout are conditional", function() {
         it ("should create layout from objects with branches", function() {
           var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
-          var result = widget.buildLayout({
+          var result = widget.addLayout(null, {
             'form#c': {
               'summary': 'Hello world',
               'fieldset': {
@@ -397,7 +397,7 @@ describe("LSD.Layout", function() {
         describe("and a conditional part uses + selector", function() {
           it ("should create layout from objects with branches and remove parts of the layout even if they are not nested in an object", function() {
             var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
-            var result = widget.buildLayout({
+            var result = widget.addLayout(null, {
               'form#c': {
                 'if (a == "bad")': {
                   '+ p': 'Hey guys, im not in form',
@@ -436,7 +436,7 @@ describe("LSD.Layout", function() {
 
         it ("should build widgets off expressions with pseudo-elements allocation queries", function() {
           var widget = new LSD.Widget({tag: 'input', document: doc, context: 'test'});
-          var result = widget.buildLayout({
+          var result = widget.addLayout(null, {
             '::dialog:of-kind(input-date)': {
               'h2': 'Hello world',
               'p': 'Jesus saves!'
@@ -450,7 +450,7 @@ describe("LSD.Layout", function() {
 
         it ("should build widgets as pseudo elements conditionally", function() {
           var widget = new LSD.Widget({tag: 'input', document: doc, context: 'test'});
-          var result = widget.buildLayout({
+          var result = widget.addLayout(null, {
             'if &:expanded': {
               '::dialog:of-kind(input-time)': {
                 'h2': 'Hello world',
@@ -494,7 +494,7 @@ describe("LSD.Layout", function() {
                 }
               });
               var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc, context: 'container1'});
-              var built = root.buildLayout(fragment)
+              var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               var container = article.element.getElement('div.container');
               expect(container.getAttribute('type')).toBeFalsy();
@@ -522,7 +522,7 @@ describe("LSD.Layout", function() {
                 }
               });
               var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc, context: 'container2'});
-              var built = root.buildLayout(fragment)
+              var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               expect(article.getElements('button').length).toEqual(2);
               expect(article.element.getElements('button').length).toEqual(2);
@@ -561,7 +561,7 @@ describe("LSD.Layout", function() {
                 }
               });
               var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc, context: 'container3'});
-              var built = root.buildLayout(fragment)
+              var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               expect(article.getElements('button').length).toEqual(2);
               expect(article.element.getElements('button').length).toEqual(3);
@@ -586,7 +586,7 @@ describe("LSD.Layout", function() {
                 }
               });
               var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc, context: 'container4'});
-              var built = root.buildLayout(fragment)
+              var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               var container = article.element.getElement('span.booty.container');
               expect(container).toBeTruthy();
