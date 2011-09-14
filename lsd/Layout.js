@@ -310,7 +310,7 @@ describe("LSD.Layout", function() {
       })
 
       describe("and comments are used to indicate conditional branches", function() {
-
+        
         it ("should parse comments and interpolate them", function() {
           var element = new Element('div', {html: '\
             <!-- if a > 1 -->\
@@ -338,22 +338,22 @@ describe("LSD.Layout", function() {
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
           expect(element.getElements('h3').length).toEqual(1);
 
-          widget.setAttribute('urgency', true);
-          expect(element.getElement('h2')).toBeFalsy();
-          expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
-          expect(element.getElements('h3').length).toEqual(1);
-          widget.removeAttribute('urgency')
-          expect(element.getElement('h2')).toBeFalsy();
-          expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
-          expect(element.getElements('h3').length).toEqual(1);
-          widget.setAttribute('urgency', true);
-          expect(element.getElement('h2')).toBeFalsy();
-          expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
-          expect(element.getElements('h3').length).toEqual(1);
-          widget.removeAttribute('urgency')
-          expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
-          expect(element.getElements('h3').length).toEqual(1);
-          widget.interpolations['a'][0](2)
+         widget.setAttribute('urgency', true);
+         expect(element.getElement('h2')).toBeFalsy();
+         expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+         expect(element.getElements('h3').length).toEqual(1);
+         widget.removeAttribute('urgency')
+         expect(element.getElement('h2')).toBeFalsy();
+         expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+         expect(element.getElements('h3').length).toEqual(1);
+         widget.setAttribute('urgency', true);
+         expect(element.getElement('h2')).toBeFalsy();
+         expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+         expect(element.getElements('h3').length).toEqual(1);
+         widget.removeAttribute('urgency')
+         expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+         expect(element.getElements('h3').length).toEqual(1);
+          widget.setAttribute('a', 2);
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
           expect(element.getElement('h3')).toBeFalsy();
@@ -361,19 +361,45 @@ describe("LSD.Layout", function() {
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is so urgent..');
           expect(element.getElement('h3')).toBeFalsy();
-          widget.interpolations['a'][0](1)
+          console.error('show h3 branch')
+          widget.setAttribute('a', 1);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElements('h3').length).toEqual(1);
           expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
-          widget.interpolations['a'][0](2)
+          widget.setAttribute('a', 2);
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is so urgent..');
           expect(element.getElement('h3')).toBeFalsy();
-          widget.interpolations['urgency'][0](false);
+          widget.removeAttribute('urgency')
           expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
           expect(element.getElement('h3')).toBeFalsy();
           expect(element.getElements('h2').length).toEqual(1);
         })
+        
+        
+        it ("should remove and re-add widgets", function() {
+          var element = new Element('div', {
+            html:                              '\
+              <li><b>123</b> <b>321</b></li>    \
+              <!-- if a -->                     \
+                <li><b>123</b> <b>321</b></li>  \
+              <!-- end -->                      \
+              <li><b>123</b> <b>321</b></li>    '
+          });
+          var widget = new LSD.Widget(element, {
+            context: 'clean',
+            mutations: {
+              'li': true,
+              'li > b': true
+            }
+          });
+          expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b']);
+          widget.addInterpolator('a', 123);
+          expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b', 'li', 'b', 'b']);
+          widget.addInterpolator('a', 0);
+          expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b']);
+        });
+        
       })
     })
     describe("when object is used as layout template", function() {
@@ -1628,6 +1654,100 @@ describe("LSD.Layout", function() {
       })
     })
     
-    
+    describe("#remove", function() {
+      describe("when removing a conditionals", function() {
+        describe("and conditional was not displayed", function() {
+          it ("should detach them and remove the nodes", function() {
+            var element = new Element('div', {
+              html:                              '\
+                <section class=content>           \
+                <!-- if condition -->             \
+                  <li><b>123</b> <b>321</b></li>  \
+                <!-- end -->                      \
+                </section>                        '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'section': true,
+                'li': true
+              }
+            });
+            var section = widget.childNodes[0];
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            section.removeLayout(null, section.element.childNodes)
+            expect(section.element.childNodes.length).toEqual(0)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            section.addInterpolator('condition', 'YES');
+            expect(section.element.childNodes.length).toEqual(0)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+          })
+        })
+        describe("and conditional was displayed", function() {
+          it ("should detach them and remove the nodes", function() {
+            var element = new Element('div', {
+              html:                              '\
+                <section class=content>           \
+                <!-- unless condition -->         \
+                  <li><b>123</b> <b>321</b></li>  \
+                <!-- end -->                      \
+                </section>                        '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'section': true,
+                'li': true
+              }
+            });
+            var section = widget.childNodes[0];
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
+            section.removeLayout(null, section.element.childNodes)
+            expect(section.element.childNodes.length).toEqual(0)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            section.addInterpolator('condition', 'YES');
+            expect(section.element.childNodes.length).toEqual(0)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+          })
+        })
+        describe("and conditional was overwritten", function() {
+          it ("should remove the old condition and use the new one", function() {
+            var element = new Element('div', {
+              html:                              '\
+                <section class=content>           \
+                <!-- if condition != "YES" -->    \
+                  <li><b>123</b> <b>321</b></li>  \
+                <!-- end -->                      \
+                </section>                        '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'section': true,
+                'li': true
+              }
+            });
+            var section = widget.childNodes[0];
+            section.addInterpolator('condition', 'NO');
+            expect(section.element.childNodes.length).toEqual(7)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
+            section.addInterpolator('condition', 'YES');
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            var nodes = Array.from(section.element.childNodes)
+            expect(section.element.childNodes.length).toEqual(4)
+            section.removeLayout(null, nodes)
+            expect(section.element.childNodes.length).toEqual(0)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            expect(section.element.childNodes.length).toEqual(0)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            section.addLayout(null, nodes)
+            expect(section.element.childNodes.length).toEqual(4)
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
+            section.removeInterpolator('condition', 'YES');
+            expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
+          })
+        })
+      })
+    });
   });
 });
