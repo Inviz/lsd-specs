@@ -361,7 +361,6 @@ describe("LSD.Layout", function() {
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is so urgent..');
           expect(element.getElement('h3')).toBeFalsy();
-          console.error('show h3 branch')
           widget.setAttribute('a', 1);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElements('h3').length).toEqual(1);
