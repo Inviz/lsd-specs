@@ -171,6 +171,101 @@ describe("LSD.Layout", function() {
           var widget = form.document.layout.render(copy, [form, target.parentNode]);
           expect(widget.tagName).toEqual('meter');
         })
+        
+        describe("if a layout was updated in the middle of mutation", function() {
+          it ("should pickup mutations", function() {
+            new LSD.Type('ContinuedMutations')
+            var element = new Element('div', {
+              html:
+            '<aside><div><section class=content>    \
+              <ul>                                  \
+                <li id=#aaa>                        \
+                  <menu type=toolbar>               \
+                    <li>123</li>                    \
+                    <li>123</li>                    \
+                  </menu>                           \
+                </li>                               \
+              </ul>                                 \
+              </section></div></aside>'});
+              LSD.ContinuedMutations.List = new Class({
+                options: {
+                  mutations: {
+                    '> li': 'item'
+                  }
+                }
+              });
+              var widget = new LSD.Widget(element, {
+                mutations: {
+                  'div > section.content > ul': 'list'
+                },
+                context: 'continued_mutations'
+              });
+              expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['list', 'item']);
+              widget.removeLayout(null, element.getElement('.content > ul'));
+              expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual([]);
+              var fragment = document.createFragment('\
+                <ul>                                  \
+                  <li id=#aaa>                        \
+                    <menu type=toolbar>               \
+                      <li>123</li>                    \
+                      <li>123</li>                    \
+                    </menu>                           \
+                  </li>                               \
+                </ul>')
+              widget.addLayout(null, fragment, element.getElement('.content'))
+                expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['list', 'item']);
+          })
+          
+          it ("should pickup deep mutation", function() {
+            new LSD.Type('ContinuedMutations')
+            var element = new Element('div', {
+              html:
+            '<aside><div><section class=content>    \
+              <ul>                                  \
+                <li id=#aaa>                        \
+                  <menu type=toolbar>               \
+                    <li>123</li>                    \
+                    <li>123</li>                    \
+                  </menu>                           \
+                </li>                               \
+              </ul>                                 \
+              </section></div></aside>'});
+              LSD.ContinuedMutations.List = new Class({
+                options: {
+                  mutations: {
+                    '> li': 'item'
+                  }
+                }
+              });
+              LSD.ContinuedMutations.Div = new Class({
+                options: {
+                  mutations: {
+                    '> section > ul': 'list'
+                  }
+                }
+              });
+              var widget = new LSD.Widget(element, {
+                mutations: {
+                  'aside > div': 'div'
+                },
+                context: 'continued_mutations'
+              });
+              expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['div', 'list', 'item']);
+              widget.childNodes[0].removeLayout(null, element.getElement('section.content > ul'));
+              expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['div']);
+              var fragment = document.createFragment('\
+                <ul>                                  \
+                  <li id=#aaa>                        \
+                    <menu type=toolbar>               \
+                      <li>123</li>                    \
+                      <li>123</li>                    \
+                    </menu>                           \
+                  </li>                               \
+                </ul>')
+              widget.addLayout(null, fragment, element.getElement('.content'))
+                expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['div', 'list', 'item']);
+          })
+        })
       })
       
       describe("and mutations are all deep", function() {
