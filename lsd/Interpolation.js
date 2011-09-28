@@ -365,8 +365,61 @@ describe("LSD.Interpolation", function() {
     expect(element.get('text')).toEqual('1');
   });
   
-  it ("should interpolate attributes", function() {
-    
+  describe("when interpolation is found in attribute", function() {
+    it ("should set the attribute with that value and update it when variables change", function() {
+      var html = "\
+        <video src='{url}'></video>\
+      ";
+      var element = new Element('div', {html: html});
+      var widget = new LSD.Widget(element);
+      var video = element.getElement('video');
+      
+      expect(video.getAttribute('src')).toEqual('{url}')
+      widget.addInterpolator('url', 'video.mpg');
+      expect(video.getAttribute('src')).toEqual('video.mpg')
+    });
+
+    describe("and value for the attribute is concatenated", function() {
+      it ("should concatenate the value and set attribute each time variable changes", function() {
+        var html = "\
+          <video src='{id}.mpg'></video>\
+        ";
+        var element = new Element('div', {html: html});
+        var widget = new LSD.Widget(element);
+        var video = element.getElement('video');
+        
+        expect(video.getAttribute('src')).toEqual('{id}.mpg')
+        widget.addInterpolator('id', '123');
+        expect(video.getAttribute('src')).toEqual('123.mpg')
+      });
+      
+      describe("and there are many variables used in expression", function() {
+        it ("should concatenate the value and set attribute each time variable changes", function() {
+          var html = "\
+            <video src='movies/{movie.type}/{movie.id}.{Player.extension}'></video>\
+          ";
+          var element = new Element('div', {html: html});
+          var widget = new LSD.Widget(element);
+          var video = element.getElement('video');
+          
+          var ad = new LSD.Object({type: 'ad', id: 'weird'});
+          var action = new LSD.Object({type: 'action', id: 'brucelee'});
+          var HTML5 = new LSD.Object({extension: 'mpg'})
+          var Flash = new LSD.Object({extension: 'flv'})
+          expect(video.getAttribute('src')).toEqual('movies/{movie.type}/{movie.id}.{Player.extension}')
+          widget.addInterpolator('Player', HTML5);
+          expect(video.getAttribute('src')).toEqual('')
+          widget.addInterpolator('movie', ad);
+          expect(video.getAttribute('src')).toEqual('movies/ad/weird.mpg')
+          widget.removeInterpolator('movie', ad);
+          expect(video.getAttribute('src')).toEqual('')
+          widget.addInterpolator('movie', action);
+          expect(video.getAttribute('src')).toEqual('movies/action/brucelee.mpg')
+          widget.addInterpolator('Player', Flash);
+          expect(video.getAttribute('src')).toEqual('movies/action/brucelee.flv')
+        });
+      })
+    })
   });
   
 })
