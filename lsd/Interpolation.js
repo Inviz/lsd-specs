@@ -359,10 +359,10 @@ describe("LSD.Interpolation", function() {
     var element = new Element('div', {html: html});
     var doc = LSD.document || new LSD.Document;
     var widget = $w = new LSD.Widget(element, {pseudos: {'root': true}, document: doc});
-    expect(element.innerText).toEqual('0');
+    expect(element.get('text')).toEqual('0');
     var item = new LSD.Widget({tag: 'item'});
     widget.appendChild(item);
-    expect(element.innerText).toEqual('1');
+    expect(element.get('text')).toEqual('1');
   });
   
   it ("should interpolate attributes", function() {

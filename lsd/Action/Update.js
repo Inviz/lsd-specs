@@ -31,11 +31,11 @@ describe("LSD.Action.Update", function() {
     var header = widget.childNodes[0];
     expect(widget.childNodes[0].element.get('tag')).toEqual('h1');
     expect(element.get('text')).toEqual('123Dings321');
-    expect(widget.getElements('span')[0].element.innerText).toEqual('D')
+    expect(widget.getElements('span')[0].element.get('text')).toEqual('D')
     expect(widget.execute({action: 'update', target: element, arguments: '321<h1>Dong<span>s</span></h1>123'}))
     expect(widget.childNodes[0]).toNotEqual(header);
     expect(widget.childNodes[0].element.get('tag')).toEqual('h1');
     expect(element.get('text')).toEqual('321Dongs123');
-    expect(widget.getElements('span')[0].element.innerText).toEqual('s')
+    expect(widget.getElements('span')[0].element.get('text')).toEqual('s')
   });
 })
