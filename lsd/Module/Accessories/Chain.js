@@ -460,6 +460,22 @@ describe("LSD.Module.Chain", function() {
     expect(slave.checked).toBeFalsy()
   });
   
+  it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on widgets but it shouldnt do it if original widget is uncheced", function() {
+    var doc = LSD.document || new LSD.Document;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
+    doc.body = root;
+    var element = new Element('input[type=radio][name=section]', {target: "do && #slave :check()"});
+    var master = new LSD.Widget(element, {pseudos: ['checkbox', 'command'], context: 'clean'}).inject(root);
+    expect(master.getCommandType()).toEqual('checkbox');
+    expect(master.checked).toBeFalsy()
+    var slave = new LSD.Widget(new Element('input#slave[type=radio][name=section]'), {pseudos: ['checkbox', 'command'], context: 'clean'}).inject(root);
+    expect(slave.checked).toBeFalsy()
+    expect(master.attributes.checked).toBeFalsy();
+    expect(slave.attributes.checked).toBeFalsy();
+    expect(master.pseudos.checked).toBeFalsy();
+    expect(slave.pseudos.checked).toBeFalsy();
+  });
+  
   it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on elements", function() {
     var doc = LSD.document || new LSD.Document;
     var root = $root = doc.body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], document: doc, traverse: false});

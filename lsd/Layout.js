@@ -354,9 +354,9 @@ describe("LSD.Layout", function() {
          expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
          expect(element.getElements('h3').length).toEqual(1);
           widget.setAttribute('a', 2);
+          expect(element.getElement('h3')).toBeFalsy();
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
-          expect(element.getElement('h3')).toBeFalsy();
           widget.setAttribute('urgency', true);
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is so urgent..');
@@ -399,6 +399,135 @@ describe("LSD.Layout", function() {
           expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b']);
         });
         
+        describe('when a for loop is used', function() {
+          it ("should render a collection of repeated chunks of layout", function() {
+            var element = new Element('div', {
+              html:                         '\
+              <!-- for item in items -->     \
+                <h2>{item.title}</h2>        \
+              <!-- end -->                   '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean'
+            });
+            widget.addInterpolator('items', [
+              {title: 'Bombs are flying'},
+              {title: 'People are dying'}
+            ]);
+            expect(element.getElements('h2').map(function(e) { return e.innerHTML })).toEqual([
+              'Bombs are flying',
+              'People are dying'
+            ])
+          })
+          describe('and a condition is defined inside loop body', function() {
+            it ("should execute branch for each iteration of loop", function() {
+              var element = new Element('div', {
+                html:                                                     '\
+                <!-- for kid in kids -->                                   \
+                  <li>                                                     \
+                    <!-- if kid.gender == "male" -->                       \
+                      Hey Boy!                                             \
+                    <!-- else -->                                          \
+                      Hey Girl!                                            \
+                    <!-- end -->                                           \
+                    Is it <strong>{kid.name}</strong>?                     \
+                  </li>                                                    \
+                <!-- end -->                                               '
+              });                                                          
+              var widget = new LSD.Widget(element, {
+                context: 'clean'
+              });
+              widget.addInterpolator('kids', [
+                {name: 'George', gender: 'male'},
+                {name: 'Lisa', gender: 'female'},
+                {name: 'Jordan', gender: 'male'},
+                {name: 'Marge', gender: 'female'},
+                {name: 'Maggie', gender: 'female'},
+                {name: 'Homer', gender: 'male'},
+                {name: 'Bart', gender: 'male'},
+                {name: 'Ned', gender: 'male'},
+                {name: 'Bart', gender: 'male'},
+                {name: 'Ned', gender: 'male'}
+              ]);
+              $element = element
+              var texts = element.getElements('li').map(function(e) { return e.get('text').trim().replace(/\s+/gm, ' ') });
+              expect(texts).toEqual([
+                'Hey Boy! Is it George?',
+                'Hey Girl! Is it Lisa?',
+                'Hey Boy! Is it Jordan?',
+                'Hey Girl! Is it Marge?',
+                'Hey Girl! Is it Maggie?',
+                'Hey Boy! Is it Homer?',
+                'Hey Boy! Is it Bart?',
+                'Hey Boy! Is it Ned?',
+                'Hey Boy! Is it Bart?',
+                'Hey Boy! Is it Ned?',
+              ])
+            })
+          });
+          
+          describe('and have nested conditions too', function() {
+            xit("should show nested branches correctly", function() {
+              var element = new Element('div', {
+                html:                                         '\
+                <h1>Posts</h1>.                              \
+                <!-- if posts -->                    \
+                  <!-- <ul> -->                        \
+                    <!-- for post in posts -->        \
+                      <!-- <li> -->                                            \
+                        <h2>{post.title}</h2>                         \
+                        <!-- <menu type="toolbar">  -->                         \
+                          <!-- if post.state == "published" -->         \
+                            <!-- if user.role == "administrator" -->    \
+                              <li>                                 \
+                                Unpublish                               \
+                              </li>                                \
+                            <!-- end -->                                \
+                            <li>                                   \
+                              Read                                      \
+                            </li>                                  \
+                          <!-- else -->                                 \
+                            <!-- if user.role == "administrator" -->    \
+                              <li>                                 \
+                                Publish                                 \
+                              </li>                                \
+                            <!-- else -->                               \
+                              <li>                                 \
+                                Ask to publish                          \
+                              </li>                                \
+                            <!-- end -->                                \
+                          <!-- end -->                                  \
+                        <!--</menu>    -->                                   \
+                      <!--</li>     -->                                      \
+                    <-- end -->                                       \
+                  <!-- </ul> -->                                             \
+                <!-- else -->                                 \
+                  <h2>No posts yet.</h2>                       \
+                  <!-- if user.role == "administrator" -->    \
+                  <li>                                     \
+                    Write a new post                           \
+                  </li>                                    \
+                  <!-- end -->                                 \
+                <!-- end -->                                 '
+              })
+              var widget = new LSD.Widget(element, {
+                context: 'clean'
+              });
+              expect(element.get('text').clean()).toEqual('Posts. No posts yet.')
+              var alex = new LSD.Object({name: 'Alex', role: 'user'})
+              widget.addInterpolator('user', alex)
+              expect(element.get('text').clean()).toEqual('Posts. No posts yet.')
+              alex.set('role', 'administrator')
+              expect(element.get('text').clean()).toEqual('Posts. No posts yet. Write a new post');
+              var post = new LSD.Object({
+                title: 'Hello world',
+                author: alex
+              });
+              widget.addInterpolator('posts', [post])
+                expect(element.get('text').clean()).toEqual('Hello world');
+            })
+          })
+        });
       })
     })
     describe("when object is used as layout template", function() {
