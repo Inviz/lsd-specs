@@ -333,7 +333,7 @@ describe("LSD.Layout", function() {
           '});
           $e = element
           var widget = $w = new LSD.Widget(element, {document: doc});
-          widget.addInterpolator(widget.attributes);
+          widget.variables.merge(widget.attributes);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
           expect(element.getElements('h3').length).toEqual(1);
@@ -393,9 +393,9 @@ describe("LSD.Layout", function() {
             }
           });
           expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b']);
-          widget.addInterpolator('a', 123);
+          widget.variables.set('a', 123);
           expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b', 'li', 'b', 'b']);
-          widget.addInterpolator('a', 0);
+          widget.variables.set('a', 0);
           expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['li', 'b', 'b', 'li', 'b', 'b']);
         });
         
@@ -410,7 +410,7 @@ describe("LSD.Layout", function() {
             var widget = new LSD.Widget(element, {
               context: 'clean'
             });
-            widget.addInterpolator('items', [
+            widget.variables.set('items', [
               {title: 'Bombs are flying'},
               {title: 'People are dying'}
             ]);
@@ -437,7 +437,7 @@ describe("LSD.Layout", function() {
               var widget = new LSD.Widget(element, {
                 context: 'clean'
               });
-              widget.addInterpolator('kids', [
+              widget.variables.set('kids', [
                 {name: 'George', gender: 'male'},
                 {name: 'Lisa', gender: 'female'},
                 {name: 'Jordan', gender: 'male'},
@@ -515,7 +515,7 @@ describe("LSD.Layout", function() {
               });
               expect(element.get('text').clean()).toEqual('Posts. No posts yet.')
               var alex = new LSD.Object({name: 'Alex', role: 'user'})
-              widget.addInterpolator('user', alex)
+              widget.variables.set('user', alex)
               expect(element.get('text').clean()).toEqual('Posts. No posts yet.')
               alex.set('role', 'administrator')
               expect(element.get('text').clean()).toEqual('Posts. No posts yet. Write a new post');
@@ -523,7 +523,7 @@ describe("LSD.Layout", function() {
                 title: 'Hello world',
                 author: alex
               });
-              widget.addInterpolator('posts', [post])
+              widget.variables.set('posts', [post])
                 expect(element.get('text').clean()).toEqual('Hello world');
             })
           })
@@ -625,19 +625,19 @@ describe("LSD.Layout", function() {
           expect(widget.element.getElement('label')).toBeFalsy();
           expect(widget.element.getElement('input')).toBeFalsy();
           expect(widget.element.getElement('h2')).toBeTruthy();
-          widget.interpolations['a'][0](2);
+          widget.variables.set('a', 2);
           expect(widget.element.getElement('label')).toBeTruthy();
           expect(widget.element.getElement('input')).toBeTruthy();
           expect(widget.element.getElement('h2')).toBeFalsy();
-          widget.interpolations['a'][0](0);
+          widget.variables.set('a', 0);
           expect(widget.element.getElement('label')).toBeFalsy();
           expect(widget.element.getElement('input')).toBeFalsy();
           expect(widget.element.getElement('h2')).toBeTruthy();
-          widget.interpolations['a'][0](2);
+          widget.variables.set('a', 2);
           expect(widget.element.getElement('label')).toBeTruthy();
           expect(widget.element.getElement('input')).toBeTruthy();
           expect(widget.element.getElement('h2')).toBeFalsy();
-          widget.interpolations['a'][0](0);
+          widget.variables.set('a', 0);
           expect(widget.element.getElement('label')).toBeFalsy();
           expect(widget.element.getElement('input')).toBeFalsy();
           expect(widget.element.getElement('h2')).toBeTruthy();
@@ -659,14 +659,14 @@ describe("LSD.Layout", function() {
               }
             });
             expect(widget.element.getElement('p')).toBeFalsy()
-            widget.interpolations['a'][0]('bad');
+            widget.variables.set('a', 'bad');
             expect(widget.element.getElement('form + p')).toBeTruthy()
-            widget.interpolations['a'][0]('good');
+            widget.variables.set('a', 'good');
             expect(widget.element.getElement('p')).toBeFalsy()
             expect(widget.element.getElement('form + p')).toBeFalsy()
-            widget.interpolations['a'][0]('bad');
+            widget.variables.set('a', 'bad');
             expect(widget.element.getElement('form + p')).toBeTruthy()
-            widget.interpolations['a'][0]('good');
+            widget.variables.set('a', 'good');
             expect(widget.element.getElement('p')).toBeFalsy()
             expect(widget.element.getElement('form + p')).toBeFalsy()
           });
@@ -1806,7 +1806,7 @@ describe("LSD.Layout", function() {
             section.removeLayout(null, section.element.childNodes)
             expect(section.element.childNodes.length).toEqual(0)
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
-            section.addInterpolator('condition', 'YES');
+            section.variables.set('condition', 'YES');
             expect(section.element.childNodes.length).toEqual(0)
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
           })
@@ -1833,7 +1833,7 @@ describe("LSD.Layout", function() {
             section.removeLayout(null, section.element.childNodes)
             expect(section.element.childNodes.length).toEqual(0)
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
-            section.addInterpolator('condition', 'YES');
+            section.variables.set('condition', 'YES');
             expect(section.element.childNodes.length).toEqual(0)
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
           })
@@ -1856,10 +1856,10 @@ describe("LSD.Layout", function() {
               }
             });
             var section = widget.childNodes[0];
-            section.addInterpolator('condition', 'NO');
+            section.variables.set('condition', 'NO');
             expect(section.element.childNodes.length).toEqual(7)
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
-            section.addInterpolator('condition', 'YES');
+            section.variables.set('condition', 'YES');
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
             var nodes = Array.from(section.element.childNodes)
             expect(section.element.childNodes.length).toEqual(4)
@@ -1871,7 +1871,7 @@ describe("LSD.Layout", function() {
             section.addLayout(null, nodes)
             expect(section.element.childNodes.length).toEqual(4)
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
-            section.removeInterpolator('condition', 'YES');
+            section.variables.unset('condition', 'YES');
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
           })
         })

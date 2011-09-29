@@ -9,15 +9,15 @@ describe("LSD.Interpolation", function() {
     var widget = new LSD.Widget(element);
     expect(element.childNodes.length).toEqual(9)
     expect(element.childNodes[5].textContent).toEqual('{person_age}')
-    widget.interpolations['person_age'][0](123)
+    widget.variables.set('person_age', 123);
     expect(element.childNodes[5].textContent).toEqual('123');
-    widget.interpolations['person_age'][0](321)
+    widget.variables.set('person_age', 321);
     expect(element.childNodes[5].textContent).toEqual('321');
     expect(element.childNodes[7].textContent).toEqual("{pluralize(person_comments_count, '% comment')}");
     expect(Element.retrieve(element.childNodes[7], 'interpolation').args[0].input).toEqual('person_comments_count')
-    widget.interpolations['person_comments_count'][0](321)
+    widget.variables.set('person_comments_count', 321);
     expect(element.childNodes[7].textContent).toEqual('321 comments');
-    widget.interpolations['person_comments_count'][0](1)
+    widget.variables.set('person_comments_count', 1);
     expect(element.childNodes[7].textContent).toEqual('1 comment');
   });
   
@@ -31,23 +31,19 @@ describe("LSD.Interpolation", function() {
     expect(element.childNodes[1].textContent).toEqual('{person_age + person_year - 1}');
     expect(element.childNodes[3].textContent).toEqual('{person_age}');
     expect(element.childNodes[5].textContent).toEqual('{person_year}');
-    widget.interpolations['person_age'][0](15)
-    widget.interpolations['person_age'][1](15)
+    widget.variables.set('person_age', 15);
     expect(element.childNodes[1].textContent).toEqual('{person_age + person_year - 1}');
     expect(element.childNodes[3].textContent).toEqual('15');
     expect(element.childNodes[5].textContent).toEqual('{person_year}');
-    widget.interpolations['person_year'][0](2005)
-    widget.interpolations['person_year'][1](2005)
+    widget.variables.set('person_year', 2005);
     expect(element.childNodes[1].textContent).toEqual('2019');
     expect(element.childNodes[3].textContent).toEqual('15');
     expect(element.childNodes[5].textContent).toEqual('2005');
-    widget.interpolations['person_year'][0](2000)
-    widget.interpolations['person_year'][1](2000)
+    widget.variables.set('person_year', 2000);
     expect(element.childNodes[1].textContent).toEqual('2014');
     expect(element.childNodes[3].textContent).toEqual('15');
     expect(element.childNodes[5].textContent).toEqual('2000');
-    widget.interpolations['person_age'][0](25)
-    widget.interpolations['person_age'][1](25)
+    widget.variables.set('person_age', 25);
     expect(element.childNodes[1].textContent).toEqual('2024');
     expect(element.childNodes[3].textContent).toEqual('25');
     expect(element.childNodes[5].textContent).toEqual('2000');
@@ -69,15 +65,9 @@ describe("LSD.Interpolation", function() {
     expect(element.childNodes.length).toEqual(3)
     expect(element.childNodes[0].textContent).toEqual('{a + b * c + 1}');
     expect(element.childNodes[1].textContent).toEqual('{a * b + c - 1}');
-    widget.interpolations['a'][0](1)
-    widget.interpolations['b'][0](3)
-    widget.interpolations['c'][0](7)
-    widget.interpolations['a'][1](1)
-    widget.interpolations['b'][1](3)
-    widget.interpolations['c'][1](7)
-    widget.interpolations['a'][2](1)
-    widget.interpolations['b'][2](3)
-    widget.interpolations['c'][2](7)
+    widget.variables.set('a', 1);
+    widget.variables.set('b', 3);
+    widget.variables.set('c', 7);
     //xitexpect(element.childNodes[0].textContent).toEqual('23');
     //xitexpect(element.childNodes[1].textContent).toEqual('9');
     //xitexpect(element.childNodes[1].textContent).toEqual('9');
@@ -87,64 +77,60 @@ describe("LSD.Interpolation", function() {
     var html = "{a + a * a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('6');
     
     var html = "{a + a * a + a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('8');
     
     var html = "{a + a * a + a - a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('6');
     
     var html = "{a + a * a + a - a / a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('7');
     
     var html = "{a + a * a + a - a / a - a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('5');
     
     var html = "{a + a * a + a - a / a - a - a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) {
-      fn(2)
-    })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('3');
-    widget.interpolations['a'].each(function(fn) {
-      fn(3)
-    })
+    widget.variables.set('a', 3);
     expect(element.childNodes[0].textContent).toEqual('8');
-    widget.interpolations['a'][5](6)
-    expect(element.childNodes[0].textContent).toEqual('8.5');
+    widget.variables.set('a', -12);
+    expect(element.childNodes[0].textContent).toEqual('143');
   })
   
   xit ("should handle parenthesises", function() {
     var html = "{a + a * (a + a) - a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('6');
     var html = "{a + a * a + a - a / a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('7');
     
     var html = "{a + a * a + a - a / a - a}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(2) })
+    widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('5');
   })
   
@@ -152,13 +138,13 @@ describe("LSD.Interpolation", function() {
     var html = "{a && b}{a || b}{a ^ b}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    widget.interpolations['a'].each(function(fn) { fn(0) })
-    widget.interpolations['b'].each(function(fn) { fn(1) })
+    widget.variables.set('a', 0);
+    widget.variables.set('b', 1);
     expect(element.childNodes.length).toEqual(3);
     expect(element.childNodes[0].textContent).toEqual('0');
     expect(element.childNodes[1].textContent).toEqual('1');
     expect(element.childNodes[2].textContent).toEqual('1');
-    widget.interpolations['a'].each(function(fn) { fn(5) })
+    widget.variables.set('a', 5);
     expect(element.childNodes[0].textContent).toEqual('1');
     expect(element.childNodes[1].textContent).toEqual('5');
     expect(element.childNodes[2].textContent).toEqual('4');
@@ -168,34 +154,30 @@ describe("LSD.Interpolation", function() {
     var html = "Hello there {name}!";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    expect(widget.interpolators).toBeFalsy();
     expect(element.childNodes[1].textContent).toEqual('{name}');
-    expect(widget.interpolations['name'].length).toEqual(1);
     widget.setAttribute('data-name', 'Hippo');
     expect(widget.dataset.name).toEqual('Hippo');
-    expect(widget.interpolators['name'].length).toEqual(1);
-    expect(widget.interpolations['name'].length).toEqual(1);
     widget.setAttribute('data-name', 'Hippo the hippie');
     expect(element.childNodes[1].textContent).toEqual('Hippo the hippie');
     widget.removeAttribute('data-name');
     expect(element.childNodes[1].textContent).toEqual('{name}');
     widget.setAttribute('data-name', 'Hippo the hippie is back');
     expect(element.childNodes[1].textContent).toEqual('Hippo the hippie is back');
-    widget.removeInterpolator(widget.dataset);
+    widget.variables.unmerge(widget.dataset);
     expect(element.childNodes[1].textContent).toEqual('{name}');
-    widget.addInterpolator(widget.dataset);
+    widget.variables.merge(widget.dataset);
     expect(element.childNodes[1].textContent).toEqual('Hippo the hippie is back');
-    widget.addInterpolator(widget.attributes);
+    widget.variables.merge(widget.attributes);
     expect(element.childNodes[1].textContent).toEqual('Hippo the hippie is back');
     widget.attributes.set('name', 'Monkey')
     expect(element.childNodes[1].textContent).toEqual('Monkey');
-    widget.removeInterpolator(widget.dataset);
+    widget.variables.unmerge(widget.dataset);
     expect(element.childNodes[1].textContent).toEqual('Monkey');
-    widget.addInterpolator(widget.dataset);
+    widget.variables.merge(widget.dataset);
     expect(element.childNodes[1].textContent).toEqual('Hippo the hippie is back');
-    widget.removeInterpolator(widget.dataset);
+    widget.variables.unmerge(widget.dataset);
     expect(element.childNodes[1].textContent).toEqual('Monkey');
-    widget.removeInterpolator(widget.attributes);
+    widget.variables.unmerge(widget.attributes);
     expect(element.childNodes[1].textContent).toEqual('{name}');
   });
   
@@ -228,8 +210,6 @@ describe("LSD.Interpolation", function() {
     "
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
-    expect(widget.interpolations.person.length).toEqual(4);
-    expect(widget.interpolators.person.length).toEqual(1);
     expect($(widget).getLast().childNodes[1].textContent).toEqual('Jesus')
     expect($(widget).getLast().childNodes[3].textContent).toEqual('Teh Savior')
     expect($(widget).getLast().childNodes[5].textContent).toEqual('Heaven')
@@ -375,7 +355,7 @@ describe("LSD.Interpolation", function() {
       var video = element.getElement('video');
       
       expect(video.getAttribute('src')).toEqual('{url}')
-      widget.addInterpolator('url', 'video.mpg');
+      widget.variables.set('url', 'video.mpg');
       expect(video.getAttribute('src')).toEqual('video.mpg')
     });
 
@@ -389,7 +369,7 @@ describe("LSD.Interpolation", function() {
         var video = element.getElement('video');
         
         expect(video.getAttribute('src')).toEqual('{id}.mpg')
-        widget.addInterpolator('id', '123');
+        widget.variables.set('id', '123');
         expect(video.getAttribute('src')).toEqual('123.mpg')
       });
       
@@ -407,15 +387,15 @@ describe("LSD.Interpolation", function() {
           var HTML5 = new LSD.Object({extension: 'mpg'})
           var Flash = new LSD.Object({extension: 'flv'})
           expect(video.getAttribute('src')).toEqual('movies/{movie.type}/{movie.id}.{Player.extension}')
-          widget.addInterpolator('Player', HTML5);
+          widget.variables.set('Player', HTML5);
           expect(video.getAttribute('src')).toEqual('')
-          widget.addInterpolator('movie', ad);
+          widget.variables.set('movie', ad);
           expect(video.getAttribute('src')).toEqual('movies/ad/weird.mpg')
-          widget.removeInterpolator('movie', ad);
+          widget.variables.unset('movie', ad);
           expect(video.getAttribute('src')).toEqual('')
-          widget.addInterpolator('movie', action);
+          widget.variables.set('movie', action);
           expect(video.getAttribute('src')).toEqual('movies/action/brucelee.mpg')
-          widget.addInterpolator('Player', Flash);
+          widget.variables.set('Player', Flash);
           expect(video.getAttribute('src')).toEqual('movies/action/brucelee.flv')
         });
       })
