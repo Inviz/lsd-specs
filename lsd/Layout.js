@@ -309,7 +309,7 @@ describe("LSD.Layout", function() {
         })
       })
 
-      describe("and comments are used to indicate conditional branches", function() {
+      describe("and comments are used to indicate conditional blocks", function() {
         
         it ("should parse comments and interpolate them", function() {
           var element = new Element('div', {html: '\
@@ -467,7 +467,7 @@ describe("LSD.Layout", function() {
           });
           
           describe('and have nested conditions too', function() {
-            xit("should show nested branches correctly", function() {
+            xit("should show nested blocks correctly", function() {
               var element = new Element('div', {
                 html:                                         '\
                 <h1>Posts</h1>.                              \
@@ -598,7 +598,7 @@ describe("LSD.Layout", function() {
       });
       
       describe("and parts of the layout are conditional", function() {
-        it ("should create layout from objects with branches", function() {
+        it ("should create layout from objects with blocks", function() {
           var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
           var result = widget.addLayout(null, {
             'form#c': {
@@ -618,7 +618,7 @@ describe("LSD.Layout", function() {
           expect(result['form#c'][1]['summary'][0].tagName.toLowerCase()).toEqual('summary');
           expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].options.keyword).toEqual('if');
           expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].options.expression).toEqual('(a > 1)');
-          expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].interpolation.name).toEqual('>');
+          expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].variable.name).toEqual('>');
           expect(result['form#c'][1]['fieldset'][1]['if (a > 1)'][0].checked).toBeFalsy();
           expect(result['form#c'][1]['fieldset'][1]['else'][0].options.keyword).toEqual('else');
           expect(result['form#c'][1]['fieldset'][1]['else'][0].checked).toBeTruthy();
@@ -644,7 +644,7 @@ describe("LSD.Layout", function() {
         });
         
         describe("and a conditional part uses + selector", function() {
-          it ("should create layout from objects with branches and remove parts of the layout even if they are not nested in an object", function() {
+          it ("should create layout from objects with blocks and remove parts of the layout even if they are not nested in an object", function() {
             var widget = new LSD.Widget({tag: 'body', document: doc, context: 'test'});
             var result = widget.addLayout(null, {
               'form#c': {

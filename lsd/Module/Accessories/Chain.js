@@ -264,7 +264,7 @@ describe("LSD.Module.Chain", function() {
     */
   })
   
-  it ("should obey keywords and do walkaheads and alternative branches", function() {
+  it ("should obey keywords and do walkaheads and alternative blocks", function() {
     var kiss = getAction('kiss'), lick = getAction('lick'), slap = getAction('slap', true, true);
     var widget = new LSD.Widget({
       chain: {
