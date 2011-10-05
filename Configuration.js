@@ -6,7 +6,7 @@ Configuration.name = 'Lovely Scalable Drawings projects';
 
 Configuration.presets = {
   'full': {
-		sets: ['accessories', 'behavior', 'ambient', 'type', 'layout', 'relations', 'actions', 'interpolation', 'object', 'array'],
+		sets: ['accessories', 'behavior', 'ambient', 'type', 'layout', 'relations', 'actions', 'interpolation', 'object', 'array', 'script'],
 		source: ['lsd']
 	},
 	'accessories': {
@@ -51,6 +51,10 @@ Configuration.presets = {
 	},
 	'array': {
 		sets: ['array'],
+		source: ['lsd']
+	},
+	'script': {
+		sets: ['script'],
 		source: ['lsd']
 	},
 	'mootools': {
@@ -153,6 +157,13 @@ Configuration.sets = {
 	  path: 'lsd/Tools/',
 	  files: [
 	    'Array'
+	  ]
+	},
+	
+	'script': {
+	  path: 'lsd/Script/',
+	  files: [
+	    'Expression'
 	  ]
 	},
 	

@@ -1874,7 +1874,238 @@ describe("LSD.Layout", function() {
             section.variables.unset('condition', 'YES');
             expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
           })
+        });
+        describe("and the widget is inside of other elements", function() {
+          it ("should remove and detach it", function() {
+            var element = new Element('div', {
+              html:                          '\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <article>                   \
+                  </article>                  \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'div': true,
+                'article': true
+              }
+            });
+            expect(widget.getElements('div').length).toBe(1);
+            expect(widget.getElement('article')).toBeNull();
+            widget.variables.set('condition', true)
+            expect(widget.getElements('div').length).toBe(3);
+            expect(widget.getElement('article')).toBeTruthy();
+            widget.variables.set('condition', false)
+            expect(widget.getElements('div').length).toBe(1);
+            expect(widget.getElement('article')).toBeNull();
+          });
+        });
+        
+        describe('and nested condition is inside of multiple, elements', function() {
+          it ("should detach that nested conditional", function() {
+            var element = new Element('div', {
+              html:                          '\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <!-- if debug -->           \
+                  Lol {debug}                 \
+                  <!-- end -->                \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'div': true
+              }
+            });
+            expect(element.getElement('section')).toBeFalsy();
+            widget.variables.set('condition', true)
+            var section = element.getElement('section');
+            expect(section).toBeTruthy();
+            expect(section.get('text').trim()).toEqual('')
+            widget.variables.set('debug', true)
+            expect(section.get('text').trim()).toEqual('Lol true')
+            widget.variables.set('condition', false);
+            expect(section.get('text').trim()).toEqual('')
+            widget.variables.set('debug', false);
+            expect(section.get('text').trim()).toEqual('')
+            widget.variables.set('debug', 'word');
+            expect(section.get('text').trim()).toEqual('')
+            expect(element.getElement('section')).toBeFalsy();
+            widget.variables.set('condition', true);
+            expect(section.get('text').trim()).toEqual('Lol word')
+            widget.variables.set('condition', false);
+          })
         })
+        describe('and multiple nested conditions are inside of multiple elements', function() {
+          it ("should each nested conditional", function() {
+            var element = new Element('div', {
+              html:                          '\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <!-- if a -->               \
+                  <section><div>              \
+                  {a}                         \
+                  <!-- if b -->               \
+                  <section><div>              \
+                  {b}                         \
+                  <!-- if c -->               \
+                  <section><div>              \
+                  {c}                         \
+                  <!-- if d -->               \
+                  <section><div>              \
+                  {d}                         \
+                  </div></section>            \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- end -->                \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'div': true
+              }
+            });
+            expect(element.getElement('section')).toBeFalsy();
+            expect(widget.getElements('div').length).toBe(1);
+            widget.variables.set('condition', true)
+            var section = element.getElement('section');
+            expect(section).toBeTruthy();
+            var get = function(element) {
+              return element.get('text').trim().replace(/\s+/g, ' ')
+            }
+            expect(widget.getElements('div').length).toBe(3);
+            expect(get(section)).toEqual('')
+            widget.variables.set('b', 2);
+            expect(widget.getElements('div').length).toBe(3);
+            expect(get(section)).toEqual('')
+            widget.variables.set('a', 1);
+            expect(widget.getElements('div').length).toBe(5);
+            expect(get(section)).toEqual('1 2')
+            widget.variables.set('c', 3);
+            expect(get(section)).toEqual('1 2 3')
+            expect(widget.getElements('div').length).toBe(6);
+            widget.variables.set('b', 0);
+            expect(get(section)).toEqual('1')
+            widget.variables.set('d', 4);
+            widget.variables.set('b', -2);
+            expect(get(section)).toEqual('1 -2 3 4')
+            expect(widget.getElements('div').length).toBe(7);
+            widget.variables.set('condition', false)
+            expect(get(section)).toEqual('')
+            widget.variables.set('b', 22);
+            widget.variables.set('condition', true)
+            expect(get(section)).toEqual('1 22 3 4')
+            expect(widget.getElements('div').length).toBe(7);
+            widget.variables.set('c', 4);
+            expect(get(section)).toEqual('1 22 4 4')
+            expect(widget.getElements('div').length).toBe(7);
+            widget.variables.set('c', 0);
+            expect(get(section)).toEqual('1 22')
+            expect(widget.getElements('div').length).toBe(5);
+          })
+        })
+        describe('and multiple nested conditions are inside of multiple elements', function() {
+          it ("should each nested conditional", function() {
+            var element = new Element('div', {
+              html:                          '\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <!-- if a -->               \
+                  <section><div>              \
+                  {a}                         \
+                  <!-- if b -->               \
+                  <section><div>              \
+                  {b}                         \
+                  <!-- if c -->               \
+                  <section><div>              \
+                  {c}                         \
+                  <!-- if d -->               \
+                  <section><div>              \
+                  {d}                         \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'div': true
+              }
+            });
+            expect(element.getElement('section')).toBeFalsy();
+            expect(widget.getElements('div').length).toBe(1);
+            widget.variables.set('condition', true)
+            var section = element.getElement('section');
+            expect(section).toBeTruthy();
+            var get = function(element) {
+              return element.get('text').trim().replace(/\s+/g, ' ')
+            }
+            expect(widget.getElements('div').length).toBe(3);
+            expect(get(section)).toEqual('X')
+            widget.variables.set('b', 2);
+            expect(widget.getElements('div').length).toBe(3);
+            expect(get(section)).toEqual('X')
+            widget.variables.set('a', 1);
+            expect(widget.getElements('div').length).toBe(5);
+            expect(get(section)).toEqual('1 2 X')
+            widget.variables.set('c', 3);
+            expect(get(section)).toEqual('1 2 3 X')
+            expect(widget.getElements('div').length).toBe(6);
+            widget.variables.set('b', 0);
+            expect(get(section)).toEqual('1 X')
+            widget.variables.set('d', 4);
+            widget.variables.set('b', -2);
+            expect(get(section)).toEqual('1 -2 3 4')
+            expect(widget.getElements('div').length).toBe(7);
+            widget.variables.set('condition', false)
+            expect(get(section)).toEqual('X')
+            widget.variables.set('b', 22);
+            widget.variables.set('condition', true)
+            expect(get(section)).toEqual('1 22 3 4')
+            expect(widget.getElements('div').length).toBe(7);
+            widget.variables.set('c', 4);
+            expect(get(section)).toEqual('1 22 4 4')
+            expect(widget.getElements('div').length).toBe(7);
+            widget.variables.set('c', 0);
+            expect(get(section)).toEqual('1 22 X')
+            expect(widget.getElements('div').length).toBe(5);
+          })
+        })
+        
       })
     });
   });
