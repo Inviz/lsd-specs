@@ -150,6 +150,36 @@ describe("LSD.Interpolation", function() {
     expect(element.childNodes[2].textContent).toEqual('4');
   });
   
+  it ("should lazily iterate expressions to set up interpolation placeholder", function() {
+    var html = "Hello there {name || 'boy'}!";
+    var element = new Element('div', {html: html});
+    var widget = new LSD.Widget(element);
+    expect(element.childNodes[1].textContent).toEqual('boy');
+    widget.variables.set('name', 'dog');
+    expect(element.childNodes[1].textContent).toEqual('dog');
+    widget.variables.unset('name', 'dog');
+    expect(element.childNodes[1].textContent).toEqual('boy');
+    widget.variables.set('name', 'log');
+    expect(element.childNodes[1].textContent).toEqual('log');
+  });
+  
+  it ("should lazily iterate expressions complex expressions to set up interpolation placeholder", function() {
+    var html = "Hello there {dog && name || 'boy'}!";
+    var element = new Element('div', {html: html});
+    var widget = new LSD.Widget(element);
+    expect(element.childNodes[1].textContent).toEqual('boy');
+    widget.variables.set('name', 'dog');
+    expect(element.childNodes[1].textContent).toEqual('boy');
+    widget.variables.set('dog', true);
+    expect(element.childNodes[1].textContent).toEqual('dog');
+    widget.variables.unset('name', 'dog');
+    expect(element.childNodes[1].textContent).toEqual('boy');
+    widget.variables.set('name', 'log');
+    expect(element.childNodes[1].textContent).toEqual('log');
+    widget.variables.unset('dog', true);
+    expect(element.childNodes[1].textContent).toEqual('boy');
+  });
+  
   it ("should use interpolators from widget", function() {
     var html = "Hello there {name}!";
     var element = new Element('div', {html: html});
@@ -388,7 +418,7 @@ describe("LSD.Interpolation", function() {
           var Flash = new LSD.Object({extension: 'flv'})
           expect(video.getAttribute('src')).toEqual('movies/{movie.type}/{movie.id}.{Player.extension}')
           widget.variables.set('Player', HTML5);
-          expect(video.getAttribute('src')).toEqual('')
+          expect(video.getAttribute('src')).toEqual('movies/{movie.type}/{movie.id}.{Player.extension}')
           widget.variables.set('movie', ad);
           expect(video.getAttribute('src')).toEqual('movies/ad/weird.mpg')
           widget.variables.unset('movie', ad);
