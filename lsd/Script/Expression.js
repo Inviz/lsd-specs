@@ -35,12 +35,10 @@ describe('LSD.Script.Expression', function() {
       }
       scope.methods.set('submit', function(value) {
         state = 'submitted'
-          console.log('submit', Array.from(arguments))
         return value;
       });
       scope.methods.set('update', function(value) {
         state = 'updated'
-        console.log('update', Array.from(arguments))
         return value;
       });
       var script = LSD.Script('submit(a), update(b), update(c || 1)', scope, callback);

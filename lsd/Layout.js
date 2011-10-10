@@ -338,21 +338,21 @@ describe("LSD.Layout", function() {
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
           expect(element.getElements('h3').length).toEqual(1);
 
-         widget.setAttribute('urgency', true);
-         expect(element.getElement('h2')).toBeFalsy();
-         expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
-         expect(element.getElements('h3').length).toEqual(1);
-         widget.removeAttribute('urgency')
-         expect(element.getElement('h2')).toBeFalsy();
-         expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
-         expect(element.getElements('h3').length).toEqual(1);
-         widget.setAttribute('urgency', true);
-         expect(element.getElement('h2')).toBeFalsy();
-         expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
-         expect(element.getElements('h3').length).toEqual(1);
-         widget.removeAttribute('urgency')
-         expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
-         expect(element.getElements('h3').length).toEqual(1);
+          widget.setAttribute('urgency', true);
+          expect(element.getElement('h2')).toBeFalsy();
+          expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+          expect(element.getElements('h3').length).toEqual(1);
+          widget.removeAttribute('urgency')
+          expect(element.getElement('h2')).toBeFalsy();
+          expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+          expect(element.getElements('h3').length).toEqual(1);
+          widget.setAttribute('urgency', true);
+          expect(element.getElement('h2')).toBeFalsy();
+          expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
+          expect(element.getElements('h3').length).toEqual(1);
+          widget.removeAttribute('urgency')
+          expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+          expect(element.getElements('h3').length).toEqual(1);
           widget.setAttribute('a', 2);
           expect(element.getElement('h3')).toBeFalsy();
           expect(element.getElements('h2').length).toEqual(1);
@@ -2092,7 +2092,7 @@ describe("LSD.Layout", function() {
             expect(get(section)).toEqual('1 -2 3 4')
             expect(widget.getElements('div').length).toBe(7);
             widget.variables.set('condition', false)
-            expect(get(section)).toEqual('X')
+            expect(get(section)).toEqual('')
             widget.variables.set('b', 22);
             widget.variables.set('condition', true)
             expect(get(section)).toEqual('1 22 3 4')
@@ -2105,7 +2105,217 @@ describe("LSD.Layout", function() {
             expect(widget.getElements('div').length).toBe(5);
           })
         })
-        
+        describe("and multiple conditions linked together are used", function() {
+          it ("should show conditional blocks at the place", function() {
+            var element = new Element('div', {
+              html:                          '\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <!-- unless chill -->       \
+                  Very                        \
+                  <!-- end -->                \
+                  <!-- if good -->            \
+                    Good                      \
+                    <!-- if time < 6 -->      \
+                      Night                   \
+                    <!-- elsif time < 12 -->  \
+                      Morning                 \
+                    <!-- elsif time < 18 -->  \
+                      Day                     \
+                    <!-- else -->             \
+                      Evening                 \
+                    <!-- end -->              \
+                    <!-- if mom -->           \
+                      <!-- if respect -->     \
+                        Mother                \
+                      <!-- else -->           \
+                        Mom                   \
+                      <!-- end -->            \
+                    <!-- else -->             \
+                      <!-- if respect -->     \
+                        Father                \
+                      <!-- else -->           \
+                        Dad                   \
+                      <!-- end -->            \
+                    <!-- end -->              \
+                  <!-- else -->               \
+                    Bad                       \
+                    <!-- if time < 6 -->      \
+                      Night                   \
+                    <!-- elsif time < 12 -->  \
+                      Morning                 \
+                    <!-- elsif time < 18 -->  \
+                      Day                     \
+                    <!-- else -->             \
+                      Evening                 \
+                    <!-- end -->              \
+                    <!-- if mom -->           \
+                      <!-- if respect -->     \
+                        Mother                \
+                      <!-- else -->           \
+                        Mom                   \
+                      <!-- end -->            \
+                    <!-- else -->             \
+                      <!-- if respect -->     \
+                        Father                \
+                      <!-- else -->           \
+                        Dad                   \
+                      <!-- end -->            \
+                    <!-- end -->              \
+                  <!-- end -->                \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          '
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'div': true
+              }
+            });
+              expect(String.trim(String.clean(element.get('text')))).toEqual('');
+            widget.variables.set('condition', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Evening Dad');
+            widget.variables.set('time', 11);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Morning Dad');
+            widget.variables.set('good', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Good Morning Dad');
+            widget.variables.set('good', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Morning Dad');
+            widget.variables.set('time', 13);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Dad');
+            widget.variables.set('mom', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Mom');
+            widget.variables.set('good', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Good Day Mom');
+            widget.variables.set('good', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Mom');
+            widget.variables.set('respect', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Mom');
+            widget.variables.set('respect', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Mother');
+            widget.variables.set('good', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Good Day Mother');
+            widget.variables.set('good', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Mother');
+            widget.variables.set('mom', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Father');
+            widget.variables.set('condition', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('');
+            widget.variables.set('condition', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Father');
+            widget.variables.set('respect', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Dad');
+            widget.variables.set('mom', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Mom');
+            widget.variables.set('good', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Good Day Mom');
+            widget.variables.set('time', 4);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Good Night Mom');
+            widget.variables.set('chill', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Good Night Mom');
+            widget.variables.set('time', 23);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Good Evening Mom');
+            widget.variables.set('good', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Bad Evening Mom');
+            widget.variables.set('respect', true);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Bad Evening Mother');
+            widget.variables.set('mom', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Bad Evening Father');
+            widget.variables.set('chill', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Evening Father');
+            widget.variables.set('respect', false);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Evening Dad');
+            widget.variables.set('time', 13);
+            expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Day Dad');
+          })
+        })
+        describe("when multiple chained elseif blocks used", function() {
+          it ("should display things in place", function() {
+            var element = new Element('div', {
+              html:                                                  "\
+              <form>                                                  \
+                <!-- if params.time_range.repeat -->                  \
+                <!--                                                  \
+                  <!- if params.time_range.repeat == 'daily' ->       \
+                    <!-                                               \
+                      <fieldset class='repeat daily'>                 \
+                        <label>Every</label>                          \
+                        <input>                                       \
+                        day                                           \
+                      </fieldset>                                     \
+                     ->                                               \
+                  <!- elsif params.time_range.repeat == 'weekly' ->   \
+                    <!-                                               \
+                      <fieldset class='repeat weekly'>                \
+                        <label>Every</label>                          \
+                        <input>                                       \
+                        week                                          \
+                      </fieldset>                                     \
+                     ->                                               \
+                  <!- elsif params.time_range.repeat == 'monthly' ->  \
+                    <!-                                               \
+                      <fieldset class='repeat monthly'>               \
+                        <label>Every</label>                          \
+                        <input>                                       \
+                        month                                         \
+                      </fieldset>                                     \
+                     ->                                               \
+                  <!- elsif params.time_range.repeat == 'yearly' ->   \
+                    <!-                                               \
+                      <fieldset class='repeat yearly'>                \
+                        <label>Every</label>                          \
+                        <input>                                       \
+                        year                                          \
+                      </fieldset>                                     \
+                     ->                                               \
+                  <!- end ->                                          \
+                  <fieldset>                                          \
+                    <label>End:</label>                               \
+                    <select name='time_range[end_on]'>                \
+                      <option value=''>Never</option>                 \
+                      <option value='recurrence'>After</option>       \
+                      <option value='date'>On date</option>           \
+                    </select>                                         \
+                  </fieldset>                                         \
+                  <!- if params.time_range.end_on == 'recurrence' ->  \
+                    <!-                                               \
+                      <fieldset>                                      \
+                        <label>After</label>                          \
+                        <input>                                       \
+                        time                                          \
+                      </fieldset>                                     \
+                    ->                                                \
+                  <!- elsif params.time_range.end_on == 'date' ->     \
+                    <!-                                               \
+                      <fieldset>                                      \
+                        <label>After</label>                          \
+                        <input>                                       \
+                        day                                           \
+                      </fieldset>                                     \
+                    ->                                                \
+                  <!- end ->                                          \
+                -->                                                   \
+                <!-- end -->                                          \
+              </form>                                                 "
+            });
+            var widget = new LSD.Widget(element, {
+              context: 'clean',
+              mutations: {
+                'div': true
+              }
+            });
+            expect(element.getElements('fieldset').length).toEqual(0)
+            widget.variables.set('params.time_range.repeat', 'weekly');
+            $w = widget;
+            expect(element.getElements('fieldset').length).toEqual(1)
+            expect(element.getElement('fieldset').nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'monthly' ")
+
+
+
+          })
+        })
       })
     });
   });
