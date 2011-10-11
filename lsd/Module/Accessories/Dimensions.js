@@ -1,4 +1,4 @@
-describe("LSD.Module.Dimensions", function() {
+xdescribe("LSD.Module.Dimensions", function() {
   describe("#size", function() {
     it ("should set size", function() {
       var instance = new LSD.Widget;
