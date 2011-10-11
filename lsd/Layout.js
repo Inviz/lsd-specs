@@ -2281,7 +2281,7 @@ describe("LSD.Layout", function() {
                   </fieldset>                                         \
                   <!- if params.time_range.end_on == 'recurrence' ->  \
                     <!-                                               \
-                      <fieldset>                                      \
+                      <fieldset class='after time'>                   \
                         <label>After</label>                          \
                         <input>                                       \
                         time                                          \
@@ -2289,7 +2289,7 @@ describe("LSD.Layout", function() {
                     ->                                                \
                   <!- elsif params.time_range.end_on == 'date' ->     \
                     <!-                                               \
-                      <fieldset>                                      \
+                      <fieldset class='after date'>                   \
                         <label>After</label>                          \
                         <input>                                       \
                         day                                           \
@@ -2306,14 +2306,39 @@ describe("LSD.Layout", function() {
                 'div': true
               }
             });
-            expect(element.getElements('fieldset').length).toEqual(0)
+            expect(element.getElements('fieldset').length).toEqual(0);
             widget.variables.set('params.time_range.repeat', 'weekly');
             $w = widget;
-            expect(element.getElements('fieldset').length).toEqual(1)
-            expect(element.getElement('fieldset').nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'monthly' ")
-
-
-
+            expect(element.getElements('fieldset').length).toEqual(2)
+            expect(element.getElement('fieldset.weekly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'monthly' ")
+            widget.variables.set('params.time_range.repeat', 'monthly');
+            expect(element.getElements('fieldset').length).toEqual(2);
+            expect(element.getElement('fieldset.weekly')).toBeFalsy()
+            expect(element.getElement('fieldset.monthly')).toBeTruthy()
+            expect(element.getElement('fieldset.monthly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'yearly' ")
+            widget.variables.set('params.time_range.repeat', 'yearly');
+            expect(element.getElement('fieldset.monthly')).toBeFalsy()
+            expect(element.getElement('fieldset.yearly')).toBeTruthy()
+            expect(element.getElements('fieldset').length).toEqual(2);
+            expect(element.getElement('fieldset.yearly').nextSibling.nextSibling.nextSibling.data).toEqual(" end ")
+            widget.variables.set('params.time_range.end_on', 'recurrence');
+            expect(element.getElements('fieldset').length).toEqual(3);
+            expect(element.getElement('fieldset.after.time').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.end_on == 'date' ")
+            widget.variables.set('params.time_range.end_on', 'date');
+            expect(element.getElements('fieldset').length).toEqual(3);
+            expect(element.getElement('fieldset.after.time')).toBeFalsy()
+            expect(element.getElement('fieldset.after.date').nextSibling.nextSibling.nextSibling.data).toEqual(" end ")
+            widget.variables.set('params.time_range.repeat', 'daily');
+            expect(element.getElements('fieldset').length).toEqual(3);
+            expect(element.getElement('fieldset.yearly')).toBeFalsy()
+            expect(element.getElement('fieldset.daily').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'weekly' ")
+            widget.variables.set('params.time_range.repeat', false);
+            expect(element.getElements('fieldset').length).toEqual(0);
+            widget.variables.set('params.time_range.end_on', 'recurrence');
+            expect(element.getElements('fieldset').length).toEqual(0);
+            widget.variables.set('params.time_range.repeat', 'weekly');
+            expect(element.getElements('fieldset').length).toEqual(3);
+            //expect(element.getElement('fieldset.weekly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'monthly' ")
           })
         })
       })
