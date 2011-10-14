@@ -404,7 +404,7 @@ describe("LSD.Layout", function() {
             var element = new Element('div', {
               html:                         '\
               <!-- for item in items -->     \
-                <h2>{item.title}</h2>        \
+                <h2>${item.title}</h2>        \
               <!-- end -->                   '
             });
             var widget = new LSD.Widget(element, {
@@ -430,7 +430,7 @@ describe("LSD.Layout", function() {
                     <!-- else -->                                          \
                       Hey Girl!                                            \
                     <!-- end -->                                           \
-                    Is it <strong>{kid.name}</strong>?                     \
+                    Is it <strong>${kid.name}</strong>?                     \
                   </li>                                                    \
                 <!-- end -->                                               '
               });                                                          
@@ -475,7 +475,7 @@ describe("LSD.Layout", function() {
                   <!-- <ul> -->                        \
                     <!-- for post in posts -->        \
                       <!-- <li> -->                                            \
-                        <h2>{post.title}</h2>                         \
+                        <h2>${post.title}</h2>                         \
                         <!-- <menu type="toolbar">  -->                         \
                           <!-- if post.state == "published" -->         \
                             <!-- if user.role == "administrator" -->    \
@@ -1475,20 +1475,20 @@ describe("LSD.Layout", function() {
                         new Element('h1', {html: '<span>Boobs</span> Dawgs at War'})
                       ),
                       new Element('section', {
-                        html: 'Hey {object}, you are at {deed}! '
+                        html: 'Hey ${object}, you are at ${deed}! '
                       })
                     );
                     var instance = new LSD.Widget(element, {
                       layout: {
                         'header': {
-                          'h1': '{object} at {deed}'
+                          'h1': '${object} at ${deed}'
                         },
                         'section': {
-                          'summary': 'Press for {deed} to happen'
+                          'summary': 'Press for ${deed} to happen'
                         },
                         'footer': [
-                          {'p': 'Listen up here, {deed}-kid'},
-                          {'p': 'We dunnae like {toLowerCase(object)} like you here'}
+                          {'p': 'Listen up here, ${deed}-kid'},
+                          {'p': 'We dunnae like ${toLowerCase(object)} like you here'}
                         ]
                       }
                     });
@@ -1514,14 +1514,14 @@ describe("LSD.Layout", function() {
                       var instance = new LSD.Widget(element, {
                         layout: {
                           'header': {
-                            'h1': '{object} at {deed}'
+                            'h1': '${object} at ${deed}'
                           },
                           'section': {
-                            'summary': 'Press for {deed} to happen'
+                            'summary': 'Press for ${deed} to happen'
                           },
                           'footer': [
-                            {'h3': 'Listen up here, {deed}-kid'},
-                            {'p': 'We dunnae like {object} like you here'}
+                            {'h3': 'Listen up here, ${deed}-kid'},
+                            {'p': 'We dunnae like ${object} like you here'}
                           ]
                         }
                       });
@@ -1914,7 +1914,7 @@ describe("LSD.Layout", function() {
               <!-- if condition -->           \
                 <section><div><div><form>     \
                   <!-- if debug -->           \
-                  Lol {debug}                 \
+                  Lol ${debug}                 \
                   <!-- end -->                \
                 </div></div></form></section> \
               <!-- end -->                    \
@@ -1954,16 +1954,16 @@ describe("LSD.Layout", function() {
                 <section><div><div><form>     \
                   <!-- if a -->               \
                   <section><div>              \
-                  {a}                         \
+                  ${a}                        \
                   <!-- if b -->               \
                   <section><div>              \
-                  {b}                         \
+                  ${b}                        \
                   <!-- if c -->               \
                   <section><div>              \
-                  {c}                         \
+                  ${c}                        \
                   <!-- if d -->               \
                   <section><div>              \
-                  {d}                         \
+                  ${d}                        \
                   </div></section>            \
                   <!-- end -->                \
                   </div></section>            \
@@ -2030,16 +2030,16 @@ describe("LSD.Layout", function() {
                 <section><div><div><form>     \
                   <!-- if a -->               \
                   <section><div>              \
-                  {a}                         \
+                  ${a}                        \
                   <!-- if b -->               \
                   <section><div>              \
-                  {b}                         \
+                  ${b}                        \
                   <!-- if c -->               \
                   <section><div>              \
-                  {c}                         \
+                  ${c}                        \
                   <!-- if d -->               \
                   <section><div>              \
-                  {d}                         \
+                  ${d}                        \
                   </div></section>            \
                   <!-- else -->               \
                   X                           \
@@ -2235,10 +2235,11 @@ describe("LSD.Layout", function() {
           it ("should display things in place", function() {
             var element = new Element('div', {
               html:                                                  "\
+              <!-- unless condition -->\
               <form>                                                  \
-                <!-- if params.time_range.repeat -->                  \
+                <!-- if params.time_range.recurrence.type -->                  \
                 <!--                                                  \
-                  <!- if params.time_range.repeat == 'daily' ->       \
+                  <!- if params.time_range.recurrence.type == 'daily' ->       \
                     <!-                                               \
                       <fieldset class='repeat daily'>                 \
                         <label>Every</label>                          \
@@ -2246,7 +2247,7 @@ describe("LSD.Layout", function() {
                         day                                           \
                       </fieldset>                                     \
                      ->                                               \
-                  <!- elsif params.time_range.repeat == 'weekly' ->   \
+                  <!- elsif params.time_range.recurrence.type == 'weekly' ->   \
                     <!-                                               \
                       <fieldset class='repeat weekly'>                \
                         <label>Every</label>                          \
@@ -2254,7 +2255,7 @@ describe("LSD.Layout", function() {
                         week                                          \
                       </fieldset>                                     \
                      ->                                               \
-                  <!- elsif params.time_range.repeat == 'monthly' ->  \
+                  <!- elsif params.time_range.recurrence.type == 'monthly' ->  \
                     <!-                                               \
                       <fieldset class='repeat monthly'>               \
                         <label>Every</label>                          \
@@ -2262,7 +2263,7 @@ describe("LSD.Layout", function() {
                         month                                         \
                       </fieldset>                                     \
                      ->                                               \
-                  <!- elsif params.time_range.repeat == 'yearly' ->   \
+                  <!- elsif params.time_range.recurrence.type == 'yearly' ->   \
                     <!-                                               \
                       <fieldset class='repeat yearly'>                \
                         <label>Every</label>                          \
@@ -2279,7 +2280,7 @@ describe("LSD.Layout", function() {
                       <option value='date'>On date</option>           \
                     </select>                                         \
                   </fieldset>                                         \
-                  <!- if params.time_range.end_on == 'recurrence' ->  \
+                  <!- if params.time_range.recurrence.end_on == 'recurrence' ->  \
                     <!-                                               \
                       <fieldset class='after time'>                   \
                         <label>After</label>                          \
@@ -2287,7 +2288,7 @@ describe("LSD.Layout", function() {
                         time                                          \
                       </fieldset>                                     \
                     ->                                                \
-                  <!- elsif params.time_range.end_on == 'date' ->     \
+                  <!- elsif params.time_range.recurrence.end_on == 'date' ->     \
                     <!-                                               \
                       <fieldset class='after date'>                   \
                         <label>After</label>                          \
@@ -2298,7 +2299,8 @@ describe("LSD.Layout", function() {
                   <!- end ->                                          \
                 -->                                                   \
                 <!-- end -->                                          \
-              </form>                                                 "
+              </form>                                                 \
+              <!-- end -->"
             });
             var widget = new LSD.Widget(element, {
               context: 'clean',
@@ -2306,39 +2308,64 @@ describe("LSD.Layout", function() {
                 'div': true
               }
             });
-            expect(element.getElements('fieldset').length).toEqual(0);
-            widget.variables.set('params.time_range.repeat', 'weekly');
             $w = widget;
+            var range = new LSD.Object;
+            var params = new LSD.Object.Stack;
+            widget.variables.merge({params: params})
+            expect(element.getElements('fieldset').length).toEqual(0);
+            params.merge({'time_range': range});
+            range.set('recurrence.type', 'weekly');
             expect(element.getElements('fieldset').length).toEqual(2)
-            expect(element.getElement('fieldset.weekly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'monthly' ")
-            widget.variables.set('params.time_range.repeat', 'monthly');
+            expect(element.getElement('fieldset.weekly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.recurrence.type == 'monthly' ")
+            range.set('recurrence.type', 'monthly')
             expect(element.getElements('fieldset').length).toEqual(2);
             expect(element.getElement('fieldset.weekly')).toBeFalsy()
             expect(element.getElement('fieldset.monthly')).toBeTruthy()
-            expect(element.getElement('fieldset.monthly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'yearly' ")
-            widget.variables.set('params.time_range.repeat', 'yearly');
+            expect(element.getElement('fieldset.monthly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.recurrence.type == 'yearly' ")
+            range.set('recurrence.type', 'yearly');
             expect(element.getElement('fieldset.monthly')).toBeFalsy()
             expect(element.getElement('fieldset.yearly')).toBeTruthy()
             expect(element.getElements('fieldset').length).toEqual(2);
             expect(element.getElement('fieldset.yearly').nextSibling.nextSibling.nextSibling.data).toEqual(" end ")
-            widget.variables.set('params.time_range.end_on', 'recurrence');
+            range.set('recurrence.end_on', 'recurrence');
             expect(element.getElements('fieldset').length).toEqual(3);
-            expect(element.getElement('fieldset.after.time').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.end_on == 'date' ")
-            widget.variables.set('params.time_range.end_on', 'date');
+            expect(element.getElement('fieldset.after.time').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.recurrence.end_on == 'date' ")
+            range.set('recurrence.end_on', 'date');
             expect(element.getElements('fieldset').length).toEqual(3);
             expect(element.getElement('fieldset.after.time')).toBeFalsy()
             expect(element.getElement('fieldset.after.date').nextSibling.nextSibling.nextSibling.data).toEqual(" end ")
-            widget.variables.set('params.time_range.repeat', 'daily');
+            range.set('recurrence.type', 'daily');
             expect(element.getElements('fieldset').length).toEqual(3);
             expect(element.getElement('fieldset.yearly')).toBeFalsy()
-            expect(element.getElement('fieldset.daily').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'weekly' ")
-            widget.variables.set('params.time_range.repeat', false);
+            expect(element.getElement('fieldset.daily').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.recurrence.type == 'weekly' ")
+            range.set('recurrence.type', false);
             expect(element.getElements('fieldset').length).toEqual(0);
-            widget.variables.set('params.time_range.end_on', 'recurrence');
+            range.set('recurrence.end_on', 'recurrence');
             expect(element.getElements('fieldset').length).toEqual(0);
-            widget.variables.set('params.time_range.repeat', 'weekly');
+            range.set('recurrence.type', 'weekly');
             expect(element.getElements('fieldset').length).toEqual(3);
-            //expect(element.getElement('fieldset.weekly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.repeat == 'monthly' ")
+            var other = new LSD.Object;
+            params.merge({'time_range': other});
+            params.unmerge({'time_range': range});
+            expect(element.getElements('fieldset').length).toEqual(0);
+            params.merge({'time_range': range});
+            params.unmerge({'time_range': other});
+            expect(element.getElements('fieldset').length).toEqual(3);
+            params.merge({'time_range': other});
+            params.unmerge({'time_range': range});
+            expect(element.getElements('fieldset').length).toEqual(0);
+            other.set('recurrence.type', 'daily')
+            expect(element.getElements('fieldset').length).toEqual(2);
+            expect(element.getElement('fieldset.daily').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.recurrence.type == 'weekly' ")
+            other.set('recurrence.end_on', 'date');
+            expect(element.getElement('fieldset.after.date').nextSibling.nextSibling.nextSibling.data).toEqual(" end ")
+            expect(element.getElements('fieldset').length).toEqual(3);
+            range.set('recurrence.end_on', false);
+            params.unmerge({'time_range': other});
+            params.merge({'time_range': range});
+            expect(element.getElements('fieldset').length).toEqual(2);
+           
+            //expect(element.getElement('fieldset.weekly').nextSibling.nextSibling.nextSibling.data).toEqual(" elsif params.time_range.recurrence.type == 'monthly' ")
           })
         })
       })
