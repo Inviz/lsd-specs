@@ -53,6 +53,48 @@ describe('LSD.Script.Expression', function() {
       expect(result).toBe(1)
       scope.variables.set('c', 4);
       expect(result).toBe(4)
-    })
+      scope.variables.set('a', null);
+      expect(scope.variables._watched['a']).toBeTruthy()
+      //expect(scope.variables._watched['b']).toBeFalsy()
+    });
+  })
+  
+  it ('should evaluate blocks', function() {
+    var scope = new LSD.Script.Scope;
+    var script = new LSD.Script('filter (items) { |item| item.active == active }', scope);
+    scope.methods.set('filter', function(array, fn, bind) {
+      var results = [];
+  		for (var i = 0, l = array.length >>> 0; i < l; i++){
+  			if ((i in array) && fn.call(bind, array[i], i, array)) results.push(array[i]);
+  		}
+  		return results;
+    });
+    scope.variables.set('active', true);
+    scope.variables.set('items', [{title: 'Bogus', active: false}, {title: 'Sacred', active: true}]);
+    expect(script.value).toEqual([{title: 'Sacred', active: true}])
+    scope.variables.set('active', false);
+    expect(script.value).toEqual([{title: 'Bogus', active: false}])
+    scope.variables.set('active', true);
+    expect(script.value).toEqual([{title: 'Sacred', active: true}])
+  })
+  
+  xit ('should run a block against an observable array', function() {
+    var scope = new LSD.Script.Scope;
+    var script = new LSD.Script('map (users) { |user| toUpperCase(user.name) + " " + organization }', scope);
+    scope.methods.set('map', function(array, fn, bind) {
+      var results = [];
+  		for (var i = 0, l = array.length >>> 0; i < l; i++){
+  			if ((i in array)) results.push(fn.call(bind, array[i], i, array));
+  		}
+  		return results;
+    });
+    var ary = new LSD.Array(new LSD.Object({name: 'Michael', active: false}), new LSD.Object({name: 'Alex', active: true}));
+    scope.variables.set('users', ary);
+    scope.variables.set('organization', 'ICP');
+    expect(script.value).toEqual(['MICHAEL ICP', 'ALEX ICP'])
+    ary[1].set('name', 'Oleksandr');
+    expect(script.value).toEqual(['MICHAEL ICP', 'OLEKSANDR ICP'])
+    ary.push({name: 'Yarik', active: true})
+    expect(script.value).toEqual(['MICHAEL ICP', 'OLEKSANDR ICP', 'YARIK ICP'])
   })
 })
