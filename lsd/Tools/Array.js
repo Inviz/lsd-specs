@@ -146,7 +146,7 @@ describe('LSD.Array', function() {
         });
       });
       describe('not equal to zero', function() {
-        xit ("should create a copy of array starting from the given offset", function() {
+        it ("should create a copy of array starting from the given offset", function() {
           var array = new LSD.Array([1, 2, 3]);
           var copy = array.slice(1);
           expect(copy).toNotEqual(array);
