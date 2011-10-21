@@ -146,7 +146,8 @@ Configuration.sets = {
 	    'Expression',
 	    'Function',
 	    'Block',
-  	  'Interpolation'
+  	  'Interpolation',
+  	  'Parser'
 	  ]
 	},
 	
