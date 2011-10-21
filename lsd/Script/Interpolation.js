@@ -49,13 +49,13 @@ describe("LSD.Interpolation", function() {
     expect(element.childNodes[5].textContent).toEqual('2000');
   });
   
-  xit ("should handle expressions without variables", function() {
+  it ("should handle expressions without variables", function() {
     
-    var html = "${666 - 616}${2 + 3 * 6 / 10}";
+    var html = "${666 - 616}${3 * 6 / 10}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Widget(element);
     expect(element.childNodes[0].textContent).toEqual('50');
-    expect(element.childNodes[1].textContent).toEqual('3.8');
+    expect(element.childNodes[1].textContent).toEqual('1.8');
   });
   
   it ("should do basic arythmetics", function() {

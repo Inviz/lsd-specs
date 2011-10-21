@@ -79,7 +79,6 @@ Configuration.sets = {
 		  'Element',
 		  'Events',
 		  'Options',
-		  'Shortcuts',
 		  'States',
 		  'Styles',
 		  'Chain'
@@ -105,13 +104,6 @@ Configuration.sets = {
 	  path: 'lsd/',
 	  files: [
 	    'Layout'
-	  ]
-	},
-	
-	'interpolation': {
-	  path: 'lsd/',
-	  files: [
-	    'Interpolation'
 	  ]
 	},
 	
@@ -146,24 +138,15 @@ Configuration.sets = {
 	  ]
 	},
 
-	'object': {
-	  path: 'lsd/Tools/',
-	  files: [
-	    'Object'
-	  ]
-	},
-	
-	'array': {
-	  path: 'lsd/Tools/',
-	  files: [
-	    'Array'
-	  ]
-	},
-	
 	'script': {
 	  path: 'lsd/Script/',
 	  files: [
-	    'Expression'
+      'Object',
+	    'Array',
+	    'Expression',
+	    'Function',
+	    'Block',
+  	  'Interpolation'
 	  ]
 	},
 	
