@@ -163,7 +163,123 @@ describe("LSD.Script.Function", function() {
         })
       });
     });
-    
-    
   });
+  
+  describe("when operator is used on two values", function() {
+    describe("and that operator is =", function() {
+      it ("should not evaluate first argument and use it as name to define the variable with the second value", function() {
+        var scope = new LSD.Script.Scope;
+        var script = new LSD.Script('incremented = number + 1', scope);
+        scope.variables.set('number', 1);
+        expect(script.value).toEqual(2)
+        expect(scope.variables.incremented).toEqual(2);
+      })
+    })
+  });
+  
+  describe("when expression consists of multiple function calls", function() {
+    var scope = new LSD.Script.Scope;
+    scope.methods.set('submit', function() {
+      return 1337
+    });
+    scope.methods.set('make', function(value) {
+      return new LSD.Widget({attributes: {title: value}})
+    });
+    scope.methods.set('return', function(value) {
+      return Array.from(arguments)
+    });
+    describe("when the pipee function doesnt have any arguments", function() {
+      it("should pipe arguments from one function call to another", function() {
+        var script = new LSD.Script('submit(), return()', scope);
+        expect(script.value).toEqual([1337])
+      });
+      describe("and value changes", function() {
+        it ("should reevaluate the expression and re-pipe value again", function() {
+          var local = new LSD.Script.Scope(scope);
+          local.variables.set('n', 1336)
+          var script = new LSD.Script('return(n), return()', local);
+          expect(script.value).toEqual([[1336]])
+          local.variables.set('n', 1338)
+          expect(script.value).toEqual([[1338]])
+        })
+      })
+    })
+    describe("when a pipee function has arguments by itself", function() {
+      describe("and that argument is a simple value", function() {
+        it ("should push piped argument at the end", function() {
+          var script = new LSD.Script('submit(), return("fire")', scope);
+          expect(script.value).toEqual(["fire", 1337])
+        });
+        describe("and pipe consists of more than two function calls", function() {
+          it ("should push piped argument at the end", function() {
+            var script = new LSD.Script('submit(), return("fire"), return("ice")', scope);
+            expect(script.value).toEqual(["ice", ["fire", 1337]])
+          });
+        })
+        describe("and piped argument is a widget", function() {
+          describe("and a pipee function can be resolved on the argument", function() {
+            it ("should use the widget as argument and execute function on argument", function() {
+              var script = new LSD.Script('make(), return("fire")', scope);
+              expect(script.value[0]).toEqual('fire');
+              expect(script.value[1].nodeType).toEqual(1);
+            });
+          })
+          describe("and a pipee function only resolves on widget", function() {
+            it ("should use the widget as argument and execute function on argument", function() {
+              var script = new LSD.Script('make(), setAttribute("tabindex", -1)', scope);
+              expect(script.value.attributes.tabindex).toEqual(-1)
+            });
+            describe("and there are more expressions", function() {
+              var script = new LSD.Script('make(), setAttribute("tabindex", -1), return()', scope);
+              expect(script.value[0].nodeType).toEqual(1)              
+            })
+          })
+        })
+      })
+    });
+    describe("and functions dont have explicit arguments", function() {
+      it ("should be able to pipe both arguments and context", function() {
+        var scope = new LSD.Widget({tag: 'container'});
+        scope.methods.set('request', function() {
+          return true
+        });
+        scope.methods.set('create', function(success) {
+          if (success === true) return new LSD.Widget({tag: 'response'}) 
+        });
+        var script = new LSD.Script('request(), create(), grab()', scope)
+        expect(scope.childNodes[0].tagName).toEqual('response')
+      })
+    })
+    describe("when function is executed in context `dot.notation()`", function() {
+      describe("and context for that function call is a result of execution of other function", function() {
+        it("should use returned values", function() {
+          var script = new LSD.Script('make(123).return()', scope);
+          expect(script.value[0].attributes.title).toEqual(123)
+        })
+      })
+      describe("and context for that function call is a variable pointing to widget", function() {
+        it("should use returned values", function() {
+          var local = new LSD.Script.Scope(scope);
+          local.variables.set('widget', new LSD.Widget)
+          var script = new LSD.Script('widget.return()', local);
+          expect(script.value[0].nodeType).toEqual(1)
+        })
+      })
+      describe("and context for that function call is a variable pointing to simple value", function() {
+        it("should use returned values", function() {
+          var local = new LSD.Script.Scope(scope);
+          local.variables.set('dog', 'hot')
+          var script = new LSD.Script('dog.return()', local);
+          expect(script.value).toEqual(['hot'])
+        })
+      })
+    })
+    describe("when functions are nested", function() {
+      it("should use returned values", function() {
+        var script = new LSD.Script('return(make(123))', scope);
+        expect(script.value[0].attributes.title).toEqual(123)
+      })
+    })
+  });
+  
 });
