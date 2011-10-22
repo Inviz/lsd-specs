@@ -14,10 +14,10 @@ describe("LSD.Script.Function", function() {
         describe("and there is a fallback method defined", function() {
           it("should use fallback method", function() {
             var scope = new LSD.Script.Scope;
-            var script = new LSD.Script('slicez(object, 1)', scope);
             scope.methods.set('slicez', function(object, index, offset) {
               return object.slice(index, offset)
             })
+            var script = new LSD.Script('slicez(object, 1, 3)', scope);
             scope.variables.set('object', [1, 2, 3]);
             expect(script.value).toEqual([2, 3]);
           });
