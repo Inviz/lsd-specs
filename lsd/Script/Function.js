@@ -230,8 +230,10 @@ describe("LSD.Script.Function", function() {
               expect(script.value.attributes.tabindex).toEqual(-1)
             });
             describe("and there are more expressions", function() {
-              var script = new LSD.Script('make(), setAttribute("tabindex", -1), return()', scope);
-              expect(script.value[0].nodeType).toEqual(1)              
+              it ("should pipe it through", function() {
+                var script = new LSD.Script('make(), setAttribute("tabindex", -1), return()', scope);
+                expect(script.value[0].nodeType).toEqual(1)
+              })            
             })
           })
         })
@@ -278,6 +280,58 @@ describe("LSD.Script.Function", function() {
       it("should use returned values", function() {
         var script = new LSD.Script('return(make(123))', scope);
         expect(script.value[0].attributes.title).toEqual(123)
+      })
+    });
+    describe("and function is called in context of", function() {
+      describe("a block", function() {
+        describe("that iterates over widget collection", function() {
+          it ("should use widget as a context", function() {
+            var local = new LSD.Script.Scope(scope);
+            local.variables.set('items', [
+              new LSD.Widget({attributes: {title: 'L'}}),
+              new LSD.Widget({attributes: {title: 'S'}}),
+              new LSD.Widget({attributes: {title: 'D'}})
+            ])
+            var script = new LSD.Script('items.map { getAttribute("title") }', local)
+            expect(script.value).toEqual(['L', 'S', 'D'])
+          })
+        });
+        describe("that iterates over element collection", function() {
+          it ("should use element as a context", function() {
+            var local = new LSD.Script.Scope(scope);
+            local.variables.set('items', [
+              new Element('div[title=L]'),
+              new Element('div[title=S]'),
+              new Element('div[title=D]'),
+            ])
+            var script = new LSD.Script('items.map { getAttribute("title") }', local)
+            expect(script.value).toEqual(['L', 'S', 'D'])
+          })
+        });
+        describe("that iterates over element collection", function() {
+          it ("should not change context", function() {
+            var local = new LSD.Widget({attributes: {title: 'LSD'}});
+            local.variables.set('items', ['L', 'S', 'D'])
+            var script = new LSD.Script('items.map { getAttribute("title") }', local)
+          })
+        });
+      })
+    });
+    describe("when function uses .dot() notation", function() {
+      describe("through a widget property", function() {
+        it ("should be able to access value and call a function upon it", function() {
+          var local = new LSD.Script.Scope(scope);
+          var items = [
+            new LSD.Widget({attributes: {title: 'L'}}),
+            new LSD.Widget({attributes: {title: 'S'}}),
+            new LSD.Widget({attributes: {title: 'D'}})
+          ];
+          local.variables.set('items', items)
+          var script = new LSD.Script('items.each { |item| item.attributes.set("food", "borscht")}', local)
+          expect(items.every(function(item) { 
+            return item.attributes.food == 'borscht'
+          })).toBeTruthy()
+        })
       })
     })
   });
