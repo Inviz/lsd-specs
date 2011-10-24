@@ -12,6 +12,14 @@ describe('LSD.Script.Parser', function() {
     '$ buttons': {type: 'selector', value: '$ buttons'},
     'count(#zipper)': {type: 'function', name: 'count', value: [{type: 'selector', value: '#zipper'}]},
     '($ .buttons).dispose()': {type: 'function', name: 'dispose', value: [{type: 'selector', value: '$ .buttons'}]},
+    "time_range.starts_at && time_range.recurrence_rule.type || 'a'":
+      {type: 'function', name: '||', value: [
+        {type: 'function', name: '&&', value: [
+          {type: 'variable', name: 'time_range.starts_at'},
+          {type: 'variable', name: 'time_range.recurrence_rule.type'}
+        ]},
+        'a'
+      ]},
     'filter (& button) {|button| button.match(".gross")}': 
       {type: 'function', name: 'filter', value: [
         {type: 'selector', value: '& button'}, 
@@ -164,7 +172,6 @@ describe('LSD.Script.Parser', function() {
           checkbox.check()                         \n\
       if (checkboxes.every() {|c| c.checked})        \n\
         input.check()                              \n\
-                                                   \n\
     ': [{type: 'function', name: 'each', value: [
       {type: 'selector', value: '& input.parent[type=checkbox]'},
       {type: 'block', value: [
