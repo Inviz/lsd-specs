@@ -57,6 +57,19 @@ describe('LSD.Script.Expression', function() {
       expect(scope.variables._watched['a']).toBeTruthy()
       //expect(scope.variables._watched['b']).toBeFalsy()
     });
+    
+    it ("should lazily evaluate expressions with deep variables", function() {
+      var scope = new LSD.Script.Scope;
+      
+      var script = new LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || 1', scope)
+      expect(script.value).toEqual(1);
+      scope.variables.set('time_range.recurrence_rule.interval', 2);
+      expect(script.value).toEqual(1);
+      scope.variables.set('time_range.starts_at', 3);
+      expect(script.value).toEqual(2);
+      scope.variables.set('time_range.starts_at', 0);
+      expect(script.value).toEqual(1);
+    })
   })
   //it ('should re-evaluate blocks that use array indecies when array contents change', function() {
   //  var scope = new LSD.Script.Scope;

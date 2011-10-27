@@ -64,18 +64,18 @@ describe("LSD.Script.Block", function() {
     expect(count).toEqual(9);
     expect(script.value).toEqual(['MICHAEL Orceo', 'OLEKSANDR Orceo', 'YAROSLAFF OrceoUI']);
     var spliced = ary.splice(1, 1);
-    expect(count).toEqual(10);
+    expect(count).toEqual(12);
     expect(ary.length).toEqual(2)
     expect(script.value).toEqual(['MICHAEL Orceo', 'YAROSLAFF OrceoUI'])
     scope.variables.set('organization', 'Overmind');
-    expect(count).toEqual(11);
+    expect(count).toEqual(13);
     expect(script.value).toEqual(['MICHAEL Overmind', 'YAROSLAFF OrceoUI'])
     ary.splice(0, 0, spliced[0]);
-    expect(count).toEqual(14);
+    expect(count).toEqual(16);
     expect(ary.length).toEqual(3)
     expect(script.value).toEqual(['OLEKSANDR Overmind', 'MICHAEL Overmind', 'YAROSLAFF OrceoUI'])
     ary[2].unset('organization');
-    expect(count).toEqual(15);
+    expect(count).toEqual(17);
     expect(script.value).toEqual(['OLEKSANDR Overmind', 'MICHAEL Overmind', 'YAROSLAFF Overmind'])
   });
   
@@ -124,7 +124,7 @@ describe("LSD.Script.Block", function() {
     var script = new LSD.Script('if (a > 1) { zig = 1 }', scope);
     expect(scope.variables.zig).toBeFalsy()
     scope.variables.set('a', 2)
-    expect(scope.variables.zig).toEqual(1)
+    expect(scope.variables.zig).toEqual(2)
     scope.variables.set('a', 1);
     expect(scope.variables.zig).toBeFalsy()
     scope.variables.set('a', 5)
@@ -133,13 +133,13 @@ describe("LSD.Script.Block", function() {
   
   it ("should execute scenarios", function() {
     var scope = new LSD.Script.Scope;
-    var script = new LSD.Script('\n\
-      each (masters) |input|     \n\
+    var script = new LSD.Script('                  \n\
+      each (masters) |input|                       \n\
         if (input.checked)                         \n\
-          slaves.each() |checkbox|                \n\
-            checkbox.check()                         \n\
-        if (slaves.every() {|c| c.checked})        \n\
-          input.check()                              \n\
+          each(slaves) |checkbox|                  \n\
+            checkbox.check()                       \n\
+        if (every(slaves) {|c| c.checked})         \n\
+          input.check()                            \n\
       ', scope)
     var checks = 0, unchecks = 0;
     scope.methods.set('check', function(object) {
@@ -150,14 +150,24 @@ describe("LSD.Script.Block", function() {
       unchecks++;
       object.unset('checked', true)
     });
-    var masters = new LSD.Array(new LSD.Object.Stack, new LSD.Object.Stack)
-    scope.variables.set('masters', masters)
-    var slaves = new LSD.Array(new LSD.Object.Stack, new LSD.Object.Stack, new LSD.Object.Stack, new LSD.Object.Stack);
+    var masters = new LSD.Array(new LSD.Object.Stack({title: 'A'}), new LSD.Object.Stack({title: 'B'}))
+    scope.variables.merge({'masters': masters});
+    var slaves = new LSD.Array(new LSD.Object.Stack({title: 'a'}), new LSD.Object.Stack({title: 'b'}), new LSD.Object.Stack({title: 'c'}), new LSD.Object.Stack({title: 'd'}));
     scope.variables.set('slaves', slaves)
     expect(checks).toEqual(0);
     scope.methods.check(masters[0]);
     expect(checks).toEqual(6);
+    expect(slaves[0].checked).toBeTruthy();
+    expect(slaves[1].checked).toBeTruthy();
+    expect(slaves[2].checked).toBeTruthy();
+    expect(slaves[3].checked).toBeTruthy();
+    console.error('uncheck', masters[0]._uid = $uid(masters[0]), slaves[1]._uid = $uid(slaves[1]))
     scope.methods.uncheck(masters[0]);
+    console.error('uncheck')
+    expect(slaves[0].checked).toBeFalsy();
+    expect(slaves[1].checked).toBeFalsy();
+    expect(slaves[2].checked).toBeFalsy();
+    expect(slaves[3].checked).toBeFalsy();
     expect(checks).toEqual(6);
     expect(unchecks).toEqual(1);
   })

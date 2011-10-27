@@ -239,6 +239,50 @@ describe('LSD.Array', function() {
     });
   });
   
+  
+  
+  describe('#filter', function() {
+    it ("should create persistent filtered collections", function() {
+      var ary = new LSD.Array({name: 'Jack'}, {name: "George"}, {name: 'Josh'});
+      var filtered = ary.filter(new LSD.Function('item', 'item.name.charAt(0) == "J"'));
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}])
+      ary.push({name: 'McCaliger'})
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}])
+      ary.push({name: 'John'})
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}, {name: 'John'}])
+      ary.splice(1, 1)
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}, {name: 'John'}])
+      ary.splice(1, 1)
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'John'}])
+      expect(ary.length).toEqual(3);
+      ary.push({name: 'Harry'})
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'John'}])
+      expect(ary.length).toEqual(4);
+      ary.push({name: 'Jesus'})
+      expect(ary.length).toEqual(5);
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'John'}, {name: 'Jesus'}])
+      ary.push({name: 'Jackie'})
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
+      var harry = ary.splice(-3, 1)[0]
+      expect(filtered).toEqual([{name: 'Jack'}, {name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
+      ary.splice(0, 1, harry);
+      expect(filtered).toEqual([{name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
+      ary.splice(3, 1, {name: 'Johan'});
+      expect(filtered).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
+      window.$spliced = true
+      ary.splice(3, 1, {name: 'Johan'});
+      expect(filtered).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
+      $ary = ary;
+      ary.splice(3, 1);
+      expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
+      ary.splice(0, 1);
+      expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
+      debugger
+      ary.splice(0, 2, {name: 'Jeff'}, {name: 'Howard'}, {name: 'Jephrey'});
+      expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+    })
+  });
+  
   describe('#map', function() {
     it ("should apply a results of calling callback upon each element of array", function() {
       var array = new LSD.Array({name: 'Jack'}, {name: 'George'}, {id: 'Jack'});
