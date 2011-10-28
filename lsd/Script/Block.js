@@ -161,9 +161,7 @@ describe("LSD.Script.Block", function() {
     expect(slaves[1].checked).toBeTruthy();
     expect(slaves[2].checked).toBeTruthy();
     expect(slaves[3].checked).toBeTruthy();
-    console.error('uncheck', masters[0]._uid = $uid(masters[0]), slaves[1]._uid = $uid(slaves[1]))
     scope.methods.uncheck(masters[0]);
-    console.error('uncheck')
     expect(slaves[0].checked).toBeFalsy();
     expect(slaves[1].checked).toBeFalsy();
     expect(slaves[2].checked).toBeFalsy();

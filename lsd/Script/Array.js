@@ -272,14 +272,45 @@ describe('LSD.Array', function() {
       window.$spliced = true
       ary.splice(3, 1, {name: 'Johan'});
       expect(filtered).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
-      $ary = ary;
       ary.splice(3, 1);
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
       ary.splice(0, 1);
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
-      debugger
       ary.splice(0, 2, {name: 'Jeff'}, {name: 'Howard'}, {name: 'Jephrey'});
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(0,0, {name: 'Griffin'});
+      expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(0,0, {name: 'Gordon'}, {name: 'Greg'});
+      expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(0,4, {name: 'George'});
+      expect(filtered).toEqual([{name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(3,0, {name: 'Jennifer'}, {name: 'Gonzales'}, {name: 'Jannet'});
+      expect(filtered).toEqual([{name: 'Jephrey'}, {name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
+      ary.splice(1,2, {name: 'Julia'});
+      expect(filtered).toEqual([{name: 'Julia'}, {name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
+      ary.splice(1,1);
+      expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
+      ary.splice(-1,1);
+      expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Jannet'}]);
+      ary.splice(-1,1, {name: 'Christian'}, {name: 'Jagger'});
+      expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Jagger'}]);
+      ary.splice(-1,2, {name: 'Justin'});
+      expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Justin'}]);
+      ary.splice(0, 2, {name: 'Hoffman'});
+      expect(filtered).toEqual([{name: 'Justin'}]);
+      ary.splice(1, 2, {name: 'Jenkins'});
+      expect(filtered).toEqual([{name: 'Jenkins'}, {name: 'Justin'}]);
+      var justin = ary.pop();
+      expect(filtered).toEqual([{name: 'Jenkins'}]);
+      ary.pop();
+      expect(filtered).toEqual([]);
+      ary.pop();
+      expect(filtered).toEqual([]);
+      expect(ary.length).toEqual(0);
+      expect(filtered.length).toEqual(0);
+      expect(ary[1]).toBeUndefined();
+      ary.push({name: 'Justin'})
+      expect(filtered).toEqual([{name: 'Justin'}]);
     })
   });
   
