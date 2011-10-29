@@ -540,6 +540,19 @@ describe('LSD.Array', function() {
       expect(sorted.slice(0)).toEqual(['Andy', 'Hanz', 'Herfer', 'Wiggley', 'Zoey', 'Zuzan']);
       array.splice(2, 3, 'Xoop', 'Yu')
       expect(sorted.slice(0)).toEqual(['Andy', 'Hanz', 'Herfer', 'Xoop', 'Yu']);
+    });
+    
+    describe('paired with filter', function() {
+      it ("should sort results of filter function", function() {
+        var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
+        var filtered = array.filter(new LSD.Function('number', 'number % 2 == 0'));
+        var sorted = filtered.sort()
+        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
+        expect(sorted.slice()).toEqual([2, 4, 6, 8, 10])
+        array.splice(2, 5, 11, 18, 16, 3, 6)
+        expect(filtered.slice()).toEqual([4, 2, 18, 16, 6, 10])
+        expect(sorted.slice()).toEqual([2, 4, 6, 10, 16, 18])
+      })
     })
-  })
+  });
 });
