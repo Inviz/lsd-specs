@@ -364,9 +364,9 @@ describe('LSD.Array', function() {
   })
   
   describe('#filter', function() {
-    it ("should create persistent filtered collections", function() {
+    it ("should create persistent filtered javascript", function() {
       var ary = new LSD.Array({name: 'Jack'}, {name: "George"}, {name: 'Josh'});
-      var filtered = ary.filter(new LSD.Function('item', 'item.name.charAt(0) == "J"'));
+      var filtered = ary.filter(new LSD.Function('item', 'item.name.charAt(0) == "J"'), true);
       expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}])
       ary.push({name: 'McCaliger'})
       expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}])
@@ -434,6 +434,77 @@ describe('LSD.Array', function() {
       ary.push({name: 'Jeeves'})
       expect(filtered).toEqual([{name: 'Jeeves'}]);
     })
+    
+    it ("should create persistent filtered LSD arrays", function() {
+      var ary = new LSD.Array({name: 'Jack'}, {name: "George"}, {name: 'Josh'});
+      var filtered = ary.filter(new LSD.Function('item', 'item.name.charAt(0) == "J"'));
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'Josh'}])
+      ary.push({name: 'McCaliger'})
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'Josh'}])
+      ary.push({name: 'John'})
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'Josh'}, {name: 'John'}])
+      ary.splice(1, 1)
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'Josh'}, {name: 'John'}])
+      ary.splice(1, 1)
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'John'}])
+      expect(ary.length).toEqual(3);
+      ary.push({name: 'Harry'})
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'John'}])
+      expect(ary.length).toEqual(4);
+      ary.push({name: 'Jesus'})
+      expect(ary.length).toEqual(5);
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'John'}, {name: 'Jesus'}])
+      ary.push({name: 'Jackie'})
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
+      var harry = ary.splice(-3, 1)[0]
+      expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
+      ary.splice(0, 1, harry);
+      expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
+      ary.splice(3, 1, {name: 'Johan'});
+      expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
+      window.$spliced = true
+      ary.splice(3, 1, {name: 'Johan'});
+      expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
+      ary.splice(3, 1);
+      expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Jackie'}]);
+      ary.splice(0, 1);
+      expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Jackie'}]);
+      ary.splice(0, 2, {name: 'Jeff'}, {name: 'Howard'}, {name: 'Jephrey'});
+      expect(filtered.slice()).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(0, 0, {name: 'Griffin'});
+      expect(filtered.slice()).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(0, 0, {name: 'Gordon'}, {name: 'Greg'});
+      expect(filtered.slice()).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(0, 4, {name: 'George'});
+      expect(filtered.slice()).toEqual([{name: 'Jephrey'}, {name: 'Jackie'}]);
+      ary.splice(3, 0, {name: 'Jennifer'}, {name: 'Gonzales'}, {name: 'Jannet'});
+      expect(filtered.slice()).toEqual([{name: 'Jephrey'}, {name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
+      ary.splice(1, 2, {name: 'Julia'});
+      expect(filtered.slice()).toEqual([{name: 'Julia'}, {name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
+      ary.splice(1, 1);
+      expect(filtered.slice()).toEqual([{name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
+      ary.splice(-1, 1);
+      expect(filtered.slice()).toEqual([{name: 'Jennifer'}, {name: 'Jannet'}]);
+      ary.splice(-1, 1, {name: 'Christian'}, {name: 'Jagger'});
+      expect(filtered.slice()).toEqual([{name: 'Jennifer'}, {name: 'Jagger'}]);
+      ary.splice(-1, 2, {name: 'Justin'});
+      expect(filtered.slice()).toEqual([{name: 'Jennifer'}, {name: 'Justin'}]);
+      ary.splice(0, 2, {name: 'Hoffman'});
+      expect(filtered.slice()).toEqual([{name: 'Justin'}]);
+      ary.splice(1, 2, {name: 'Jenkins'});
+      expect(filtered.slice()).toEqual([{name: 'Jenkins'}, {name: 'Justin'}]);
+      var justin = ary.pop();
+      expect(filtered.slice()).toEqual([{name: 'Jenkins'}]);
+      ary.pop();
+      expect(filtered.slice()).toEqual([]);
+      ary.pop();
+      expect(filtered.slice()).toEqual([]);
+      expect(ary.length).toEqual(0);
+      expect(filtered.length).toEqual(0);
+      expect(ary[1]).toBeUndefined();
+      ary.push({name: 'Jeeves'})
+      expect(filtered.slice()).toEqual([{name: 'Jeeves'}]);
+    })
   });
   
   describe('#map', function() {
@@ -444,4 +515,31 @@ describe('LSD.Array', function() {
       })).toEqual(['Jack', 'George', window.z0z0z0undefined])
     })
   });
+  
+  describe ('#sort', function() {
+    it ("should create persistent sorted collection", function() {
+      var array = new LSD.Array();
+      var sorted = array.sort();
+      array.push('Howard');
+      expect(sorted.slice(0)).toEqual(['Howard'])
+      array.push('Adolf');
+      expect(sorted.slice(0)).toEqual(['Adolf', 'Howard'])
+      array.push('Herfer');
+      expect(sorted.slice(0)).toEqual(['Adolf', 'Herfer', 'Howard']);
+      array.shift();
+      expect(sorted.slice(0)).toEqual(['Adolf', 'Herfer']);
+      array.splice(1, 0, 'Zack')
+      expect(sorted.slice(0)).toEqual(['Adolf', 'Herfer', 'Zack']);
+      array.splice(1, 0, 'Zoey', 'Xena')
+      expect(sorted.slice(0)).toEqual(['Adolf', 'Herfer', 'Xena', 'Zack', 'Zoey']);
+      array.splice(0, 1)
+      expect(sorted.slice(0)).toEqual(['Herfer', 'Xena', 'Zack', 'Zoey']);
+      array.splice(1, 2)
+      expect(sorted.slice(0)).toEqual(['Herfer', 'Zoey']);
+      array.unshift('Hanz', 'Andy', 'Wiggley', 'Zuzan');
+      expect(sorted.slice(0)).toEqual(['Andy', 'Hanz', 'Herfer', 'Wiggley', 'Zoey', 'Zuzan']);
+      array.splice(2, 3, 'Xoop', 'Yu')
+      expect(sorted.slice(0)).toEqual(['Andy', 'Hanz', 'Herfer', 'Xoop', 'Yu']);
+    })
+  })
 });
