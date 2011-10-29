@@ -164,82 +164,204 @@ describe('LSD.Array', function() {
         it ("should copy array from offset ")
       });
     })
-    describe('indexOf', function() {
-      describe('in array of primitives', function() {
+  })
+  describe('indexOf', function() {
+    describe('in array of primitives', function() {
+      describe('when given a primitive', function() {
+        it('should return value index', function() {
+          var array = new LSD.Array(1, 2, 3);
+          expect(array.indexOf(1)).toEqual(0);
+          expect(array.indexOf('1')).toEqual(-1);
+          expect(array.indexOf(3)).toEqual(2);
+          expect(array.indexOf(4)).toEqual(-1);
+        })
+      })
+    });
+    describe('in array of objects', function() {
+      describe('each having id attribute', function() {
         describe('when given a primitive', function() {
-          it('should return value index', function() {
-            var array = new LSD.Array(1, 2, 3);
-            expect(array.indexOf(1)).toEqual(0);
-            expect(array.indexOf('1')).toEqual(-1);
-            expect(array.indexOf(3)).toEqual(2);
-            expect(array.indexOf(4)).toEqual(-1);
+          it ("should find object with that as an id", function() {
+            var array = new LSD.Array({id: 'George', title: 'Scientist'}, {id: 'Jack', title: 'Singer'}, {id: 0, title: 'Player'}, {title: 'Hustler'});
+            expect(array.indexOf(33)).toEqual(-1);
+            expect(array.indexOf(0)).toEqual(2);
+            expect(array.indexOf('George')).toEqual(0);
+            expect(array.indexOf('Jack')).toEqual(1);
+            expect(array.indexOf('Hustler')).toEqual(-1);
           })
         })
-      });
-      describe('in array of objects', function() {
-        describe('each having id attribute', function() {
-          describe('when given a primitive', function() {
-            it ("should find object with that as an id", function() {
-              var array = new LSD.Array({id: 'George', title: 'Scientist'}, {id: 'Jack', title: 'Singer'}, {id: 0, title: 'Player'}, {title: 'Hustler'});
-              expect(array.indexOf(33)).toEqual(-1);
-              expect(array.indexOf(0)).toEqual(2);
-              expect(array.indexOf('George')).toEqual(0);
-              expect(array.indexOf('Jack')).toEqual(1);
-              expect(array.indexOf('Hustler')).toEqual(-1);
+        describe('when given an object', function() {
+          describe('with id attribute', function() {
+            it ("should find that object by id or by identicity", function() {
+              var george = {id: 'George', title: 'Scientist'}, josh = {id: 'Josh', title: 'Singer'};
+              var array = new LSD.Array(george, {id: 'Jack', title: 'Singer'}, {id: 0, title: 'Player'}, {title: 'Hustler'});
+              expect(array.indexOf({id: 33})).toEqual(-1);
+              expect(array.indexOf({id: 0})).toEqual(2);
             })
           })
-          describe('when given an object', function() {
-            describe('with id attribute', function() {
-              it ("should find that object by id or by identicity", function() {
-                var george = {id: 'George', title: 'Scientist'}, josh = {id: 'Josh', title: 'Singer'};
-                var array = new LSD.Array(george, {id: 'Jack', title: 'Singer'}, {id: 0, title: 'Player'}, {title: 'Hustler'});
-                expect(array.indexOf({id: 33})).toEqual(-1);
-                expect(array.indexOf({id: 0})).toEqual(2);
-              })
-            })
-            describe('without id attribute', function() {
-              it ("should only find object by identicity", function() {
-                var george = {name: 'George', title: 'Scientist'}, jack = {name: 'Jack', title: 'Singer'};
-                var array = new LSD.Array(george, {name: 'Jack', title: 'Singer'}, {name: 0, title: 'Player'}, {name: 'Hustler'});
-                expect(array.indexOf(george)).toEqual(0);
-                expect(array.indexOf(jack)).toEqual(-1);
-                expect(array.indexOf({id: 'Jack', title: 'Singer'})).toEqual(-1);
-              })
+          describe('without id attribute', function() {
+            it ("should only find object by identicity", function() {
+              var george = {name: 'George', title: 'Scientist'}, jack = {name: 'Jack', title: 'Singer'};
+              var array = new LSD.Array(george, {name: 'Jack', title: 'Singer'}, {name: 0, title: 'Player'}, {name: 'Hustler'});
+              expect(array.indexOf(george)).toEqual(0);
+              expect(array.indexOf(jack)).toEqual(-1);
+              expect(array.indexOf({id: 'Jack', title: 'Singer'})).toEqual(-1);
             })
           })
         })
-        describe('and none of them have id attribute', function() {
-          describe('when given a primitive', function() {
+      })
+      describe('and none of them have id attribute', function() {
+        describe('when given a primitive', function() {
+          it ("should not find anything", function() {
+            var array = new LSD.Array({name: 'George', title: 'Scientist'}, {name: 'Jack', title: 'Singer'});
+            expect(array.indexOf(33)).toEqual(-1);
+            expect(array.indexOf('George')).toEqual(-1);
+          })
+        })
+        describe('when given an object', function() {
+          describe('with id attribute', function() {
             it ("should not find anything", function() {
-              var array = new LSD.Array({name: 'George', title: 'Scientist'}, {name: 'Jack', title: 'Singer'});
-              expect(array.indexOf(33)).toEqual(-1);
-              expect(array.indexOf('George')).toEqual(-1);
+              var george = {name: 33};
+              var array = new LSD.Array(george, {name: 'Jack'});
+              expect(array.indexOf({id: 33})).toEqual(-1);
+              expect(array.indexOf({id: 'Jack'})).toEqual(-1);
             })
           })
-          describe('when given an object', function() {
-            describe('with id attribute', function() {
-              it ("should not find anything", function() {
-                var george = {name: 33};
-                var array = new LSD.Array(george, {name: 'Jack'});
-                expect(array.indexOf({id: 33})).toEqual(-1);
-                expect(array.indexOf({id: 'Jack'})).toEqual(-1);
-              })
-            })
-            describe('without id attribute', function() {
-              it ("should only find object by identicity", function() {
-                var george = {name: 33};
-                var array = new LSD.Array(george, {name: 'Jack'});
-                expect(array.indexOf({id: 33})).toEqual(-1);
-                expect(array.indexOf({id: 'Jack'})).toEqual(-1);
-              })
+          describe('without id attribute', function() {
+            it ("should only find object by identicity", function() {
+              var george = {name: 33};
+              var array = new LSD.Array(george, {name: 'Jack'});
+              expect(array.indexOf({id: 33})).toEqual(-1);
+              expect(array.indexOf({id: 'Jack'})).toEqual(-1);
             })
           })
         })
-      });
+      })
     });
   });
   
-  
+  describe('splice', function() {
+    describe('when given no arguments', function() {
+      it ("should remove all elements from array and return them in a new array", function() {
+        var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+        expect(array.splice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        expect(array.slice()).toEqual([])
+      })
+    })
+    describe('when given zero index', function() {
+      describe('and offset is not given', function() {
+        it ('should remove all elements from array and return them in a new array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(0)).toEqual(['A', 'B', 'C', 'D', 'E'])
+          expect(array.slice()).toEqual([])
+        })
+      })
+      describe('and offset is zero', function() {
+        it ('should do nothing to array and return empty array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(0, 0)).toEqual([])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        })
+      });
+      describe('and offset is non zero', function() {
+        it ('should remove `offset` number of elements from original array and return them', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(0, 2)).toEqual(['A', 'B'])
+          expect(array.slice()).toEqual(['C', 'D', 'E'])
+        })
+      });
+      describe('and offset is negative', function() {
+        it ('should do nothing to array and return empty array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(0, -1)).toEqual([])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        })
+      });
+      describe('and offset is too large', function() {
+        it ('should ignore the large offset and just return removed elements', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(0, 10)).toEqual(['A', 'B', 'C', 'D', 'E'])
+          expect(array.slice()).toEqual([])
+        })
+      })
+    });
+    describe('when given non zero index', function() {
+      describe('and offset is not given', function() {
+        it ('should remove all elements starting from index and return them', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(1)).toEqual(['B', 'C', 'D', 'E'])
+          expect(array.slice()).toEqual(['A'])
+        })
+      })
+      describe('and offset is zero', function() {
+        it ('should do nothing to array and return empty array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(1, 0)).toEqual([])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        })
+      });
+      describe('and offset is non zero', function() {
+        it ('should return `offset` number of elements from array starting from `index` and return them', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(1, 2)).toEqual(['B', 'C'])
+          expect(array.slice()).toEqual(['A', 'D', 'E'])
+        })
+      });
+      describe('and offset is negative', function() {
+        it ('should do nothing to array and return empty array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(1, -1)).toEqual([])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        })
+      });
+      describe('and offset is too large', function() {
+        it ('should ignore the large offset and just return removed elements', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(1, 10)).toEqual(['B', 'C', 'D', 'E'])
+          expect(array.slice()).toEqual(['A'])
+        })
+      });
+    })
+    describe('when given negative index', function() {
+      describe('and offset is not given', function() {
+        it ('should remove all elements starting from `index`th element from the end and return them', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(-2)).toEqual(['D', 'E'])
+          expect(array.slice()).toEqual(['A', 'B', 'C'])
+        })
+      })
+      describe('and offset is zero', function() {
+        it ('should do nothing to array and return empty array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(-2, 0)).toEqual([])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        })
+      });
+      describe('and offset is non zero', function() {
+        it ('should return `offset` number of elements from array starting from `index` and return them', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(-2, 1)).toEqual(['D'])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'E'])
+        })
+      });
+      describe('and offset is negative', function() {
+        it ('should do nothing to array and return empty array', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(-1, -1)).toEqual([])
+          expect(array.slice()).toEqual(['A', 'B', 'C', 'D', 'E'])
+        })
+      });
+      describe('and offset is too large', function() {
+        it ('should ignore the large offset and just return removed elements', function() {
+          var array = new LSD.Array('A', 'B', 'C', 'D', 'E');
+          expect(array.splice(-2, 5)).toEqual(['D', 'E'])
+          expect(array.slice()).toEqual(['A', 'B', 'C'])
+        })
+      });
+    });
+    describe('when given index larger than length of array', function() {
+      
+    })
+  })
   
   describe('#filter', function() {
     it ("should create persistent filtered collections", function() {
@@ -278,23 +400,23 @@ describe('LSD.Array', function() {
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
       ary.splice(0, 2, {name: 'Jeff'}, {name: 'Howard'}, {name: 'Jephrey'});
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
-      ary.splice(0,0, {name: 'Griffin'});
+      ary.splice(0, 0, {name: 'Griffin'});
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
-      ary.splice(0,0, {name: 'Gordon'}, {name: 'Greg'});
+      ary.splice(0, 0, {name: 'Gordon'}, {name: 'Greg'});
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
-      ary.splice(0,4, {name: 'George'});
+      ary.splice(0, 4, {name: 'George'});
       expect(filtered).toEqual([{name: 'Jephrey'}, {name: 'Jackie'}]);
-      ary.splice(3,0, {name: 'Jennifer'}, {name: 'Gonzales'}, {name: 'Jannet'});
+      ary.splice(3, 0, {name: 'Jennifer'}, {name: 'Gonzales'}, {name: 'Jannet'});
       expect(filtered).toEqual([{name: 'Jephrey'}, {name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
-      ary.splice(1,2, {name: 'Julia'});
+      ary.splice(1, 2, {name: 'Julia'});
       expect(filtered).toEqual([{name: 'Julia'}, {name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
-      ary.splice(1,1);
+      ary.splice(1, 1);
       expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Jannet'}, {name: 'Jackie'}]);
-      ary.splice(-1,1);
+      ary.splice(-1, 1);
       expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Jannet'}]);
-      ary.splice(-1,1, {name: 'Christian'}, {name: 'Jagger'});
+      ary.splice(-1, 1, {name: 'Christian'}, {name: 'Jagger'});
       expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Jagger'}]);
-      ary.splice(-1,2, {name: 'Justin'});
+      ary.splice(-1, 2, {name: 'Justin'});
       expect(filtered).toEqual([{name: 'Jennifer'}, {name: 'Justin'}]);
       ary.splice(0, 2, {name: 'Hoffman'});
       expect(filtered).toEqual([{name: 'Justin'}]);
@@ -309,8 +431,8 @@ describe('LSD.Array', function() {
       expect(ary.length).toEqual(0);
       expect(filtered.length).toEqual(0);
       expect(ary[1]).toBeUndefined();
-      ary.push({name: 'Justin'})
-      expect(filtered).toEqual([{name: 'Justin'}]);
+      ary.push({name: 'Jeeves'})
+      expect(filtered).toEqual([{name: 'Jeeves'}]);
     })
   });
   
