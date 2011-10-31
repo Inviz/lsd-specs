@@ -398,9 +398,7 @@ describe('LSD.Array', function() {
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
       ary.splice(0, 1);
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
-      console.error(12387128378127, ary.slice())
       ary.splice(0, 2, {name: 'Jeff'}, {name: 'Howard'}, {name: 'Jephrey'});
-      console.error(12387128378127)
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
       ary.splice(0, 0, {name: 'Griffin'});
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
@@ -533,10 +531,6 @@ describe('LSD.Array', function() {
         expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
         scope.variables.set('result', 1);
         expect(filtered.slice()).toEqual([5, 1, 7, 3, 9])
-        scope.variables.set('result', 0);
-        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
-        scope.variables.set('result', 1);
-        console.error(123123)
         scope.variables.set('divisor', 3);
         expect(filtered.slice()).toEqual([4, 1, 7, 10])
       })
