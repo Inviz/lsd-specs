@@ -70,6 +70,7 @@ describe("LSD.Script.Block", function() {
     scope.variables.set('organization', 'Overmind');
     expect(count).toEqual(13);
     expect(script.value).toEqual(['MICHAEL Overmind', 'YAROSLAFF OrceoUI'])
+    window.$spliced = true;
     ary.splice(0, 0, spliced[0]);
     expect(count).toEqual(16);
     expect(ary.length).toEqual(3)
@@ -124,7 +125,7 @@ describe("LSD.Script.Block", function() {
     var script = new LSD.Script('if (a > 1) { zig = 1 }', scope);
     expect(scope.variables.zig).toBeFalsy()
     scope.variables.set('a', 2)
-    expect(scope.variables.zig).toEqual(2)
+    expect(scope.variables.zig).toEqual(1)
     scope.variables.set('a', 1);
     expect(scope.variables.zig).toBeFalsy()
     scope.variables.set('a', 5)
@@ -151,9 +152,8 @@ describe("LSD.Script.Block", function() {
       object.unset('checked', true)
     });
     var masters = new LSD.Array(new LSD.Object.Stack({title: 'A'}), new LSD.Object.Stack({title: 'B'}))
-    scope.variables.merge({'masters': masters});
     var slaves = new LSD.Array(new LSD.Object.Stack({title: 'a'}), new LSD.Object.Stack({title: 'b'}), new LSD.Object.Stack({title: 'c'}), new LSD.Object.Stack({title: 'd'}));
-    scope.variables.set('slaves', slaves)
+    scope.variables.merge({'masters': masters, slaves: slaves});
     expect(checks).toEqual(0);
     scope.methods.check(masters[0]);
     expect(checks).toEqual(6);

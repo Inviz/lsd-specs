@@ -364,7 +364,7 @@ describe('LSD.Array', function() {
   })
   
   describe('#filter', function() {
-    it ("should create persistent filtered javascript", function() {
+    it ("should create persistent filtered javascript array", function() {
       var ary = new LSD.Array({name: 'Jack'}, {name: "George"}, {name: 'Josh'});
       var filtered = ary.filter(new LSD.Function('item', 'item.name.charAt(0) == "J"'), true);
       expect(filtered).toEqual([{name: 'Jack'}, {name: 'Josh'}])
@@ -398,7 +398,9 @@ describe('LSD.Array', function() {
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
       ary.splice(0, 1);
       expect(filtered).toEqual([{name: 'John'}, {name: 'Jackie'}]);
+      console.error(12387128378127, ary.slice())
       ary.splice(0, 2, {name: 'Jeff'}, {name: 'Howard'}, {name: 'Jephrey'});
+      console.error(12387128378127)
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
       ary.splice(0, 0, {name: 'Griffin'});
       expect(filtered).toEqual([{name: 'Jeff'}, {name: 'Jephrey'}, {name: 'Jackie'}]);
@@ -437,7 +439,7 @@ describe('LSD.Array', function() {
     
     it ("should create persistent filtered LSD arrays", function() {
       var ary = new LSD.Array({name: 'Jack'}, {name: "George"}, {name: 'Josh'});
-      var filtered = ary.filter(new LSD.Function('item', 'item.name.charAt(0) == "J"'));
+      var filtered = ary.filter(new Function('item', 'return item.name.charAt(0) == "J"'));
       expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'Josh'}])
       ary.push({name: 'McCaliger'})
       expect(filtered.slice()).toEqual([{name: 'Jack'}, {name: 'Josh'}])
@@ -505,6 +507,40 @@ describe('LSD.Array', function() {
       ary.push({name: 'Jeeves'})
       expect(filtered.slice()).toEqual([{name: 'Jeeves'}]);
     })
+    
+    describe('paired with sort', function() {
+      it ("should sort filtered results", function() {
+        var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
+        var filtered = array.filter(new LSD.Function('number', 'number % 2 == 0'));
+        var sorted = filtered.sort()
+        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
+        expect(sorted.slice()).toEqual([2, 4, 6, 8, 10])
+        array.splice(2, 5, 11, 18, 16, 3, 6)
+        expect(filtered.slice()).toEqual([4, 2, 18, 16, 6, 10])
+        expect(sorted.slice()).toEqual([2, 4, 6, 10, 16, 18])
+        array.push(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+        expect(sorted.slice()).toEqual([2, 2, 4, 4, 6, 6, 8, 10, 10, 16, 18])
+      })
+    });
+    
+    describe('when non-local variables are used in the block', function() {
+      it ("should re-filter values as filter criteria change", function() {
+        var scope = new LSD.Script.Scope;
+        scope.variables.set('divisor', 2);
+        scope.variables.set('result', 0);
+        var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
+        var filtered = array.filter(new LSD.Function('number', 'number % divisor == result', scope));
+        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
+        scope.variables.set('result', 1);
+        expect(filtered.slice()).toEqual([5, 1, 7, 3, 9])
+        scope.variables.set('result', 0);
+        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
+        scope.variables.set('result', 1);
+        console.error(123123)
+        scope.variables.set('divisor', 3);
+        expect(filtered.slice()).toEqual([4, 1, 7, 10])
+      })
+    });
   });
   
   describe('#map', function() {
@@ -541,18 +577,5 @@ describe('LSD.Array', function() {
       array.splice(2, 3, 'Xoop', 'Yu')
       expect(sorted.slice(0)).toEqual(['Andy', 'Hanz', 'Herfer', 'Xoop', 'Yu']);
     });
-    
-    describe('paired with filter', function() {
-      it ("should sort results of filter function", function() {
-        var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
-        var filtered = array.filter(new LSD.Function('number', 'number % 2 == 0'));
-        var sorted = filtered.sort()
-        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
-        expect(sorted.slice()).toEqual([2, 4, 6, 8, 10])
-        array.splice(2, 5, 11, 18, 16, 3, 6)
-        expect(filtered.slice()).toEqual([4, 2, 18, 16, 6, 10])
-        expect(sorted.slice()).toEqual([2, 4, 6, 10, 16, 18])
-      })
-    })
   });
 });

@@ -1,5 +1,13 @@
 describe('LSD.Script.Parser', function() {
   var Examples = { 
+    'a': {type: 'variable', name: 'a'},
+    '1': 1,
+    '0': 0,
+    '-1': -1,
+    '"a"': 'a',
+    '""': '',
+    "'a'": 'a',
+    "''": '',
     '1 + 1': {type: 'function', name: '+', value: [1, 1]},
     'a = 1': {type: 'function', name: '=', value: [{type: 'variable', name: 'a'}, 1]},
     'a = ($$ buttons)': {type: 'function', name: '=', value: [{type: 'variable', name: 'a'}, {type: 'selector', value: '$$ buttons'}]},
