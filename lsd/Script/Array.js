@@ -533,8 +533,79 @@ describe('LSD.Array', function() {
         expect(filtered.slice()).toEqual([5, 1, 7, 3, 9])
         scope.variables.set('divisor', 3);
         expect(filtered.slice()).toEqual([4, 1, 7, 10])
-      })
+        scope.variables.set('divisor', 2);
+        expect(filtered.slice()).toEqual([5, 1, 7, 3, 9])
+        scope.variables.set('result', 0);
+        expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
+        scope.variables.set('divisor', 3);
+        expect(filtered.slice()).toEqual([6, 3, 9])
+        scope.variables.set('result', 2);
+        expect(filtered.slice()).toEqual([2, 8, 5])
+        scope.variables.set('result', 1);
+        expect(filtered.slice()).toEqual([4, 1, 7, 10])
+        scope.variables.set('divisor', 4);
+        expect(filtered.slice()).toEqual([5, 1, 9])
+        scope.variables.set('divisor', 5);
+        expect(filtered.slice()).toEqual([1, 6])
+        scope.variables.set('result', 2);
+        expect(filtered.slice()).toEqual([2, 7])
+        scope.variables.set('result', 3);
+        expect(filtered.slice()).toEqual([8, 3])
+        scope.variables.set('result', 4);
+        expect(filtered.slice()).toEqual([4, 9])
+        scope.variables.set('result', 5);
+        expect(filtered.slice()).toEqual([])
+        scope.variables.set('result', 0);
+        expect(filtered.slice()).toEqual([5, 10])
+        scope.variables.set('divisor', 3);
+        expect(filtered.slice()).toEqual([6, 3, 9])
+        array.unshift(4);
+        expect(filtered.slice()).toEqual([6, 3, 9]);
+        array.push(9);
+        expect(filtered.slice()).toEqual([6, 3, 9, 9]);
+        array.splice(1, 1, 12, 15, 11)
+        expect(filtered.slice()).toEqual([12, 15, 6, 3, 9, 9]);
+        array.unshift(3);
+        expect(filtered.slice()).toEqual([3, 12, 15, 6, 3, 9, 9])
+        array.unshift(3);
+        expect(filtered.slice()).toEqual([3, 3, 12, 15, 6, 3, 9, 9])
+        array.splice(-1, 1, 99);
+        expect(filtered.slice()).toEqual([3, 3, 12, 15, 6, 3, 9, 99])
+        array.unshift(1, 2, -3);
+        expect(filtered.slice()).toEqual([-3, 3, 3, 12, 15, 6, 3, 9, 99])
+      });
     });
+
+    describe('when given a block using index', function() {
+      it ("should filter array based on index of the values", function() {
+        var scope = new LSD.Script.Scope;
+        scope.variables.set('divisor', 2)
+        scope.variables.set('result', 0)
+        var array = new LSD.Array('George', 'Harry', 'Bill', 'Jeff', 'Claus');
+        var filtered = array.filter(new LSD.Function('name', 'index', 'index % divisor == result', scope))
+        expect(filtered.slice()).toEqual(['George', 'Bill', 'Claus']);
+        scope.variables.set('result', 1)
+        expect(filtered.slice()).toEqual(['Harry', 'Jeff']);
+        array.push('Michael')
+        expect(filtered.slice()).toEqual(['Harry', 'Jeff', 'Michael']);
+        array.push('Jesus')
+        expect(filtered.slice()).toEqual(['Harry', 'Jeff', 'Michael']);
+        array.shift();
+        expect(filtered.slice()).toEqual(['Bill', 'Claus', 'Jesus']);
+        array.splice(1, 1, 'Gomes')
+        expect(filtered.slice()).toEqual(['Gomes', 'Claus', 'Jesus']);
+        array.splice(2, 1)
+        expect(filtered.slice()).toEqual(['Gomes', 'Michael']);
+        array.push('Jahmal')
+        expect(filtered.slice()).toEqual(['Gomes', 'Michael', 'Jahmal']);
+        array.push('Jehrar')
+        expect(filtered.slice()).toEqual(['Gomes', 'Michael', 'Jahmal']);
+        scope.variables.set('result', 0)
+        expect(filtered.slice()).toEqual(['Harry', 'Claus', 'Jesus', 'Jehrar']);
+        scope.variables.set('divisor', 3)
+        expect(filtered.slice()).toEqual(['Harry', 'Michael', 'Jehrar']);
+      });
+    })
   });
   
   describe('#map', function() {
@@ -551,7 +622,7 @@ describe('LSD.Array', function() {
       var array = new LSD.Array();
       var sorted = array.sort();
       array.push('Howard');
-      expect(sorted.slice(0)).toEqual(['Howard'])
+      expect(sorted.slice(0)).toEqual(['Howard']) 
       array.push('Adolf');
       expect(sorted.slice(0)).toEqual(['Adolf', 'Howard'])
       array.push('Herfer');
@@ -572,4 +643,105 @@ describe('LSD.Array', function() {
       expect(sorted.slice(0)).toEqual(['Andy', 'Hanz', 'Herfer', 'Xoop', 'Yu']);
     });
   });
+  
+  describe('#every', function() {
+    it ('should update value asynchronously', function() {
+      var array = new LSD.Array;
+      var scope = new LSD.Script.Scope;
+      scope.variables.set('array', array);
+      var script = new LSD.Script('every (array) { |item| item.selected }', scope);
+      expect(script.value).toEqual(true);
+      var first = new LSD.Object({selected: true})
+      array.push(first);
+      expect(script.value).toEqual(true);
+      first.set('selected', false);
+      expect(script.value).toEqual(false);
+      var second = new LSD.Object({selected: true});
+      array.push(second);
+      expect(script.value).toEqual(false);
+      first.set('selected', true);
+      expect(script.value).toEqual(true);
+      second.set('selected', false);
+      expect(script.value).toEqual(false);
+      var third = new LSD.Object({selected: false});
+      array.push(third);
+      expect(script.value).toEqual(false);
+      second.set('selected', true);
+      expect(script.value).toEqual(false);
+      third.set('selected', true);
+      expect(script.value).toEqual(true);
+      array.splice(0, 1, {selected: false})
+      expect(script.value).toEqual(false);
+      array.shift()
+      expect(script.value).toEqual(true);
+      array.shift()
+      expect(script.value).toEqual(true);
+      array[0].set('selected', false)
+      expect(script.value).toEqual(false);
+    })
+  });
+  
+  describe('#some', function() {
+    it ("should calculate value asynchronously", function() {
+      var array = new LSD.Array;
+      var scope = new LSD.Script.Scope;
+      scope.variables.set('array', array);
+      var script = new LSD.Script('array.some() { |item| item.shquared }', scope);
+      expect(script.value).toEqual(false);
+      var first = new LSD.Object({shquared: false});
+      array.push(first);
+      expect(script.value).toEqual(false);
+      first.set('shquared', true);
+      expect(script.value).toEqual(true);
+      var second = new LSD.Object({shquared: true});
+      array.push(second);
+      expect(script.value).toEqual(true);
+      first.set('shquared', false);
+      expect(script.value).toEqual(true);
+      second.set('shquared', false);
+      expect(script.value).toEqual(false);
+      var third = new LSD.Object({shquared: true});
+      array.push(third);
+      expect(script.value).toEqual(true);
+      array.pop();
+      expect(script.value).toEqual(false);
+      second.set('shquared', true);
+      expect(script.value).toEqual(true);
+      array.shift();
+      expect(script.value).toEqual(true);
+      array.shift()
+      expect(script.value).toEqual(false);
+    })
+  });
+  
+  describe('#map', function() {
+    it ("should invoke an iterator on each value and return an array with results", function() {
+      var array = new LSD.Array;
+      var scope = new LSD.Script.Scope;
+      scope.variables.set('array', array);
+      var script = new LSD.Script('array.map() { |item| organization || item.organization || fallback }', scope);
+      $script = script
+      var first = new LSD.Object({organization: 'ICP'});
+      var second = new LSD.Object;
+      array.push(first, second);
+      scope.variables.set('fallback', 'BurgerKing')
+      expect(script.value).toEqual(['ICP', 'BurgerKing'])
+      second.set('organization', 'ICPP')
+      expect(script.value).toEqual(['ICP', 'ICPP'])
+      array.splice(1, 0, new LSD.Object({organization: 'Jungo'}), {}, new LSD.Object({organization: 'Chimp'}))
+      expect(script.value).toEqual(['ICP', 'Jungo', 'BurgerKing', 'Chimp', 'ICPP'])
+      array.shift()
+      expect(script.value).toEqual(['Jungo', 'BurgerKing', 'Chimp', 'ICPP'])
+      scope.variables.set('fallback', 'McDonalds')
+      expect(script.value).toEqual(['Jungo', 'McDonalds', 'Chimp', 'ICPP'])
+      console.info(123)
+      scope.variables.set('organization', 'KGB')
+      console.info(123)
+      expect(script.value).toEqual(['KGB', 'KGB', 'KGB', 'KGB'])
+      array.splice(2, 1);
+      expect(script.value).toEqual(['KGB', 'KGB', 'KGB'])
+      scope.variables.unset('organization', 'KGB')
+      expect(script.value).toEqual(['Jungo', 'McDonalds', 'ICPP'])
+    })
+  })
 });

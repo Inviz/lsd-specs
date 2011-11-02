@@ -7,7 +7,7 @@ describe('LSD.Script.Expression', function() {
         result = value;
       }
       var script = LSD.Script('a, b', scope, callback);
-      expect(result).toBeUndefined();
+      expect(result).toBeNull();
       expect(scope.variables._watched['a']).toBeTruthy()
       expect(scope.variables._watched['b']).toBeFalsy()
       scope.variables.set('a', 1);
@@ -75,31 +75,12 @@ describe('LSD.Script.Expression', function() {
       var scope = new LSD.Script.Scope;
       var script = new LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || ""', scope)
       expect(script.value).toEqual("");
-      //scope.variables.set('time_range.recurrence_rule.interval', 2);
-      //expect(script.value).toEqual("");
-      //scope.variables.set('time_range.starts_at', 3);
-      //expect(script.value).toEqual(2);
-      //scope.variables.set('time_range.starts_at', 0);
-      //expect(script.value).toEqual("");
+      scope.variables.set('time_range.recurrence_rule.interval', 2);
+      expect(script.value).toEqual("");
+      scope.variables.set('time_range.starts_at', 3);
+      expect(script.value).toEqual(2);
+      scope.variables.set('time_range.starts_at', 0);
+      expect(script.value).toEqual("");
     })
   })
-  //it ('should re-evaluate blocks that use array indecies when array contents change', function() {
-  //  var scope = new LSD.Script.Scope;
-  //  var script = new LSD.Script('filter (letters) { |letter, index| index % 2 == 0 }', scope);
-  //  scope.methods.set('map', function(array, fn, bind) {
-  //    if (fn.results == null) {
-  //      var results = fn.results = [];
-  //      array.iterate(fn, function(result, value, index, state, old) {
-  //        if (state) {
-  //          results[index] = result;
-  //        } else {
-  //          results.splice(index, 1);
-  //        }
-  //      })
-  //    }
-  //		return fn.results;
-  //  });
-  //  var ary = new LSD.Array(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H']);
-  //  scope.
-  //})
 })
