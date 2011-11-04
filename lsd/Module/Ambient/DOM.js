@@ -321,42 +321,264 @@ describe("LSD.Module.Ambient.DOM", function() {
 
     });
 
-    it ("inject horizontal", function() {
-      var root = new LSD.Widget({tag: 'root'});
+    describe("inject", function() {
+      describe("when given widgets", function() {
+        it ("should inject elements next to the target", function() {
+          var root = new LSD.Widget({tag: 'root'});
 
-      var pane1 = new LSD.Widget({tag: 'pane1'});
-      var pane2 = new LSD.Widget({tag: 'pane2'});
-      var pane3 = new LSD.Widget({tag: 'pane3'});
+          var pane1 = new LSD.Widget({tag: 'pane1'});
+          var pane2 = new LSD.Widget({tag: 'pane2'});
+          var pane3 = new LSD.Widget({tag: 'pane3'});
 
-      root.appendChild(pane2);
-      pane1.inject(pane2, "before");
-      pane3.inject(pane2, "after");
-      expect(root.firstChild).toEqual(pane1);
-      expect(root.lastChild).toEqual(pane3);
-      expect(pane1.previousSibling).toBeUndefined();
-      expect(pane1.nextSibling).toEqual(pane2);
-      expect(pane2.previousSibling).toEqual(pane1);
-      expect(pane2.nextSibling).toEqual(pane3);
-      expect(pane3.previousSibling).toEqual(pane2);
-      expect(pane3.nextSibling).toBeUndefined();
+          root.appendChild(pane2);
+          pane1.inject(pane2, "before");
+          pane3.inject(pane2, "after");
+          expect(root.firstChild).toEqual(pane1);
+          expect(root.lastChild).toEqual(pane3);
+          expect(pane1.previousSibling).toBeUndefined();
+          expect(pane1.nextSibling).toEqual(pane2);
+          expect(pane2.previousSibling).toEqual(pane1);
+          expect(pane2.nextSibling).toEqual(pane3);
+          expect(pane3.previousSibling).toEqual(pane2);
+          expect(pane3.nextSibling).toBeUndefined();
 
-    });
+        });
+        
+        it ("should adopt elements in the right spot in target element", function() {
+          var root = new LSD.Widget({tag: 'root'});
 
-    it ("inject vertical", function() {
-      var root = new LSD.Widget({tag: 'root'});
+          var pane1 = new LSD.Widget({tag: 'pane'});
+          var pane2 = new LSD.Widget({tag: 'pane'});
+          var pane3 = new LSD.Widget({tag: 'pane'});
 
-      var pane1 = new LSD.Widget({tag: 'pane'});
-      var pane2 = new LSD.Widget({tag: 'pane'});
-      var pane3 = new LSD.Widget({tag: 'pane'});
+          root.appendChild(pane1);
+          pane2.inject(pane1, "top");
+          pane3.inject(pane2, "bottom");
 
-      root.appendChild(pane1);
-      pane2.inject(pane1, "top");
-      pane3.inject(pane2, "bottom");
+          expect(root.firstChild).toEqual(pane1);
+          expect(pane1.firstChild).toEqual(pane2);
+          expect(pane2.firstChild).toEqual(pane3);
+        });
+      });
+      
+      describe("when given a widget and an element", function() {
+        describe("to insert widget after the element", function() {
+          describe("and element is actually a widget", function() {
+            it ("should insert given widget after found widget", function() {
+              var before = new LSD.Widget({tag: 'before'});
+              var after = new LSD.Widget({tag: 'after'});
+              var parent = new LSD.Widget({tag: 'parent'});
+              var child = new LSD.Widget({tag: 'child'});
+              var target = new LSD.Widget({tag: 'target'});
+              
+              parent.appendChild(before);
+              parent.appendChild(target);
+              parent.appendChild(after);
+              child.inject(target.element, 'after');
+              expect(child.element.previousSibling).toEqual(target.element);
+              expect(child.element.nextSibling).toEqual(after.element);
+              expect(child.nextSibling).toEqual(after);
+              expect(child.previousSibling).toEqual(target);
+            })
+          });
+          describe("and there is a widget after an element", function() {
+            describe("and the widget being inserted is NOT between that those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
 
-      expect(root.firstChild).toEqual(pane1);
-      expect(pane1.firstChild).toEqual(pane2);
-      expect(pane2.firstChild).toEqual(pane3);
-    });
+                parent.appendChild(before);
+                parent.appendChild(target);
+                parent.appendChild(after);
+                child.inject(target, 'after');
+                expect(child.element.previousSibling).toEqual(target);
+                expect(child.element.nextSibling).toEqual(after.element);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+            describe("and the widget being inserted is between those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+                var cruft = new Element('cruft');
+
+                parent.appendChild(before);
+                parent.appendChild(target);
+                parent.appendChild(cruft);
+                parent.appendChild(child);
+                parent.appendChild(after);
+                child.inject(target, 'after');
+                expect(child.element.nextSibling).toEqual(cruft);
+                expect(child.element.previousSibling).toEqual(target);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+          });
+          describe("and there is a widget nested into element after the element", function() {
+            describe("and the widget being inserted is NOT between that those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+                var cruft = new Element('cruft');
+
+                parent.appendChild(before);
+                parent.appendChild(target);
+                parent.appendChild(cruft);
+                parent.appendChild(after, cruft);
+                child.inject(target, 'after');
+                expect(child.element.nextSibling).toEqual(cruft);
+                expect(child.element.previousSibling).toEqual(target);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+            describe("and the widget being inserted is between those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+                var cruft = new Element('cruft');
+                var thing = new Element('thing');
+
+                parent.appendChild(before);
+                parent.appendChild(target);
+                parent.appendChild(thing);
+                parent.appendChild(child);
+                parent.appendChild(cruft);
+                parent.appendChild(after, cruft);
+                child.inject(target, 'after');
+                expect(child.element.nextSibling).toEqual(thing);
+                expect(child.element.previousSibling).toEqual(target);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+          });
+        })
+        describe("to insert widget before the element", function() {
+          describe("and element is actually a widget", function() {
+            it ("should insert given widget after found widget", function() {
+              var before = new LSD.Widget({tag: 'before'});
+              var after = new LSD.Widget({tag: 'after'});
+              var parent = new LSD.Widget({tag: 'parent'});
+              var child = new LSD.Widget({tag: 'child'});
+              var target = new LSD.Widget({tag: 'target'});
+              
+              parent.appendChild(before);
+              parent.appendChild(target);
+              parent.appendChild(after);
+              child.inject(target.element, 'before');
+              expect(child.element.previousSibling).toEqual(before.element);
+              expect(child.element.nextSibling).toEqual(target.element);
+              expect(child.nextSibling).toEqual(target);
+              expect(child.previousSibling).toEqual(before);
+            })
+          });
+          describe("and there is a widget after an element", function() {
+            describe("and the widget being inserted is NOT between that those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+
+                parent.appendChild(before);
+                parent.appendChild(target);
+                parent.appendChild(after);
+                child.inject(target, 'before');
+                expect(child.element.previousSibling).toEqual(before.element);
+                expect(child.element.nextSibling).toEqual(target);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+            describe("and the widget being inserted is between those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+                var cruft = new Element('cruft');
+
+                parent.appendChild(before);
+                parent.appendChild(child);
+                parent.appendChild(cruft);
+                parent.appendChild(target);
+                parent.appendChild(after);
+                child.inject(target, 'before');
+                expect(child.element.nextSibling).toEqual(target);
+                expect(child.element.previousSibling).toEqual(cruft);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+          });
+          describe("and there is a widget nested into element after the element", function() {
+            describe("and the widget being inserted is NOT between that those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+                var cruft = new Element('cruft');
+                
+                parent.appendChild(cruft);
+                parent.appendChild(before, cruft);
+                parent.appendChild(target);
+                parent.appendChild(after);
+                child.inject(target, 'before');
+                expect(child.element.nextSibling).toEqual(target);
+                expect(child.element.previousSibling).toEqual(cruft);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+            describe("and the widget being inserted is between those two", function() {
+              it ("should insert original widget after the given element and set widget its siblings propertly", function() {
+                var before = new LSD.Widget({tag: 'before'});
+                var after = new LSD.Widget({tag: 'after'});
+                var parent = new LSD.Widget({tag: 'parent'});
+                var child = new LSD.Widget({tag: 'child'});
+                var target = new Element('target');
+                var cruft = new Element('cruft');
+                var thing = new Element('thing');
+
+                parent.appendChild(cruft);
+                parent.appendChild(before, cruft);
+                parent.appendChild(child);
+                parent.appendChild(thing);
+                parent.appendChild(target);
+                parent.appendChild(after);
+                child.inject(target, 'before');
+                expect(child.element.nextSibling).toEqual(target);
+                expect(child.element.previousSibling).toEqual(thing);
+                expect(child.nextSibling).toEqual(after);
+                expect(child.previousSibling).toEqual(before);
+              })
+            })
+          });
+        })
+      });
+    })
+
+    
+    
     
     describe("appendChild", function() {
       describe("without proxies", function() {
