@@ -11,7 +11,7 @@ describe("LSD.Script.Block", function() {
   		}
   		return results;
     });
-    var script = new LSD.Script('filter (items) { |item| item.active == active }', scope);
+    var script = $script =new LSD.Script('filter (items) { |item| item.active == active }', scope);
     var count = 0;
     scope.variables.set('active', true);
     expect(count).toEqual(0)
@@ -142,31 +142,91 @@ describe("LSD.Script.Block", function() {
         if (every(slaves) {|c| c.checked})         \n\
           input.check()                            \n\
       ', scope)
+    $script = script
     var checks = 0, unchecks = 0;
-    scope.methods.set('check', function(object) {
+    scope.methods.set('check', function(object) { 
       checks++;
-      object.set('checked', true)
+      return object.set('checked', true)
     });
-    scope.methods.set('uncheck', function(object) {
+    scope.methods.set('uncheck', function(object, force) {
       unchecks++;
-      object.unset('checked', true)
+      return object.set('checked', false)
     });
     var masters = new LSD.Array(new LSD.Object.Stack({title: 'A'}), new LSD.Object.Stack({title: 'B'}))
     var slaves = new LSD.Array(new LSD.Object.Stack({title: 'a'}), new LSD.Object.Stack({title: 'b'}), new LSD.Object.Stack({title: 'c'}), new LSD.Object.Stack({title: 'd'}));
     scope.variables.merge({'masters': masters, slaves: slaves});
     expect(checks).toEqual(0);
+    expect(unchecks).toEqual(0);
     scope.methods.check(masters[0]);
-    expect(checks).toEqual(6);
+    expect(checks).toEqual(7);
+    expect(unchecks).toEqual(0);
+    expect(masters[0].checked).toBeTruthy();
+    expect(masters[1].checked).toBeTruthy();
     expect(slaves[0].checked).toBeTruthy();
     expect(slaves[1].checked).toBeTruthy();
     expect(slaves[2].checked).toBeTruthy();
     expect(slaves[3].checked).toBeTruthy();
-    scope.methods.uncheck(masters[0]);
+    
+    scope.methods.uncheck(masters[0], true);
+    expect(masters[0].checked).toBeFalsy();
+    expect(masters[1].checked).toBeFalsy();
     expect(slaves[0].checked).toBeFalsy();
     expect(slaves[1].checked).toBeFalsy();
     expect(slaves[2].checked).toBeFalsy();
     expect(slaves[3].checked).toBeFalsy();
-    expect(checks).toEqual(6);
-    expect(unchecks).toEqual(1);
-  })
+    expect(unchecks).toEqual(7);
+    expect(checks).toEqual(7);
+    
+    scope.methods.check(masters[1]);
+    expect(masters[0].checked).toBeTruthy();
+    expect(masters[1].checked).toBeTruthy();
+    expect(slaves[0].checked).toBeTruthy();
+    expect(slaves[1].checked).toBeTruthy();
+    expect(slaves[2].checked).toBeTruthy();
+    expect(slaves[3].checked).toBeTruthy();
+    expect(checks).toEqual(14);
+    expect(unchecks).toEqual(7);
+    
+    
+    scope.methods.uncheck(slaves[0], true);
+    expect(masters[0].checked).toBeFalsy();
+    expect(masters[1].checked).toBeFalsy();
+    expect(slaves[0].checked).toBeFalsy();
+    expect(slaves[1].checked).toBeFalsy();
+    expect(slaves[2].checked).toBeFalsy();
+    expect(slaves[3].checked).toBeFalsy();
+    expect(checks).toEqual(14);
+    expect(unchecks).toEqual(14);
+    
+    scope.methods.check(slaves[0]);
+    expect(checks).toEqual(15);
+    expect(unchecks).toEqual(14);
+    scope.methods.check(slaves[1]);
+    expect(checks).toEqual(16);
+    expect(unchecks).toEqual(14);
+    scope.methods.check(slaves[2]);
+    expect(checks).toEqual(17);
+    expect(unchecks).toEqual(14);
+    expect(masters[0].checked).toBeFalsy();
+    expect(masters[1].checked).toBeFalsy();
+    scope.methods.check(slaves[3]);
+    expect(checks).toEqual(24);
+    expect(unchecks).toEqual(14);
+    expect(masters[0].checked).toBeTruthy();
+    expect(masters[1].checked).toBeTruthy();
+    expect(slaves[0].checked).toBeTruthy();
+    expect(slaves[1].checked).toBeTruthy();
+    expect(slaves[2].checked).toBeTruthy();
+    expect(slaves[3].checked).toBeTruthy();
+    
+    scope.methods.uncheck(slaves[3], true);
+    expect(masters[0].checked).toBeFalsy();
+    expect(masters[1].checked).toBeFalsy();
+    expect(slaves[0].checked).toBeFalsy();
+    expect(slaves[1].checked).toBeFalsy();
+    expect(slaves[2].checked).toBeFalsy();
+    expect(slaves[3].checked).toBeFalsy();
+    expect(checks).toEqual(24);
+    expect(unchecks).toEqual(21);
+  });
 })
