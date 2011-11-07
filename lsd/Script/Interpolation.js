@@ -344,7 +344,7 @@ describe("LSD.Interpolation", function() {
     var widget = $w = new LSD.Widget(element, {mutations: {'menu': true, 'button': true}, pseudos: {'root': true}, document: doc});
     var interpolation = Element.retrieve(element.childNodes[5], 'interpolation');
     expect(interpolation.name).toEqual('count');
-    expect(interpolation.args[0].parent).toEqual(interpolation);
+    expect(interpolation.args[0].parents[0]).toEqual(interpolation);
     expect(element.childNodes[5].textContent).toEqual('2');
     expect(element.childNodes[7].textContent).toEqual('1');
     expect(element.childNodes[9].textContent).toEqual('4');
