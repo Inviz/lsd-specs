@@ -124,7 +124,7 @@ describe("LSD.Object", function() {
         object.artist.set('boy', 'clooney');
         expect(stack).toEqual(['george', 'clooney']);
         object.artist.unset('boy');
-        expect(stack).toEqual(['george', 'clooney', null]);
+        expect(stack).toEqual(['george', 'clooney', undefined]);
       })
     });
     
@@ -204,11 +204,11 @@ describe("LSD.Object", function() {
             object.watch('cash', callback);
             expect(stack).toEqual([50])
             object.unwatch('cash', callback);
-            expect(stack).toEqual([50, null]);
+            expect(stack).toEqual([50, undefined]);
             object.set('cash', 60);
-            expect(stack).toEqual([50, null]);
+            expect(stack).toEqual([50, undefined]);
             object.unset('cash')
-            expect(stack).toEqual([50, null]);
+            expect(stack).toEqual([50, undefined]);
           });
         })
         describe("when a property was not set before", function() {
@@ -234,9 +234,9 @@ describe("LSD.Object", function() {
             object.set('cash', 666);
             expect(stack).toEqual([666]);
             object.unset('cash', 666);
-            expect(stack).toEqual([666, null]);
+            expect(stack).toEqual([666, undefined]);
             object.unwatch('cash', callback);
-            expect(stack).toEqual([666, null]);
+            expect(stack).toEqual([666, undefined]);
           })
         })
       })
@@ -293,7 +293,7 @@ describe("LSD.Object", function() {
             object.unwatch('artist.boy', callback)
             expect(object._watched.artist.length).toEqual(0);
             expect(artist._watched.boy.length).toEqual(0);
-            expect(stack).toEqual(['george', null]);
+            expect(stack).toEqual(['george', undefined]);
           })
         })
       })

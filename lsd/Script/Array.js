@@ -720,7 +720,6 @@ describe('LSD.Array', function() {
       var scope = new LSD.Script.Scope;
       scope.variables.set('array', array);
       var script = new LSD.Script('array.map() { |item| organization || item.organization || fallback }', scope);
-      $script = script
       var first = new LSD.Object({organization: 'ICP'});
       var second = new LSD.Object;
       array.push(first, second);
@@ -734,14 +733,20 @@ describe('LSD.Array', function() {
       expect(script.value).toEqual(['Jungo', 'BurgerKing', 'Chimp', 'ICPP'])
       scope.variables.set('fallback', 'McDonalds')
       expect(script.value).toEqual(['Jungo', 'McDonalds', 'Chimp', 'ICPP'])
-      console.info(123)
       scope.variables.set('organization', 'KGB')
-      console.info(123)
       expect(script.value).toEqual(['KGB', 'KGB', 'KGB', 'KGB'])
       array.splice(2, 1);
-      expect(script.value).toEqual(['KGB', 'KGB', 'KGB'])
+      expect(script.value).toEqual(['KGB', 'KGB', 'KGB']);
+      array.unshift({})
+      expect(script.value).toEqual(['KGB', 'KGB', 'KGB', 'KGB']);
       scope.variables.unset('organization', 'KGB')
-      expect(script.value).toEqual(['Jungo', 'McDonalds', 'ICPP'])
+      expect(script.value).toEqual(['McDonalds', 'Jungo', 'McDonalds', 'ICPP'])
+      array.splice(2, 1, {organization: 'Ding'}, {organization: 'Dong'})
+      expect(script.value).toEqual(['McDonalds', 'Jungo', 'Ding', 'Dong', 'ICPP'])
+      array.splice(1, 1)
+      expect(script.value).toEqual(['McDonalds', 'Ding', 'Dong', 'ICPP'])
+      array.splice(0, 2)
+      expect(script.value).toEqual(['Dong', 'ICPP'])
     })
   })
 });
