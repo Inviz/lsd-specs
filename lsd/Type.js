@@ -1,6 +1,4 @@
 describe("LSD.Type", function() {
-  new LSD.Type('Test');
-  
   describe("#initialize", function() {
 
   });

@@ -238,13 +238,12 @@ describe("LSD.Module.Attributes", function() {
       expect(instance.states._stack.selected.length).toEqual(0);
     })
     
-    new LSD.Type('Checkboxtest');
-    
     it ("should make attributes type='checkbox' and checked='checked'", function() {
+      var context = LSD.getCleanContext();
       var element = new Element('input', {type: 'checkbox'});
       element.setAttribute('checked', 'checked');
       var instance = new LSD.Widget(element, {
-        context: 'checkboxtest',
+        context: context,
         element: {tag: 'div'}
       });
       expect(instance.tagName).toEqual('input');

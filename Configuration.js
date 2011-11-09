@@ -103,7 +103,10 @@ Configuration.sets = {
 	'layout': {
 	  path: 'lsd/',
 	  files: [
-	    'Layout'
+	    'Layout',
+	    'Layout/Mutations',
+	    'Layout/Templates.HTML',
+	    'Layout/Templates.Object'
 	  ]
 	},
 	

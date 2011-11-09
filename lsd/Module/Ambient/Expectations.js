@@ -1,14 +1,5 @@
 describe("LSD.Module.Ambient.Expectations", function() {
-  var doc = LSD.document || new LSD.Document
-  LSD.Widget.Root = new Class({
-    options: {
-      tag: 'root',
-      pseudos: ['root'],
-      document: LSD.document
-    }
-  });
   describe("#expect", function() {
-
     it ("single pseudo", function() {
       var instance = new LSD.Widget;
       var bool = false;
@@ -174,8 +165,11 @@ describe("LSD.Module.Ambient.Expectations", function() {
   describe("#watch", function() {
     it ("should watch a complex combinator", function() {
       var bool = false;
-      var root = new LSD.Widget({tag: 'root'});
-
+      var root = new LSD.Widget({
+        tag: 'root',
+        pseudos: ['root'],
+        document: LSD.getCleanDocument()
+      });
 
       var form = new LSD.Widget({tag: 'form'});
       root.appendChild(form);
@@ -224,7 +218,11 @@ describe("LSD.Module.Ambient.Expectations", function() {
     
     describe("and && combinator is given", function() {
       it ("should relate to the root widget", function() {
-        var form = new LSD.Widget({tag: 'form', pseudos: ['root']});
+        var form = new LSD.Widget({
+          tag: 'form',
+          pseudos: ['root'],
+          document: LSD.getCleanDocument()
+        });
         var button = new LSD.Widget({tag: 'button'});
         var callback = function(widget, state) {
           working = state;

@@ -87,8 +87,7 @@ describe("LSD.Module.Accessories.Events", function() {
           clicked = true;
         }
       });
-
-      var doc = LSD.document || new LSD.Document;
+      var doc = LSD.getCleanDocument();
       var widget = new LSD.Widget(new Element('documenttest'), {context:'event_test', document: doc});
       doc.fireEvent("click");
       expect(clicked).toBeTruthy();

@@ -386,13 +386,14 @@ describe("LSD.Module.Chain", function() {
   });
 
   it ("should parse target expression and watch LSD selectors, so it may perform action on widgets that were in there ", function() {
-    var doc = LSD.document || new LSD.Document;
+    var context = LSD.getCleanContext()
+    var doc = LSD.getCleanDocument();
     var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
     doc.body = root;
     var slaveEl = new Element('input#slave[type=checkbox][name=section]');
     var masterEl = new Element('input[type=checkbox][name=section]', {target: "&& #slave :check()"});
-    var slave = new LSD.Widget(slaveEl, {pseudos: ['checkbox'], context: 'clean'}).inject(root);
-    var master = new LSD.Widget(masterEl, {pseudos: ['checkbox'], context: 'clean'}).inject(root);
+    var slave = new LSD.Widget(slaveEl, {pseudos: ['checkbox'], context: context}).inject(root);
+    var master = new LSD.Widget(masterEl, {pseudos: ['checkbox'], context: context}).inject(root);
     expect(master.checked).toBeFalsy()
     expect(slave.checked).toBeFalsy()
     expect(master.getCommandType()).toEqual('checkbox');
@@ -411,9 +412,8 @@ describe("LSD.Module.Chain", function() {
   });
   
   it ("should parse target expression and watch LSD selectors, so it may perform action on widgets that were added after action execution took part", function() {
-    var doc = LSD.document || new LSD.Document;
-    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
-    doc.body = root;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: LSD.getCleanDocument()});
+    LSD.getCleanDocument().body = root;
     var master = new LSD.Widget(new Element('input[type=radio][name=section]', {target: "watch && #slave :check()"}), {pseudos: ['checkbox'], context: 'clean'}).inject(root);
     expect(master.getCommandType()).toEqual('checkbox');
     master.click()
@@ -432,9 +432,8 @@ describe("LSD.Module.Chain", function() {
   });
   
   it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on widgets", function() {
-    var doc = LSD.document || new LSD.Document;
-    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
-    doc.body = root;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: LSD.getCleanDocument()});
+    LSD.getCleanDocument().body = root;
     var element = new Element('input[type=radio][name=section]', {target: "do && #slave :check()"});
     var master = new LSD.Widget(element, {pseudos: ['checkbox', 'checked', 'command'], context: 'clean'}).inject(root);
     expect(master.getCommandType()).toEqual('checkbox');
@@ -461,9 +460,8 @@ describe("LSD.Module.Chain", function() {
   });
   
   it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on widgets but it shouldnt do it if original widget is uncheced", function() {
-    var doc = LSD.document || new LSD.Document;
-    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: doc});
-    doc.body = root;
+    var root = $root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: LSD.getCleanDocument()});
+    LSD.getCleanDocument().body = root;
     var element = new Element('input[type=radio][name=section]', {target: "do && #slave :check()"});
     var master = new LSD.Widget(element, {pseudos: ['checkbox', 'command'], context: 'clean'}).inject(root);
     expect(master.getCommandType()).toEqual('checkbox');
@@ -477,8 +475,7 @@ describe("LSD.Module.Chain", function() {
   });
   
   it ("should respect 'do' keyword and apply those actions from the start (no need for interaction) on elements", function() {
-    var doc = LSD.document || new LSD.Document;
-    var root = $root = doc.body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], document: doc, traverse: false});
+    var root = $root = LSD.getCleanDocument().body = new LSD.Widget(document.body, {tag: 'body', pseudos: ['root'], document: LSD.getCleanDocument(), traverse: false});
       var cooking = new Element('section#cooking').inject(root);
       var baking = new Element('section#baking').inject(root);
     var showCooking = new LSD.Widget(new Element('input', {type: 'radio', name: 'section', target: 'do $$ #cooking :show()'}), {pseudos: ['radio'], context: 'clean'}).inject(root)

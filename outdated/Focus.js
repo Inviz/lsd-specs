@@ -5,7 +5,6 @@ describe("Mixin.Focus", function() {
     },
     Includes: [Widget, Mixin.Focus]
   });
-  var doc = LSD.document || new LSD.Document
   var instances = [];
   $w = function(parent) {
     var instance = new Focusable(new Element('div'));
