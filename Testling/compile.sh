@@ -1,1 +1,0 @@
-jsus lsd output -d ../.. --postproc=moocompat12 -v

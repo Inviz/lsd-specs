@@ -1,1 +1,0 @@
-testling output/test.js --noinstrument=test.js
