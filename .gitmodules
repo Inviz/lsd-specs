@@ -1,3 +1,6 @@
 [submodule "Runner"]
 	path = Runner
 	url = https://github.com/mootools/mootools-runner
+[submodule "Testling"]
+	path = Testling
+	url = https://github.com/Inviz/lsd-jasmine-testling
