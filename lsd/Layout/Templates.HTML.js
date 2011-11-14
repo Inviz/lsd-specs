@@ -505,7 +505,6 @@ describe("LSD.Layout", function() {
                 expect(String.trim(String.clean(element.get('text')))).toEqual('');
               widget.variables.set('condition', true);
               expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Evening Dad');
-              console.error(1123)
               widget.variables.set('time', 11);
               expect(String.trim(String.clean(element.get('text')))).toEqual('Very Bad Morning Dad');
               widget.variables.set('good', true);
@@ -1088,16 +1087,16 @@ Object.append(LSD.Test.Template, {
     <section>                                                                            \
       <article itemscope itemprop='person' itemtype='people'>                            \
         <!-- if character == 'thief' -->                                                 \
-          <meta itemprop='name' content='Sneak Stealer' />                               \
-          <meta itemprop='interest' content='fish' />                                    \
+          <b itemprop='name'>Sneak Stealer</b>                                           \
+          <b itemprop='interest'>fish</b>                                                \
         <!-- elsif character == 'mage' -->                                               \
-          <meta itemprop='name' content='Sir Overrule' />                                \
-          <meta itemprop='interest' content='law' />                                     \
+          <b itemprop='name'>Sir Overrule</b>                                            \
+          <b itemprop='interest'>law</b>                                                  \
         <!-- elsif character == 'bard' -->                                               \
-          <meta itemprop='name' content='Sweetvoice' />                                  \
-          <meta itemprop='interest' content='media' />                                   \
+          <b itemprop='name'>Sweetvoice</b>                                              \
+          <b itemprop='interest'>media</b>                                               \
         <!-- elsif character == 'noob' -->                                               \
-          <meta itemprop='name' content='Newbie guy'></meta>                             \
+          <b itemprop='name'>Newbie guy</b>                                              \
         <!-- end -->                                                                     \
         <h2>Occupation</h2>                                                              \
         <!-- if person.occupation -->                                                    \
