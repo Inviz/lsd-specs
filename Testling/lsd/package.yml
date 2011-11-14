@@ -1,0 +1,13 @@
+name: "test"
+filename: "test.js"
+version: "0.1"
+description: "LSD on jasmine on testling"
+license: "[MIT License](http://mootools.net/license.txt)"
+authors: ["[Yaroslaff Fedin](http://inviz.ru)"]
+sources:
+  - "Source/Jasmine.js"
+  - "Source/Matchers.js"
+  - "Source/Specs.js"
+  - "Source/Window.js"
+  - "Source/Run.js"
+  - "Source/Environment.js"
