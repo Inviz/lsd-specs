@@ -336,7 +336,7 @@ describe("LSD.Interpolation", function() {
         </button>\
       </menu>\
       Menus count: ${count(&& menu)}\
-      Toolbars count: ${count(menu[type=toolbar])}\
+      Toolbars count: ${count(&& menu[type=toolbar])}\
       Buttons in menus count: ${count(&& menu button)}\
     ";
     var element = new Element('div', {html: html});

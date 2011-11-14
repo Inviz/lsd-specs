@@ -159,10 +159,9 @@ describe("LSD.Layout", function() {
               });
               var posts = new LSD.Array(post)
               widget.variables.set('posts', posts)
-                expect(element.get('text').clean()).toEqual('Hello world');
+              expect(element.get('text').clean()).toEqual('Hello world');
               alex.set('role', 'administrator')
-              console.log(element)
-                expect(element.get('text').clean()).toEqual('Hello world');
+              expect(element.get('text').clean()).toEqual('Hello world');
             })
           })
         });
