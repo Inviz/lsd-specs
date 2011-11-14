@@ -112,7 +112,7 @@ Configuration.sets = {
 	
 	'type': {
 	  path: 'lsd/',
-	  files: [,
+	  files: [
 	    'Type', 
 	    'Module/Accessories/Tag'
 	  ]
