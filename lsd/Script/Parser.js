@@ -17,6 +17,51 @@ describe('LSD.Script.Parser', function() {
     'item.ding()': {type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]},
     'item.ding().ding()': {type: 'function', name: 'ding', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}]},
     'item.delete(2)': {type: 'function', name: 'delete', value: [{type: 'variable', name: 'item'}, 2]},
+    'a[b]': {type: 'function', name: '[]', value: [{type: 'variable', name: 'a'}, {type: 'variable', name: 'b'}]},
+    'a["b"]': {type: 'function', name: '[]', value: [{type: 'variable', name: 'a'}, 'b']},
+    'a[\'b\']': {type: 'function', name: '[]', value: [{type: 'variable', name: 'a'}, 'b']},
+    'a[\'b\' + \'c\']': {type: 'function', name: '[]', value: [{type: 'variable', name: 'a'}, 'b']},
+    'a[\'b\' + \'c\']': 
+      {type: 'function', name: '[]', value: [
+        {type: 'variable', name: 'a'}, 
+        {type: 'function', name: '+', value: [
+          'b',
+          'c'
+        ]}
+      ]},
+    'a[b + \'c\']': 
+      {type: 'function', name: '[]', value: [
+        {type: 'variable', name: 'a'}, 
+        {type: 'function', name: '+', value: [
+          {type: 'variable', name: 'b'},
+          'c'
+        ]}
+      ]},
+    'a()[b + \'c\']': 
+      {type: 'function', name: '[]', value: [
+        {type: 'function', name: 'a', value: []}, 
+        {type: 'function', name: '+', value: [
+          {type: 'variable', name: 'b'},
+          'c'
+        ]}
+      ]},
+    'a[b[c[d()]]][e[f]]': 
+      {type: 'function', name: '[]', value: [
+        {type: 'function', name: '[]', value: [
+          {type: 'variable', name: 'a'},
+          {type: 'function', name: '[]', value: [
+            {type: 'variable', name: 'b'},
+            {type: 'function', name: '[]', value: [
+              {type: 'variable', name: 'c'},
+              {type: 'function', name: 'd', value: []}
+            ]},
+          ]}
+        ]},
+        {type: 'function', name: '[]', value: [
+          {type: 'variable', name: 'e'},
+          {type: 'variable', name: 'f'}
+        ]}
+      ]},
     '$ buttons': {type: 'selector', value: '$ buttons'},
     'count(#zipper)': {type: 'function', name: 'count', value: [{type: 'selector', value: '#zipper'}]},
     '($ .buttons).dispose()': {type: 'function', name: 'dispose', value: [{type: 'selector', value: '$ .buttons'}]},
