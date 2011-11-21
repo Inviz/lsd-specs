@@ -340,7 +340,7 @@ describe("LSD.Interpolation", function() {
       Buttons in menus count: ${count(&& menu button)}\
     ";
     var element = new Element('div', {html: html});
-    var widget = $w = new LSD.Widget(element, {mutations: {'menu': true, 'button': true}, pseudos: {'root': true}, document: LSD.getCleanDocument()});
+    var widget = $w = Factory('root', {mutations: {'menu': true, 'button': true}}, element);
     var interpolation = Element.retrieve(element.childNodes[5], 'interpolation');
     expect(interpolation.name).toEqual('count');
     expect(interpolation.args[0].parents[0]).toEqual(interpolation);
@@ -364,7 +364,7 @@ describe("LSD.Interpolation", function() {
   it ("should watch selectors from the start", function() {
     var html = "${count(&& item)}";
     var element = new Element('div', {html: html});
-    var widget = $w = new LSD.Widget(element, {pseudos: {'root': true}, document: LSD.getCleanDocument()});
+    var widget = $w = Factory('root', {}, element);
     expect(element.get('text')).toEqual('0');
     var item = new LSD.Widget({tag: 'item'});
     widget.appendChild(item);

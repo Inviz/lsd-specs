@@ -2,8 +2,8 @@ describe('Layout', function() {
   describe('Templates', function() {
     describe('when DOM tree is used as a template', function() {
       describe('and mutations are used to convert elements to widgets', function() {
-        new LSD.Type('Test')
-        LSD.Test.Form = new Class({
+        var Context = Factory('type');
+        Context.Form = new Class({
           options: {
             tag: 'form',
             mutations: {
@@ -12,7 +12,7 @@ describe('Layout', function() {
             }
           }
         });
-        LSD.Test.Meter = new Class({
+        Context.Meter = new Class({
           options: {
             mutations: {
               '+ strong': 'button',
@@ -22,10 +22,10 @@ describe('Layout', function() {
         })
         var parse = function(element, options) {
           if (element.indexOf) element = new Element('div', {html: element});
-          return new LSD.Widget(element, Object.append({context: 'test', document: LSD.getCleanDocument()}, options));
+          return new LSD.Widget(element, Object.append({context: Context, document: Factory('document')}, options));
         }
         new LSD.Type('Clean');
-        LSD.Test.Superform = new Class({
+        Context.Superform = new Class({
           options: {
             mutations: {
               'div > section > progresz': 'meter',
@@ -150,7 +150,7 @@ describe('Layout', function() {
           })
       
           it ("should pickup simple mutations", function() {
-            new LSD.Type('ContinuedMutations')
+            var Context = Factory('type');
             var element = new Element('div', {
               html:
             '<aside><div><section class=content>    \
@@ -163,7 +163,7 @@ describe('Layout', function() {
                 </li>                               \
               </ul>                                 \
               </section></div></aside>'});
-            LSD.ContinuedMutations.List = new Class({
+            Context.List = new Class({
               options: {
                 mutations: {
                   '> li': 'item'
@@ -174,7 +174,7 @@ describe('Layout', function() {
               mutations: {
                 'div > section.content > ul': 'list'
               },
-              context: 'continued_mutations'
+              context: Context
             });
             expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['list', 'item']);
             widget.removeLayout(null, element.getElement('.content > ul'));
@@ -193,7 +193,7 @@ describe('Layout', function() {
           })
       
           it ("should pickup deep mutation", function() {
-            new LSD.Type('ContinuedMutations')
+            var Context = Factory('type');
             var element = new Element('div', {
               html:
             '<aside><div><section class=content>    \
@@ -206,14 +206,14 @@ describe('Layout', function() {
                 </li>                               \
               </ul>                                 \
               </section></div></aside>'});
-            LSD.ContinuedMutations.List = new Class({
+            Context.List = new Class({
               options: {
                 mutations: {
                   '> li': 'item'
                 }
               }
             });
-            LSD.ContinuedMutations.Div = new Class({
+            Context.Div = new Class({
               options: {
                 mutations: {
                   '> section > ul': 'list'
@@ -224,7 +224,7 @@ describe('Layout', function() {
               mutations: {
                 'aside > div': 'div'
               },
-              context: 'continued_mutations'
+              context: Context
             });
             expect(widget.getElements('*').map(function(w) { return w.tagName})).toEqual(['div', 'list', 'item']);
             widget.childNodes[0].removeLayout(null, element.getElement('section.content > ul'));
@@ -275,7 +275,7 @@ describe('Layout', function() {
                   '> section.content > ul > li': 'item',
                   'menu[type=toolbar]': 'menu'
                 },
-                context: 'test'
+                context: Context
               });
               expect(widget.getElements('list').length).toEqual(1);
               expect(widget.getElements('item').length).toEqual(2);

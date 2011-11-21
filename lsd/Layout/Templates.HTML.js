@@ -5,7 +5,7 @@ describe("LSD.Layout", function() {
         it ("should parse comments and interpolate them", function() {
           var element = new Element('div', {html: LSD.Test.Template.urgency});
           $e = element
-          var widget = $w = new LSD.Widget(element, {document: LSD.getCleanDocument()});
+          var widget = $w = new LSD.Widget(element, {document: Factory('document')});
           widget.variables.merge(widget.attributes);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
@@ -636,13 +636,13 @@ describe("LSD.Layout", function() {
       describe("complex reallife setup", function() {
         it ("should clone, mutate and adopt elements to manipulate them with data", function() {
           var layout = new LSD.Layout;
-          var parent = new LSD.Widget({document: LSD.getCleanDocument()});
+          var parent = new LSD.Widget({document: Factory('document')});
           var element = layout.render(document.createFragment(LSD.Test.Template.resource_field), parent);
           var widget = $w = new LSD.Widget({
             mutations: {
               '>  fieldset': 'fieldset'
             },
-            document: LSD.getCleanDocument()
+            document: Factory('document')
           });
           LSD.Template.resource_field.clone().inject(widget)
           var element = widget.element;
@@ -714,7 +714,7 @@ describe("LSD.Layout", function() {
           var element = new Element('div', {
             html: LSD.Test.Template.dynamic_microdata
           });
-          var doc = LSD.getCleanDocument();
+          var doc = Factory('document');
           doc.layout = new LSD.Layout;
           var widget = $w = new LSD.Widget(element, {
             context: 'clean',

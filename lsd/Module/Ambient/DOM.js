@@ -2,22 +2,22 @@ describe("LSD.Module.Ambient.DOM", function() {
   describe("#dom manipulations", function() {
     
     it ("contains", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
 
       root.appendChild(pane1);
+      expect(root.sourceIndex).toEqual(1);
+      expect(root.sourceLastIndex).toEqual(2);
       expect(root.contains(pane1)).toBeTruthy();
       expect(pane1.sourceIndex).toEqual(2)
+      expect(pane1.sourceLastIndex).toEqual(2)
 
       root.removeChild(pane1);
       root.appendChild(pane2);
       expect(root.sourceIndex).toEqual(1);
+      expect(root.sourceLastIndex).toEqual(2)
       expect(pane2.sourceIndex).toEqual(2);
       expect(root.contains(pane1)).toBeFalsy();
 
@@ -28,12 +28,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     });
 
     it ("getChildren", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
-
+      var root = Factory('root');
       var pane1 = new LSD.Widget({tag: 'pane'});
       pane1.addClass("first");
 
@@ -59,11 +54,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     });
 
     it (".root", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
@@ -101,11 +92,7 @@ describe("LSD.Module.Ambient.DOM", function() {
 
     describe ("setParent", function() {
       it ("should set properties right", function() {
-        var root = new LSD.Widget({
-          tag: 'root',
-          pseudos: ['root'],
-          document: LSD.getCleanDocument()
-        });
+        var root = Factory('root');
 
         var pane1 = new LSD.Widget({tag: 'pane'});
         var pane2 = new LSD.Widget({tag: 'pane'});
@@ -136,14 +123,10 @@ describe("LSD.Module.Ambient.DOM", function() {
         expect(pane3.nextSibling).toBeUndefined();
       })
       
-      xit ("should keep sourceIndex", function() {
+      it ("should keep sourceIndex", function() {
         
-        var root = new LSD.Widget({
-          tag: 'root',
-          pseudos: ['root'],
-          document: LSD.getCleanDocument()
-        });
-
+        var root = Factory('root');
+        
         var pane1 = new LSD.Widget({tag: 'pane'});
         var pane2 = new LSD.Widget({tag: 'pane'});
         var pane3 = new LSD.Widget({tag: 'pane'});
@@ -154,58 +137,55 @@ describe("LSD.Module.Ambient.DOM", function() {
         expect(pane2.sourceLastIndex).toEqual(2);
         expect(pane3.sourceLastIndex).toBeFalsy();
         
-        root.appendChild(pane2)
-        expect(root.sourceLastIndex).toEqual(3);
-        expect(root.sourceIndex).toEqual(1);
-        expect(pane2.sourceIndex).toEqual(2);
-        expect(pane2.sourceLastIndex).toEqual(3);
-        expect(pane3.sourceIndex).toEqual(3);
-        expect(pane3.sourceLastIndex).toBeFalsy();
-        
-        expect(pane2.sourceLastIndex).toEqual(3);
-        root.appendChild(pane1);
-        expect(root.sourceLastIndex).toEqual(4);
-        expect(pane1.sourceIndex).toEqual(4);
-        
-        var rooty = new LSD.Widget({
-          tag: 'root',
-          pseudos: ['root'],
-          document: LSD.getCleanDocument()
-        });
-        rooty.appendChild(root);
-        expect(rooty.sourceLastIndex).toEqual(5);
-        expect(rooty.sourceIndex).toEqual(1);
-        expect(root.sourceLastIndex).toEqual(5);
-        expect(root.sourceIndex).toEqual(2);
-        expect(pane2.sourceIndex).toEqual(3);
-        expect(pane2.sourceLastIndex).toEqual(4);
-        expect(pane3.sourceIndex).toEqual(4);
-        expect(pane3.sourceLastIndex).toBeFalsy();
-        
-        var pane4 = new LSD.Widget({tag: 'kane'});
-        pane2.appendChild(pane4);
-        expect(rooty.sourceLastIndex).toEqual(6);
-        expect(rooty.sourceIndex).toEqual(1);
-        expect(root.sourceLastIndex).toEqual(6);
-        expect(root.sourceIndex).toEqual(2);
-        expect(pane1.sourceIndex).toEqual(5);
-        expect(pane2.sourceIndex).toEqual(3);
-        expect(pane2.sourceLastIndex).toEqual(5);
-        expect(pane3.sourceLastIndex).toBeFalsy();
-        expect(pane3.sourceIndex).toEqual(6);
-        expect(pane4.sourceIndex).toEqual(4);
-        
-        expect(rooty.expectations.tag.pane.map(function(e) { return e.sourceIndex})).toEqual([])
+        //root.appendChild(pane2)
+        //expect(root.sourceLastIndex).toEqual(3);
+        //expect(root.sourceIndex).toEqual(1);
+        //expect(pane2.sourceIndex).toEqual(2);
+        //expect(pane2.sourceLastIndex).toEqual(3);
+        //expect(pane3.sourceIndex).toEqual(3);
+        //expect(pane3.sourceLastIndex).toBeFalsy();
+        //
+        //expect(pane2.sourceLastIndex).toEqual(3);
+        //root.appendChild(pane1);
+        //expect(root.sourceLastIndex).toEqual(4);
+        //expect(pane1.sourceIndex).toEqual(4);
+        //
+        //var rooty = Factory('root');
+        //rooty.appendChild(root);
+        //expect(rooty.sourceLastIndex).toEqual(5);
+        //expect(rooty.sourceIndex).toEqual(1);
+        //expect(root.sourceLastIndex).toEqual(5);
+        //expect(root.sourceIndex).toEqual(2);
+        //expect(pane2.sourceIndex).toEqual(3);
+        //expect(pane2.sourceLastIndex).toEqual(4);
+        //expect(pane3.sourceIndex).toEqual(4);
+        //expect(pane3.sourceLastIndex).toBeFalsy();
+        //
+        //var pane4 = new LSD.Widget({tag: 'kane'});
+        //pane2.appendChild(pane4);
+        //expect(rooty.sourceLastIndex).toEqual(6);
+        //expect(rooty.sourceIndex).toEqual(1);
+        //expect(root.sourceLastIndex).toEqual(6);
+        //expect(root.sourceIndex).toEqual(2);
+        //expect(pane1.sourceIndex).toEqual(5);
+        //expect(pane2.sourceIndex).toEqual(3);
+        //expect(pane2.sourceLastIndex).toEqual(5);
+        //expect(pane3.sourceLastIndex).toBeFalsy();
+        //expect(pane3.sourceIndex).toEqual(6);
+        //expect(pane4.sourceIndex).toEqual(4);
+        //
+        //expect(rooty.expectations.tag.pane.map(function(e) { return e.sourceIndex})).toEqual([])
+      });
+      
+      it ("should keep nodes notified about their position in tree", function() {
+        var widget = Factory('widget');
+        expect(widget.sourceIndex).toEqual()
       })
     });
     
 
     it ("unsetParent", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
@@ -240,11 +220,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     });
 
     it ("removeChild", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
@@ -279,11 +255,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     });
 
     it ("insertBefore", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'label'});
@@ -310,11 +282,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     });
 
     it ("replaceChild", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
@@ -329,11 +297,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     });
 
     it ("replaceChild", function() {
-      var root = new LSD.Widget({
-        tag: 'root',
-        pseudos: ['root'],
-        document: LSD.getCleanDocument()
-      });
+      var root = Factory('root');
 
       var pane1 = new LSD.Widget({tag: 'pane'});
       var pane2 = new LSD.Widget({tag: 'pane'});
@@ -360,11 +324,7 @@ describe("LSD.Module.Ambient.DOM", function() {
     describe("inject", function() {
       describe("when given widgets", function() {
         it ("should inject elements next to the target", function() {
-          var root = new LSD.Widget({
-            tag: 'root',
-            pseudos: ['root'],
-            document: LSD.getCleanDocument()
-          });
+          var root = Factory('root');
 
           var pane1 = new LSD.Widget({tag: 'pane1'});
           var pane2 = new LSD.Widget({tag: 'pane2'});
@@ -385,11 +345,7 @@ describe("LSD.Module.Ambient.DOM", function() {
         });
         
         it ("should adopt elements in the right spot in target element", function() {
-          var root = new LSD.Widget({
-            tag: 'root',
-            pseudos: ['root'],
-            document: LSD.getCleanDocument()
-          });
+          var root = Factory('root');
 
           var pane1 = new LSD.Widget({tag: 'pane'});
           var pane2 = new LSD.Widget({tag: 'pane'});
@@ -628,11 +584,7 @@ describe("LSD.Module.Ambient.DOM", function() {
       describe("without proxies", function() {
         describe("when given widget", function() {
           it ("should set all the links around", function() {
-            var root = new LSD.Widget({
-              tag: 'root',
-              pseudos: ['root'],
-              document: LSD.getCleanDocument()
-            });
+            var root = Factory('root');
 
             var pane1 = new LSD.Widget({tag: 'pane'});
             var pane2 = new LSD.Widget({tag: 'pane'});
@@ -664,16 +616,8 @@ describe("LSD.Module.Ambient.DOM", function() {
           });
           
           it ("may be called repeatedly on one widget", function() {
-            var root1 = new LSD.Widget({
-              tag: 'root',
-              pseudos: ['root'],
-              document: LSD.getCleanDocument()
-            });
-            var root2 = new LSD.Widget({
-              tag: 'root',
-              pseudos: ['root'],
-              document: LSD.getCleanDocument()
-            });
+            var root1 = Factory('root');
+            var root2 = Factory('root');
             var child = new LSD.Widget({tag: 'child'});
             root1.appendChild(child);
             expect(root1.childNodes).toEqual([child]);
@@ -764,11 +708,7 @@ describe("LSD.Module.Ambient.DOM", function() {
         describe("when inserted node is a widget", function() {
           describe("and before hook is a widget", function() {
             it("should insert the widget before the target", function() {
-              var root = new LSD.Widget({
-                tag: 'root',
-                pseudos: ['root'],
-                document: LSD.getCleanDocument()
-              });
+              var root = Factory('root');
               var header = new LSD.Widget({tag: 'header'});
               var section = new LSD.Widget({tag: 'section'});
               var footer = new LSD.Widget({tag: 'footer'});
@@ -783,11 +723,7 @@ describe("LSD.Module.Ambient.DOM", function() {
           describe("and before hook is an element", function() {
             describe("which has an initialized widget too", function() {
               it ("should insert the widget before the target element's widget", function() {
-                var root = new LSD.Widget({
-                  tag: 'root',
-                  pseudos: ['root'],
-                  document: LSD.getCleanDocument()
-                });
+                var root = Factory('root');
                 var header = new LSD.Widget({tag: 'header'});
                 var section = new LSD.Widget({tag: 'section'});
                 var footer = new LSD.Widget({tag: 'footer'});
@@ -801,11 +737,7 @@ describe("LSD.Module.Ambient.DOM", function() {
             describe("which is not widget", function() {
               describe("and there is a widget after it", function() {
                 it("should insert the widget before the element and the widget", function() {
-                  var root = new LSD.Widget({
-                    tag: 'root',
-                    pseudos: ['root'],
-                    document: LSD.getCleanDocument()
-                  });
+                  var root = Factory('root');
                   var header = new LSD.Widget({tag: 'header'});
                   var section = new LSD.Widget({tag: 'section'});
                   var nav = new Element('nav');
@@ -819,11 +751,7 @@ describe("LSD.Module.Ambient.DOM", function() {
               });
               describe("and there's no widget after it", function() {
                 it("should insert the widget before the element and the widget", function() {
-                  var root = new LSD.Widget({
-                    tag: 'root',
-                    pseudos: ['root'],
-                    document: LSD.getCleanDocument()
-                  });
+                  var root = Factory('root');
                   var header = new LSD.Widget({tag: 'header'});
                   var section = new LSD.Widget({tag: 'section'});
                   var nav = new Element('nav');
@@ -840,11 +768,7 @@ describe("LSD.Module.Ambient.DOM", function() {
           });
           describe("and before hook is not given", function() {
             it ("should append that child", function() {
-              var root = new LSD.Widget({
-                tag: 'root',
-                pseudos: ['root'],
-                document: LSD.getCleanDocument()
-              });
+              var root = Factory('root');
               var header = new LSD.Widget({tag: 'header'});
               var section = new LSD.Widget({tag: 'section'});
               var footer = new LSD.Widget({tag: 'footer'});
@@ -859,11 +783,7 @@ describe("LSD.Module.Ambient.DOM", function() {
         describe("when inserted node is an element", function() {
           describe("and before hook is a widget", function() {
             it("should insert the node before the target", function() {
-              var root = new LSD.Widget({
-                tag: 'root',
-                pseudos: ['root'],
-                document: LSD.getCleanDocument()
-              });
+              var root = Factory('root');
               var header = new LSD.Widget({tag: 'header'});
               var section = new Element('section');
               var footer = new LSD.Widget({tag: 'footer'});
@@ -877,11 +797,7 @@ describe("LSD.Module.Ambient.DOM", function() {
           describe("and before hook is an element", function() {
             describe("which has an initialized widget too", function() {
               it ("should insert the widget before the target element's widget", function() {
-                var root = new LSD.Widget({
-                  tag: 'root',
-                  pseudos: ['root'],
-                  document: LSD.getCleanDocument()
-                });
+                var root = Factory('root');
                 var header = new LSD.Widget({tag: 'header'});
                 var section = new Element('section');
                 var footer = new LSD.Widget({tag: 'footer'});
@@ -894,11 +810,7 @@ describe("LSD.Module.Ambient.DOM", function() {
             })
             describe("which is not widget", function() {
               it("should insert the node before the element", function() {
-                var root = new LSD.Widget({
-                  tag: 'root',
-                  pseudos: ['root'],
-                  document: LSD.getCleanDocument()
-                });
+                var root = Factory('root');
                 var header = new LSD.Widget({tag: 'header'});
                 var section = new Element('section');
                 var nav = new Element('nav');
@@ -914,11 +826,7 @@ describe("LSD.Module.Ambient.DOM", function() {
           });
           describe("and before hook is not given", function() {
             it ("should append that child", function() {
-              var root = new LSD.Widget({
-                tag: 'root',
-                pseudos: ['root'],
-                document: LSD.getCleanDocument()
-              });
+              var root = Factory('root');
               var header = new LSD.Widget({tag: 'header'});
               var section = new Element('section');
               var footer = new LSD.Widget({tag: 'footer'});

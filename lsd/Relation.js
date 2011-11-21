@@ -2,14 +2,14 @@ describe("LSD.Relation", function() {
   new LSD.Type('RelationTest');
   
   it ("should initialize with origin", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     //var item = new LSD.Widget({tag: 'item'});
     var relation = new LSD.Relation('items', list);
     expect(relation.origin).toEqual(list)
   })
   
   it ("should watch the origin when selector is given", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var relation = new LSD.Relation('items', list);
     relation.setOptions({selector: 'item', multiple: true});
     expect(list.expectations[' ']['item']).toBeTruthy();
@@ -20,14 +20,14 @@ describe("LSD.Relation", function() {
   });
 
   it ("should write relation origin when as option is given", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var item = new LSD.Widget({tag: 'item'}).inject(list);
     var relation = new LSD.Relation('items', list, {as: 'ownzor', selector: 'item'});
     expect(item.ownzor).toEqual(list);
   });
   
   it ("should not rewrite relation origin when as option is given but it was claimed by other widget", function() {
-    var form = new LSD.Widget({tag: 'form', document: LSD.getCleanDocument()});
+    var form = new LSD.Widget({tag: 'form', document: Factory('document')});
     var list = new LSD.Widget({tag: 'list'}).inject(form)
     var relation1 = new LSD.Relation('itemio', form, {as: 'ownzor', selector: 'item'});
     var relation2 = new LSD.Relation('itemio', list, {as: 'ownzor', selector: 'item'});
@@ -38,8 +38,8 @@ describe("LSD.Relation", function() {
   });
   
   it ("should write relation origin into array on matched widget when collection option is set", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
-    var menu = new LSD.Widget({tag: 'menu', document: LSD.getCleanDocument()}).inject(list);
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
+    var menu = new LSD.Widget({tag: 'menu', document: Factory('document')}).inject(list);
     var item = new LSD.Widget({tag: 'item'}).inject(menu);
     var relation = new LSD.Relation('items', list, {collection: 'supper', selector: 'item'});
     var relation = new LSD.Relation('items', menu, {collection: 'supper', selector: 'item'});
@@ -47,7 +47,7 @@ describe("LSD.Relation", function() {
   });
 
   it ("should watch the same widget in two different relations", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var item = new LSD.Widget({tag: 'item'}).inject(list);
     var item1 = new LSD.Relation('items', list, {selector: 'item', multiple: true});
     var item2 = new LSD.Relation('itemz', list, {selector: 'item', multiple: true});
@@ -58,7 +58,7 @@ describe("LSD.Relation", function() {
   });
   
   it ("should watch and find widgets with complex selector", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var icon = new LSD.Widget({tag: 'icon'}).inject(new LSD.Widget({tag: 'grid'}).inject(list));
     var relation = new LSD.Relation('items', list);
     relation.setOptions({selector: 'grid icon item', multiple: true});
@@ -70,7 +70,7 @@ describe("LSD.Relation", function() {
   });
   
   it ("should watch and find widgets using selector with pseudo element in it", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var item = new LSD.Widget({tag: 'item'}).inject(list);
     var relation = new LSD.Relation('items', list);
     relation.setOptions({selector: 'item', multiple: true});
@@ -80,7 +80,7 @@ describe("LSD.Relation", function() {
   });
   
   it ("should apply expectation on origin when expectation is given", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});  
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});  
     var item = new LSD.Widget({tag: 'item', attributes: {id: 'something'}}).inject(list);
     var relation = new LSD.Relation('items', list);
     relation.setOptions({
@@ -96,7 +96,7 @@ describe("LSD.Relation", function() {
         tag: 'item'
       }
     })
-    var list = new LSD.Widget({tag: 'list', context: 'relation_test', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', context: 'relation_test', document: Factory('document')});
     var item = new Element('div').inject(list);
     var relation = new LSD.Relation('items', list);
     relation.setOptions({
@@ -113,8 +113,8 @@ describe("LSD.Relation", function() {
   });
   
   it ("should respect target option", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
-    var menu = new LSD.Widget({tag: 'menu', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
+    var menu = new LSD.Widget({tag: 'menu', document: Factory('document')});
     var item = new LSD.Widget({tag: 'item'}).inject(menu);
     list.menu = menu;
     var relation = new LSD.Relation('items', list, {
@@ -128,7 +128,7 @@ describe("LSD.Relation", function() {
   });
   
   it ("should set up lazy expectation for known target that is yet not preset", function() {
-    var body = new LSD.Widget({tag: 'body', pseudos: ['root'], document: LSD.getCleanDocument()})
+    var body = new LSD.Widget({tag: 'body', pseudos: ['root'], document: Factory('document')})
     var list = new LSD.Widget({tag: 'list'});
     var item = new LSD.Widget({tag: 'item'});
     item.inject(body)
@@ -144,7 +144,7 @@ describe("LSD.Relation", function() {
   });
   
   it ("should notify pseudo element expectations when related widget gets related or unrelated", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var i = 0;
     var item = new LSD.Widget({tag: 'item'}).inject(list);
     expect(list.expectations['::']).toBeUndefined();
@@ -170,7 +170,7 @@ describe("LSD.Relation", function() {
   });
   
   it ("should convert callbacks into relation events and fire them", function() {
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')});
     var item = new LSD.Widget({tag: 'item'})
     list.onFill = function() {
       onFill = true;
@@ -208,10 +208,10 @@ describe("LSD.Relation", function() {
   });
   
   it ("should be able to aggregate associations using through option", function() {
-    var grid = new LSD.Widget({tag: 'grid', document: LSD.getCleanDocument()});
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()}).inject(grid);
+    var grid = new LSD.Widget({tag: 'grid', document: Factory('document')});
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')}).inject(grid);
     var item1 = new LSD.Widget({tag: 'item'}).inject(list);
-    var menu = new LSD.Widget({tag: 'menu', document: LSD.getCleanDocument()}).inject(grid);
+    var menu = new LSD.Widget({tag: 'menu', document: Factory('document')}).inject(grid);
     var item2 = new LSD.Widget({tag: 'item'}).inject(menu);
     var lister = new LSD.Relation('items', list, {
       selector: 'item',
@@ -246,7 +246,7 @@ describe("LSD.Relation", function() {
   it ("should define nested ad-hoc relations", function() {
     var grid = new LSD.Widget({
       tag: 'grid', 
-      document: LSD.getCleanDocument(), 
+      document: Factory('document'), 
       relations: {
         list: {
           selector: 'list',
@@ -258,7 +258,7 @@ describe("LSD.Relation", function() {
         }
       }
     });
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()}).inject(grid);
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')}).inject(grid);
     var item1 = new LSD.Widget({tag: 'item'}).inject(list);
     expect(grid.list.items).toEqual(item1);
     list.dispose();
@@ -270,7 +270,7 @@ describe("LSD.Relation", function() {
   it ("should define nested ad-hoc relations using has option", function() {
     var grid = new LSD.Widget({
       tag: 'grid', 
-      document: LSD.getCleanDocument(), 
+      document: Factory('document'), 
       has: {
         many: {
           items: {
@@ -291,7 +291,7 @@ describe("LSD.Relation", function() {
         }
       }
     });
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()}).inject(grid);
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')}).inject(grid);
     var item1 = new LSD.Widget({tag: 'item'}).inject(list);
     var item2 = new LSD.Widget({tag: 'item'}).inject(list);
     expect(grid.list.items).toEqual([item1, item2]);
@@ -304,7 +304,7 @@ describe("LSD.Relation", function() {
   it ("should re-watch the widget when relation is updated with the new selector", function() {
     var grid = new LSD.Widget({
       tag: 'grid', 
-      document: LSD.getCleanDocument(), 
+      document: Factory('document'), 
       has: {
         many: {
           items: {
@@ -325,7 +325,7 @@ describe("LSD.Relation", function() {
         }
       }
     });
-    var list = new LSD.Widget({tag: 'list', document: LSD.getCleanDocument()}).inject(grid);
+    var list = new LSD.Widget({tag: 'list', document: Factory('document')}).inject(grid);
     var item = new LSD.Widget({tag: 'item'}).inject(list);
     var option = new LSD.Widget({tag: 'option'}).inject(list);
     expect(list.items).toEqual([item]);
@@ -339,7 +339,7 @@ describe("LSD.Relation", function() {
     var added = 0, removed = 0;
     var list = new LSD.Widget({
       tag: 'list', 
-      document: LSD.getCleanDocument(),
+      document: Factory('document'),
       has: {
         many: {
           items: {
@@ -399,7 +399,7 @@ describe("LSD.Relation", function() {
   it ("should define a dependent relation when scope on already initialized relation just fine", function() {
     var list = new LSD.Widget({
       tag: 'list', 
-      document: LSD.getCleanDocument()
+      document: Factory('document')
     });
     var a = new LSD.Widget({tag: 'item'}).inject(list);
     var b = new LSD.Widget({tag: 'item'}).inject(list).addPseudo('checked');

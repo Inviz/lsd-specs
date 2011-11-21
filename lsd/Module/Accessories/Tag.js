@@ -1,8 +1,8 @@
 describe('LSD.Module.Tag', function() {
   
   describe('#setSource', function() {
-    LSD.SourceTest = new LSD.Type;
-    LSD.SourceTest.Body = new Class({
+    var Context = Factory('type')
+    Context.Body = new Class({
       options: {
         element: {
           tag: 'body'
@@ -12,7 +12,7 @@ describe('LSD.Module.Tag', function() {
         return true;
       }
     });
-    LSD.SourceTest.Button = new Class({
+    Context.Button = new Class({
       options: {
         element: {
           tag: 'button'
@@ -22,16 +22,16 @@ describe('LSD.Module.Tag', function() {
         return true;
       }
     });
-    LSD.SourceTest.Button.Submit = new Class({
-      Extends: LSD.SourceTest.Button
+    Context.Button.Submit = new Class({
+      Extends: Context.Button
     })
-    LSD.SourceTest.Button.Submit.Bang = new Class({
-      Extends: LSD.SourceTest.Button.Submit
+    Context.Button.Submit.Bang = new Class({
+      Extends: Context.Button.Submit
     })
     
     it ('should set the widget class and implement its methods', function() {
       var widget = new LSD.Widget({
-        context: 'source_test'
+        context: Context
       });
       expect(widget.getBody).toBeFalsy();
       widget.properties.set('tag', 'body');
@@ -40,7 +40,7 @@ describe('LSD.Module.Tag', function() {
     
     it ('should change the class after it was set once', function() {
       var widget = new LSD.Widget({
-        context: 'source_test'
+        context: Context
       });
       widget.property = 1;
       widget.properties.set('tag', 'body');
@@ -55,7 +55,7 @@ describe('LSD.Module.Tag', function() {
     
     it ('should create a functioning widget', function() {
       var widget = new LSD.Widget({
-        context: 'source_test'
+        context: Context
       });
       widget.properties.set('tag', 'button');
       widget.build()
@@ -68,24 +68,24 @@ describe('LSD.Module.Tag', function() {
           it ('should find original widget role by tag name', function() {
             var instance = new LSD.Widget({
               tag: 'button',
-              context: 'source_test',
+              context: Context,
               attributes: {
                 type: 'zippety'
               }
             });
-            expect(instance.role).toEqual(LSD.SourceTest.Button)
+            expect(instance.role).toEqual(Context.Button)
           })
         })
         describe('and there is subclassed widget', function() {
           it ('should find a subclassed widget role by tag name and type attribute', function() {
             var instance = new LSD.Widget({
               tag: 'button',
-              context: 'source_test',
+              context: Context,
               attributes: {
                 type: 'submit'
               }
             });
-            expect(instance.role).toEqual(LSD.SourceTest.Button.Submit)
+            expect(instance.role).toEqual(Context.Button.Submit)
           })
         })
         describe('and kind attribute', function() {
@@ -93,25 +93,25 @@ describe('LSD.Module.Tag', function() {
             it ('should find a deeply subclassed widget role by tag name, type and kind attribute', function() {
               var instance = new LSD.Widget({
                 tag: 'button',
-                context: 'source_test',
+                context: Context,
                 attributes: {
                   type: 'submit',
                   kind: 'bang'
                 }
               });
-              expect(instance.role).toEqual(LSD.SourceTest.Button.Submit.Bang)
+              expect(instance.role).toEqual(Context.Button.Submit.Bang)
             })
             describe('but type doesnt match', function() {
               it ('should find original widget role', function() {
                 var instance = new LSD.Widget({
                   tag: 'button',
-                  context: 'source_test',
+                  context: Context,
                   attributes: {
                     type: 'hobbit',
                     kind: 'bang'
                   }
                 });
-                expect(instance.role).toEqual(LSD.SourceTest.Button)
+                expect(instance.role).toEqual(Context.Button)
               })
             })
           })
@@ -120,26 +120,26 @@ describe('LSD.Module.Tag', function() {
               it ('should find original widget role by tag name', function() {
                 var instance = new LSD.Widget({
                   tag: 'body',
-                  context: 'source_test',
+                  context: Context,
                   attributes: {
                     type: 'submit',
                     kind: 'zap'
                   }
                 });
-                expect(instance.role).toEqual(LSD.SourceTest.Body)
+                expect(instance.role).toEqual(Context.Body)
               })
             })
             describe('and there is subclassed widget role', function() {
               it ('should find a subclassed widget role by tag name and type', function() {
                 var instance = new LSD.Widget({
                   tag: 'button',
-                  context: 'source_test',
+                  context: Context,
                   attributes: {
                     type: 'submit',
                     kind: 'zap'
                   }
                 });
-                expect(instance.role).toEqual(LSD.SourceTest.Button.Submit)
+                expect(instance.role).toEqual(Context.Button.Submit)
               })
             })
           })
@@ -150,24 +150,24 @@ describe('LSD.Module.Tag', function() {
           it ('should find an original widget role by tag name', function() {
             var instance = new LSD.Widget({
               tag: 'button',
-              context: 'source_test',
+              context: Context,
               attributes: {
                 kind: 'zap'
               }
             });
-            expect(instance.role).toEqual(LSD.SourceTest.Button)
+            expect(instance.role).toEqual(Context.Button)
           })
         })
         describe('and there is subclassed widget', function() {
           it ('should find subclassed widget role by tag name and kind attribute', function() {
             var instance = new LSD.Widget({
               tag: 'button',
-              context: 'source_test',
+              context: Context,
               attributes: {
                 kind: 'submit'
               }
             });
-            expect(instance.role).toEqual(LSD.SourceTest.Button.Submit)
+            expect(instance.role).toEqual(Context.Button.Submit)
           })
         });
       })
@@ -179,9 +179,9 @@ describe('LSD.Module.Tag', function() {
           var instance = new LSD.Widget({
             tag: 'button',
             source: 'body',
-            context: 'source_test'
+            context: Context
           });
-          expect(instance.role).toEqual(LSD.SourceTest.Body)
+          expect(instance.role).toEqual(Context.Body)
         })
 
         describe('and type attribute', function() {
@@ -190,12 +190,12 @@ describe('LSD.Module.Tag', function() {
               var instance = new LSD.Widget({
                 tag: 'body',
                 source: 'button',
-                context: 'source_test',
+                context: Context,
                 attributes: {
                   type: 'zippety'
                 }
               });
-              expect(instance.role).toEqual(LSD.SourceTest.Button)
+              expect(instance.role).toEqual(Context.Button)
             })
           })
           describe('and there is subclassed widget', function() {
@@ -203,12 +203,12 @@ describe('LSD.Module.Tag', function() {
               var instance = new LSD.Widget({
                 tag: 'body',
                 source: 'button',
-                context: 'source_test',
+                context: Context,
                 attributes: {
                   type: 'submit'
                 }
               });
-              expect(instance.role).toEqual(LSD.SourceTest.Button.Submit)
+              expect(instance.role).toEqual(Context.Button.Submit)
             })
           })
           describe('and kind attribute', function() {
@@ -217,26 +217,26 @@ describe('LSD.Module.Tag', function() {
                 var instance = new LSD.Widget({
                   tag: 'body',
                   source: 'button',
-                  context: 'source_test',
+                  context: Context,
                   attributes: {
                     type: 'submit',
                     kind: 'bang'
                   }
                 });
-                expect(instance.role).toEqual(LSD.SourceTest.Button.Submit.Bang)
+                expect(instance.role).toEqual(Context.Button.Submit.Bang)
               })
               describe('but type doesnt match', function() {
                 it ('should find an original widget role by source', function() {
                   var instance = new LSD.Widget({
                     tag: 'body',
                     source: 'button',
-                    context: 'source_test',
+                    context: Context,
                     attributes: {
                       type: 'hobbit',
                       kind: 'bang'
                     }
                   });
-                  expect(instance.role).toEqual(LSD.SourceTest.Button)
+                  expect(instance.role).toEqual(Context.Button)
                   //expect(instance.source).toEqual('button')
                 })
               })
@@ -247,13 +247,13 @@ describe('LSD.Module.Tag', function() {
                   var instance = new LSD.Widget({
                     tag: 'button',
                     source: 'body',
-                    context: 'source_test',
+                    context: Context,
                     attributes: {
                       type: 'submit',
                       kind: 'zap'
                     }
                   });
-                  expect(instance.role).toEqual(LSD.SourceTest.Body)
+                  expect(instance.role).toEqual(Context.Body)
                 })
               })
               describe('and there is subclassed widget', function() {
@@ -261,13 +261,13 @@ describe('LSD.Module.Tag', function() {
                   var instance = new LSD.Widget({
                     tag: 'body',
                     source: 'button',
-                    context: 'source_test',
+                    context: Context,
                     attributes: {
                       type: 'submit',
                       kind: 'zap'
                     }
                   });
-                  expect(instance.role).toEqual(LSD.SourceTest.Button.Submit)
+                  expect(instance.role).toEqual(Context.Button.Submit)
                 })
               })
             })
@@ -279,12 +279,12 @@ describe('LSD.Module.Tag', function() {
               var instance = new LSD.Widget({
                 tag: 'body',
                 source: 'button',
-                context: 'source_test',
+                context: Context,
                 attributes: {
                   kind: 'submit'
                 }
               });
-              expect(instance.role).toEqual(LSD.SourceTest.Button.Submit)
+              expect(instance.role).toEqual(Context.Button.Submit)
             })
           })
           describe('and there is subclassed widget', function() {
@@ -292,12 +292,12 @@ describe('LSD.Module.Tag', function() {
               var instance = new LSD.Widget({
                 tag: 'body',
                 source: 'button',
-                context: 'source_test',
+                context: Context,
                 attributes: {
                   kind: 'zap'
                 }
               });
-              expect(instance.role).toEqual(LSD.SourceTest.Button)
+              expect(instance.role).toEqual(Context.Button)
             })
           });
         })
@@ -309,24 +309,24 @@ describe('LSD.Module.Tag', function() {
             var element = document.createElement('button');
             element.setAttribute('type', 'submit');
             element.setAttribute('kind', 'bang')
-            var instance = new LSD.Widget(element, {context: 'source_test'});
-            expect(instance.role).toEqual(LSD.SourceTest.Button.Submit.Bang);
+            var instance = new LSD.Widget(element, {context: Context});
+            expect(instance.role).toEqual(Context.Button.Submit.Bang);
           });
           describe("and source is given too", function() {
             it ("should find a deep subclass", function() {
               var element = document.createElement('body');
               element.setAttribute('type', 'submit');
               element.setAttribute('kind', 'bang')
-              var instance = new LSD.Widget(element, {context: 'source_test', source: 'button'});
-              expect(instance.role).toEqual(LSD.SourceTest.Button.Submit.Bang);
+              var instance = new LSD.Widget(element, {context: Context, source: 'button'});
+              expect(instance.role).toEqual(Context.Button.Submit.Bang);
             });
             describe("but the role path doesnt match", function() {
               it ("should find whatever it matches", function() {
                 var element = document.createElement('button');
                 element.setAttribute('type', 'submit');
                 element.setAttribute('kind', 'bang')
-                var instance = new LSD.Widget(element, {context: 'source_test', source: 'body'});
-                expect(instance.role).toEqual(LSD.SourceTest.Body);
+                var instance = new LSD.Widget(element, {context: Context, source: 'body'});
+                expect(instance.role).toEqual(Context.Body);
               })
             })
           })
@@ -336,7 +336,7 @@ describe('LSD.Module.Tag', function() {
     
     it ('should create a widget off an element and replace it when tag is changed', function() {
       var element = document.createElement('body');
-      var widget = new LSD.Widget(element, {context: 'source_test'});
+      var widget = new LSD.Widget(element, {context: Context});
       widget.build();
       expect(widget.tagName).toEqual('body');
       expect(widget.getBody).toBeTruthy();

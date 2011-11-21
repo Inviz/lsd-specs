@@ -239,7 +239,7 @@ describe("LSD.Module.Attributes", function() {
     })
     
     it ("should make attributes type='checkbox' and checked='checked'", function() {
-      var context = LSD.getCleanContext();
+      var context = Factory('type');
       var element = new Element('input', {type: 'checkbox'});
       element.setAttribute('checked', 'checked');
       var instance = new LSD.Widget(element, {
