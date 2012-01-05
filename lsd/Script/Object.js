@@ -15,6 +15,24 @@ describe("LSD.Object", function() {
     })
   });
   
+  describe("#set", function() {
+    describe("when key references other objects", function() {
+      it("should store value for that key and apply to objects", function() {
+        var object = new LSD.Object;
+        object.set('attributes.hidden', true);
+        var attributes = object.attributes;
+        expect(attributes).toBeDefined();
+        expect(attributes.hidden).toBeTruthy();
+        var other = new LSD.Object;
+        object.set('attributes', other);
+        expect(attributes.hidden).toBeUndefined();
+        expect(other.hidden).toBeTruthy();
+        object.unset('attributes.hidden', true);
+        expect(other.hidden).toBeUndefined();
+      })
+    })
+  })
+  
   describe("#watch", function() {
     describe("when given a simple property to watch", function() {
       describe("before the property was set", function() {
@@ -112,19 +130,43 @@ describe("LSD.Object", function() {
       });
     })
     describe("when given a nested attribute to watch", function() {
-      it ("should execute callback when nested attribute is changed", function() {
-        var object = new LSD.Object;
-        var artist = new LSD.Object({boy: 'george'});
-        object.set('artist', artist);
-        var stack = []
-        object.watch('artist.boy', function(value) {
-          stack.push(value)
+      describe("and the nested object is observable", function() {
+        it ("should execute callback when nested attribute is changed", function() {
+          var object = new LSD.Object;
+          var artist = new LSD.Object({boy: 'george'});
+          object.set('artist', artist);
+          var stack = []
+          object.watch('artist.boy', function(value) {
+            stack.push(value)
+          })
+          expect(stack).toEqual(['george']);
+          object.artist.set('boy', 'clooney');
+          expect(stack).toEqual(['george', 'clooney']);
+          object.artist.unset('boy');
+          expect(stack).toEqual(['george', 'clooney', undefined]);
+        });
+      });
+      describe("and the nested object is NOT observable", function() {
+        describe("and there's one more nested object that is observable", function() {
+          it ("should execute callback when deeply nested attribute is changed", function() {
+            var object = new LSD.Object({
+              genre: new LSD.Object({
+                band: {
+                  artist: new LSD.Object({boy: 'SCHIZO'})
+                }
+              })
+            });
+            var stack = []
+            object.watch('genre.band.artist.boy', function(value) {
+              stack.push(value)
+            })
+            expect(stack).toEqual(['SCHIZO']);
+            object.genre.band.artist.set('boy', 'PSYCHOPATH');
+            expect(stack).toEqual(['SCHIZO', 'PSYCHOPATH']);
+            object.genre.band.artist.unset('boy');
+            expect(stack).toEqual(['SCHIZO', 'PSYCHOPATH', undefined]);
+          });
         })
-        expect(stack).toEqual(['george']);
-        object.artist.set('boy', 'clooney');
-        expect(stack).toEqual(['george', 'clooney']);
-        object.artist.unset('boy');
-        expect(stack).toEqual(['george', 'clooney', undefined]);
       })
     });
     

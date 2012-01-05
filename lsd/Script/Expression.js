@@ -176,14 +176,14 @@ describe('LSD.Script.Expression', function() {
       advice.wrap(script);
       expect(script.value).toBeUndefined()
       expect(script.args[0]).toBeUndefined()
-      expect(advice.args[0].variable).toBeUndefined()
+      expect(advice.args[0].script).toBeUndefined()
       advice.attach();
       expect(script.value).toEqual(submit)
       expect(advice.value).toBeUndefined()
-      expect(advice.args[0].variable).toBeTruthy();
-      expect(advice.args[1].variable).toBeTruthy();
+      expect(advice.args[0].script).toBeTruthy();
+      expect(advice.args[1].script).toBeTruthy();
       expect(advice.args[1].value).toEqual(submit);
-      expect(advice.args[2].variable).toBeUndefined();
+      expect(advice.args[2].script).toBeUndefined();
       submit.onSuccess(submit.data + 'Jack');
       expect(advice.value).toEqual('HiJack... Boom')
     })
@@ -222,15 +222,15 @@ describe('LSD.Script.Expression', function() {
       advice.wrap(script);
       expect(script.value).toBeUndefined()
       expect(script.args[0]).toBeUndefined()
-      expect(advice.args[0].variable).toBeUndefined()
+      expect(advice.args[0].script).toBeUndefined()
       advice.attach();
       expect(script.value).toEqual(submit)
       expect(advice.value).toBeNull()
-      expect(advice.args[0].variable).toBeTruthy();
-      expect(advice.args[1].variable).toBeTruthy();
+      expect(advice.args[0].script).toBeTruthy();
+      expect(advice.args[1].script).toBeTruthy();
       expect(advice.args[1].args[0].value).toEqual(submit);
       expect(advice.args[1].value).toBeUndefined();
-      expect(advice.args[2].variable).toBeUndefined();
+      expect(advice.args[2].script).toBeUndefined();
       submit.onFailure(submit.data + 'Jack');
       expect(advice.value).toEqual('Error: HiJack... Boom');
       expect(errors).toEqual(1);

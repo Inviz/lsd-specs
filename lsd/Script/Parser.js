@@ -275,7 +275,62 @@ describe('LSD.Script.Parser', function() {
     '             \n\
     post()        \n\
      destroy()    \n\
-        destroy()': {exception: "Incorrect indentation: A line is 3 levels deeper then previous line"}
+        destroy()': {exception: "Incorrect indentation: A line is 3 levels deeper then previous line"},
+        
+    '                                                   \n\
+    masters = (&& input.master)                         \n\
+    slaves = (&& input.slave)                           \n\
+    if (some(masters) {|master| master.states.checked}) \n\
+      each(slaves) |slave|                              \n\
+        slave.check()                                   \n\
+    if (every(slaves) {|slave| slave.states.checked})   \n\
+      each(masters) |master|                            \n\
+        master.check()                                    ':
+    [{type: 'function', name: '=', value: [
+      {type: 'variable', name: 'masters'},
+      {type: 'selector', value: '&& input.master'}
+    ]},
+    {type: 'function', name: '=', value: [
+      {type: 'variable', name: 'slaves'},
+      {type: 'selector', value: '&& input.slave'}
+    ]},
+    {type: 'function', name: 'if', value: [
+      {type: 'function', name: 'some', value: [
+        {type: 'variable', name: 'masters'},
+        {type: 'block', value: [
+          {type: 'variable', name: 'master.states.checked'}
+        ], locals: [{type: 'variable', name: 'master'}]}
+      ]},
+      {type: 'block', value: [
+        {type: 'function', name: 'each', value: [
+          {type: 'variable', name: 'slaves'},
+          {type: 'block', value: [
+            {type: 'function', name: 'check', value: [
+              {type: 'variable', name: 'slave'}
+            ]}
+          ], locals: [{type: 'variable', name: 'slave'}]}
+        ]}
+      ]}
+    ]},
+    {type: 'function', name: 'if', value: [
+      {type: 'function', name: 'every', value: [
+        {type: 'variable', name: 'slaves'},
+        {type: 'block', value: [
+          {type: 'variable', name: 'slave.states.checked'}
+        ], locals: [{type: 'variable', name: 'slave'}]}
+      ]},
+      {type: 'block', value: [
+        {type: 'function', name: 'each', value: [
+          {type: 'variable', name: 'masters'},
+          {type: 'block', value: [
+            {type: 'function', name: 'check', value: [
+              {type: 'variable', name: 'master'}
+            ]}
+          ], locals: [{type: 'variable', name: 'master'}]}
+        ]}
+      ]}
+    ]}
+    ]
                                                             
     //'($ > button).length': [{type: 'selector', value: '$ > button'}, {type: 'variable', name: 'length'}],
     //'delete item': [{type: 'function', value: [{type: 'variable', value: 'item'}]}]

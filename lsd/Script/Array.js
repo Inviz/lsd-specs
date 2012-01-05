@@ -82,7 +82,7 @@ describe('LSD.Array', function() {
       it ('should notify observers on each push and provide the position of insertion as the second argument', function() {
         var array = new LSD.Array;
         var pushed = [];
-        array.addEvent('change', function(value, index, state) {
+        array.watch(function(value, index, state) {
           expect(index).toEqual(array.length - 1);
           pushed.push([value, index]);
         });
@@ -100,7 +100,7 @@ describe('LSD.Array', function() {
       it ('should notify observers with each argument separately', function() {
         var array = new LSD.Array;
         var pushed = [], count = 0;
-        array.addEvent('change', function(value, index, state) {
+        array.watch(function(value, index, state) {
           expect(index).toEqual(array.length - 1);
           pushed.push([value, index]);
           count++;

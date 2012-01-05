@@ -21,8 +21,23 @@ LSD.Factory.Document = function(fresh) {
 
 LSD.Factory.Type = function() {
   var type = new LSD.Type;
-  for (var i = 0, j = arguments.length; i < j; i++)
-    type[LSD.toClassName(arguments[i])] = LSD.Factory.Class[LSD.toClassName(arguments[i])]();
+  for (var i = 0, j = arguments.length; i < j; i++) {
+    var arg = arguments[i];
+    if (typeof arg == 'string') {
+      type[LSD.toClassName(arg)] = LSD.Factory.Class[LSD.toClassName(arg)]();
+    } else {
+      for (var selector in arg) {
+        var klass = LSD.Factory.Class[LSD.toClassName(arg[selector])]();
+        Object.merge(klass, {options: LSD.Module.Selectors.parse(selector)})
+        var source = LSD.Layout.getSource(klass.options.attributes, klass.options.tag);
+        for (var i = 0, bit, obj = type; bit = source[i++];) {
+          bit = LSD.toClassName(bit);
+          obj = obj[bit] || (obj[bit] = (source[i] ? {} : klass));
+        }
+        console.error(type, source, klass.options, selector)
+      }
+    }
+  }
   return type;
 };
 
@@ -91,3 +106,5 @@ Object.each(LSD.Factory.Options, function(value, key) {
 
 if (typeof jasmine != "undefined")
   Factory = LSD.Factory;
+  
+Factory('document')
