@@ -77,8 +77,8 @@ describe("LSD.Type.Children", function() {
         var b = new LSD.Object({id: 'b'});;
         var c = new LSD.Object({id: 'c'});;
         var d = new LSD.Object({id: 'd'});;
-        expect(children.first).toBeUndefined();
-        expect(children.last).toBeUndefined();
+        expect(children.first).toBeNull();
+        expect(children.last).toBeNull();
         children.push(a); //a
         expect(children.first).toEqual(a);
         expect(children.last).toEqual(a);
@@ -197,8 +197,8 @@ describe("LSD.Type.Children", function() {
         var b = new LSD.Object.Stack({id: 'b'});;
         var c = new LSD.Object.Stack({id: 'c'});;
         var d = new LSD.Object.Stack({id: 'd'});;
-        expect(children.first).toBeUndefined();
-        expect(children.last).toBeUndefined();
+        expect(children.first).toBeNull();
+        expect(children.last).toBeNull();
         children.push(a); //a
         expect(children.first).toEqual(a);
         expect(children.last).toEqual(a);
@@ -253,4 +253,46 @@ describe("LSD.Type.Children", function() {
       })
     })
   });
+  describe("when attached to an object", function() {
+    it ("should export firstChild/lastChild properties", function() {
+      var children = new LSD.Type.Children;
+      var widget = new LSD.Object.Stack({
+        childNodes: children
+      });
+      var a = new LSD.Object.Stack({id: 'a'});
+      var b = new LSD.Object.Stack({id: 'b'});;
+      var c = new LSD.Object.Stack({id: 'c'});;
+      var d = new LSD.Object.Stack({id: 'd'});;
+      expect(widget.firstChild).toBeNull();
+      expect(widget.lastChild).toBeNull();
+      children.push(a); //a
+      expect(widget.firstChild).toEqual(a);
+      expect(widget.lastChild).toEqual(a);
+      children.unshift(b); //ba
+      expect(widget.firstChild).toEqual(b);
+      expect(widget.lastChild).toEqual(a);
+      children.splice(1, 0, c); //bac
+      expect(widget.firstChild).toEqual(b);
+      expect(widget.lastChild).toEqual(a);
+      children.push(d); //bacd
+      expect(widget.firstChild).toEqual(b);
+      expect(widget.lastChild).toEqual(d);
+      children.shift(); //cad
+      expect(widget.firstChild).toEqual(c);
+      expect(widget.lastChild).toEqual(d);
+      children.shift(); //ad
+      expect(widget.firstChild).toEqual(a);
+      expect(widget.lastChild).toEqual(d);
+      children.pop(); //a
+      expect(widget.firstChild).toEqual(a);
+      expect(widget.lastChild).toEqual(a);
+      children.pop(); //
+      expect(widget.firstChild).toBeNull();
+      expect(widget.lastChild).toBeNull();
+      widget.unset('childNodes', children);
+      expect(widget.firstChild).toBeUndefined();
+      expect(widget.lastChild).toBeUndefined();
+      
+    })
+  })
 })
