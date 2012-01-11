@@ -41,7 +41,8 @@ Configuration.sets = {
     files: [
       'Children',
       'States',
-      'Matches'
+      'Matches',
+      'Relations'
     ]
   },
   'lsd': {

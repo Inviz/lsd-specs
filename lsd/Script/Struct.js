@@ -256,9 +256,9 @@ describe("LSD.Struct", function() {
             'matches': '.matches'
           });
           Events.implement({
-            _delegate: function(object, name, value, state, memo) {
+            _delegate: function(object, name, value, state, memo, origin) {
               if (this._properties[name]) return;
-              object.mix('events', value, memo, state)
+              if (object.mix) object.mix('events', value, memo, state)
               return true;
             }
           })
