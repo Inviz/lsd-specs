@@ -106,7 +106,28 @@ describe('LSD.Type.Relations', function() {
         })
         describe('and relation registers the relation holder in related widgets (`as` option is used)', function() {
           it ('should write the relation origin to related widgets', function() {
-            
+            var as = {
+              as: 'weedget'
+            }
+            var widget = new LSD.Widget({
+              relations: {
+                buttons: as
+              }
+            })
+            var button = new LSD.Widget({tagName: 'button'});
+            var button2 = new LSD.Widget({tagName: 'button'})
+            widget.relations.set('buttons', button);
+            expect(button.weedget).toEqual(widget);
+            expect(button2.weedget).toBeUndefined();
+            widget.relations.set('buttons', button2);
+            expect(button.weedget).toEqual(widget);
+            expect(button2.weedget).toEqual(widget);
+            widget.relations.unset('buttons', button);
+            expect(button.weedget).toBeUndefined()
+            expect(button2.weedget).toEqual(widget);
+            widget.relations.unset('buttons', button2);
+            expect(button.weedget).toBeUndefined()
+            expect(button2.weedget).toBeUndefined()
           })
         })
         describe('and relation registers all relation holders that match the widget (`collection` option is used)', function() {
@@ -115,53 +136,92 @@ describe('LSD.Type.Relations', function() {
         })
         describe('and relation defines callbacks (`callbacks` option is used)', function() {
           it ('should assign callbacks and call them when applicable', function() {
-            
-              var index = 0, filled = 0;
-              var fill = function() {
-                filled ++;
-              }
-              var empty = function() {
-                filled --;
-              }
-              var add = function() {
-                index ++;
-              };
-              var remove = function() {
-                index --;
-              }
-              var widget = new LSD.Widget({
-                relations: {
-                  buttons: {
-                    callbacks: {
-                      fill: fill,
-                      empty: empty,
-                      add: add,
-                      remove: remove
-                    }
-                  }
+            var index = 0, filled = 0;
+            var fill = function() {
+              filled ++;
+            }
+            var empty = function() {
+              filled --;
+            }
+            var add = function() {
+              index ++;
+            };
+            var remove = function() {
+              index --;
+            }
+            var callbacks = {
+              fill: fill,
+              empty: empty,
+              add: add,
+              remove: remove
+            };
+            var widget = new LSD.Widget({
+              relations: {
+                buttons: {
+                  callbacks: callbacks
                 }
-              })
-              var button = new LSD.Widget({tagName: 'button'});
-              var button2 = new LSD.Widget({tagName: 'button'});
-              expect(button.callbacks).toBeUndefined()
-              widget.relations.set('buttons', button);
-              expect(button.callbacks).toBeUndefined()
-              expect(index).toEqual(1);
-              expect(filled).toEqual(1);
-              widget.relations.set('buttons', button2);
-              expect(index).toEqual(2);
-              expect(filled).toEqual(1);
-              widget.relations.unset('buttons', button);
-              expect(index).toEqual(1);
-              expect(filled).toEqual(1);
-              widget.relations.unset('buttons', button2);
-              expect(index).toEqual(0);
-              expect(filled).toEqual(0);
+              }
+            })
+            var button = new LSD.Widget({tagName: 'button'});
+            var button2 = new LSD.Widget({tagName: 'button'});
+            expect(button.callbacks).toBeUndefined()
+            widget.relations.set('buttons', button);
+            expect(button.callbacks).toBeUndefined()
+            expect(index).toEqual(1);
+            expect(filled).toEqual(1);
+            widget.relations.set('buttons', button2);
+            expect(index).toEqual(2);
+            expect(filled).toEqual(1);
+            widget.relations.unset('buttons', button);
+            expect(index).toEqual(1);
+            expect(filled).toEqual(1);
+            widget.relations.unset('buttons', button2);
+            expect(index).toEqual(0);
+            expect(filled).toEqual(0);
+            widget.relations.mix({buttons: {callbacks: callbacks}}, null, null, false);
+            widget.relations.set('buttons', button);
+            expect(index).toEqual(0);
+            expect(filled).toEqual(0);
+            widget.relations.set('buttons', button2);
+            expect(index).toEqual(0);
+            expect(filled).toEqual(0);
           })
         });
         describe('and relation is defined as `singular`', function() {
           it ('should write the first matched widget', function() {
-            
+            var widget = new LSD.Widget({
+              relations: {
+                button: {
+                  singular: true
+                }
+              }
+            });
+            var button = new LSD.Widget({tagName: 'button'});
+            var button2 = new LSD.Widget({tagName: 'button'});
+            widget.relations.set('button', button);
+            expect(widget.relations.button.clone()).toEqual(LSD.Array(button));
+            expect(widget.button).toEqual(button);
+            widget.relations.mix({button: {singular: true}}, null, null, false);
+            expect(widget.button.clone()).toEqual(LSD.Array(button));
+            widget.relations.set('button', button2);
+            expect(widget.button.clone()).toEqual(LSD.Array(button, button2));
+            widget.relations.mix({button: {singular: true}});
+            expect(widget.button).toEqual(button);
+            widget.relations.unset('button', button);
+            expect(widget.relations.button.clone()).toEqual(LSD.Array(button2));
+            expect(widget.button).toEqual(button2);
+            widget.relations.mix({button: {singular: true}}, null, null, false);
+            expect(widget.button.clone()).toEqual(LSD.Array(button2));
+            widget.relations.mix({button: {singular: true}});
+            expect(widget.button).toEqual(button2);
+            widget.relations.set('button', button);
+            expect(widget.button).toEqual(button2);
+            widget.relations.unset('button', button2);
+            expect(widget.button).toEqual(button);
+            widget.relations.unset('button', button);
+            expect(widget.button).toBeUndefined()
+            widget.relations.mix({button: {singular: true}}, null, null, false);
+            expect(widget.button.clone()).toEqual(LSD.Array());
           })
         })
       })
