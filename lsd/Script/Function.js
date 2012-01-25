@@ -140,7 +140,7 @@ describe("LSD.Script.Function", function() {
         it("should execute that widget method", function() {
           var scope = new LSD.Script.Scope;
           var script = new LSD.Script('getAttribute(object, "title")', scope);
-          scope.variables.set('object', new LSD.Widget({attributes: {title: 'Loleo'}}));
+          scope.variables.set('object', new LSD.Element({attributes: {title: 'Loleo'}}));
           expect(script.value).toEqual('Loleo');
         });
       });
@@ -152,7 +152,7 @@ describe("LSD.Script.Function", function() {
             scope.methods.set('getSomething', function(object, name) {
               return object.getAttribute(name)
             })
-            scope.variables.set('object', new LSD.Widget({attributes: {title: 'Loleo'}}));
+            scope.variables.set('object', new LSD.Element({attributes: {title: 'Loleo'}}));
             expect(script.value).toEqual('Loleo');
           });
         });
@@ -183,7 +183,7 @@ describe("LSD.Script.Function", function() {
       return 1337
     });
     scope.methods.set('make', function(value) {
-      return new LSD.Widget({attributes: {title: value}})
+      return new LSD.Element({attributes: {title: value}})
     });
     scope.methods.set('return', function(value) {
       return Array.from(arguments)
@@ -241,12 +241,12 @@ describe("LSD.Script.Function", function() {
     });
     describe("and functions dont have explicit arguments", function() {
       it ("should be able to pipe both arguments and context", function() {
-        var scope = new LSD.Widget({tag: 'container'});
+        var scope = new LSD.Element({tag: 'container'});
         scope.methods.set('request', function() {
           return true
         });
         scope.methods.set('create', function(success) {
-          if (success === true) return new LSD.Widget({tag: 'response'}) 
+          if (success === true) return new LSD.Element({tag: 'response'}) 
         });
         var script = new LSD.Script('request(), create(), grab()', scope)
         expect(scope.childNodes[0].tagName).toEqual('response')
@@ -262,7 +262,7 @@ describe("LSD.Script.Function", function() {
       describe("and context for that function call is a variable pointing to widget", function() {
         it("should use returned values", function() {
           var local = new LSD.Script.Scope(scope);
-          local.variables.set('widget', new LSD.Widget)
+          local.variables.set('widget', new LSD.Element)
           var script = new LSD.Script('widget.return()', local);
           expect(script.value[0].nodeType).toEqual(1)
         })
@@ -288,9 +288,9 @@ describe("LSD.Script.Function", function() {
           it ("should use widget as a context", function() {
             var local = new LSD.Script.Scope(scope);
             local.variables.set('items', [
-              new LSD.Widget({attributes: {title: 'L'}}),
-              new LSD.Widget({attributes: {title: 'S'}}),
-              new LSD.Widget({attributes: {title: 'D'}})
+              new LSD.Element({attributes: {title: 'L'}}),
+              new LSD.Element({attributes: {title: 'S'}}),
+              new LSD.Element({attributes: {title: 'D'}})
             ])
             var script = new LSD.Script('items.map { getAttribute("title") }', local)
             expect(script.value).toEqual(['L', 'S', 'D'])
@@ -310,7 +310,7 @@ describe("LSD.Script.Function", function() {
         });
         describe("that iterates over element collection", function() {
           it ("should not change context", function() {
-            var local = new LSD.Widget({attributes: {title: 'LSD'}});
+            var local = new LSD.Element({attributes: {title: 'LSD'}});
             local.variables.set('items', ['L', 'S', 'D'])
             var script = new LSD.Script('items.map { getAttribute("title") }', local)
           })
@@ -322,9 +322,9 @@ describe("LSD.Script.Function", function() {
         it ("should be able to access value and call a function upon it", function() {
           var local = new LSD.Script.Scope(scope);
           var items = [
-            new LSD.Widget({attributes: {title: 'L'}}),
-            new LSD.Widget({attributes: {title: 'S'}}),
-            new LSD.Widget({attributes: {title: 'D'}})
+            new LSD.Element({attributes: {title: 'L'}}),
+            new LSD.Element({attributes: {title: 'S'}}),
+            new LSD.Element({attributes: {title: 'D'}})
           ];
           local.variables.set('items', items)
           var script = new LSD.Script('items.each { |item| item.attributes.set("food", "borscht")}', local)

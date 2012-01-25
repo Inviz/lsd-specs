@@ -152,7 +152,7 @@ describe("LSD.Layout", function() {
         })
 
         it ("should build widgets off expressions with pseudo-elements allocation queries", function() {
-          var widget = new LSD.Widget({tag: 'input', document: Factory('document')});
+          var widget = new LSD.Element({tag: 'input', document: Factory('document')});
           var result = widget.addLayout(null, {
             '::dialog:of-kind(input-date)': {
               'h2': 'Hello world',
@@ -166,7 +166,7 @@ describe("LSD.Layout", function() {
         })
 
         it ("should build widgets as pseudo elements conditionally", function() {
-          var widget = new LSD.Widget({tag: 'input', document: Factory('document')});
+          var widget = new LSD.Element({tag: 'input', document: Factory('document')});
           var result = widget.addLayout(null, {
             'if &:expanded': {
               '::dialog:of-kind(input-time)': {
@@ -210,7 +210,7 @@ describe("LSD.Layout", function() {
                   }
                 }
               });
-              var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container1'});
+              var root = new LSD.Element({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container1'});
               var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               var container = article.element.getElement('div.container');
@@ -238,7 +238,7 @@ describe("LSD.Layout", function() {
                   }
                 }
               });
-              var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container2'});
+              var root = new LSD.Element({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container2'});
               var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               expect(article.getElements('button').length).toEqual(2);
@@ -277,7 +277,7 @@ describe("LSD.Layout", function() {
                   }
                 }
               });
-              var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container3'});
+              var root = new LSD.Element({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container3'});
               var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               expect(article.getElements('button').length).toEqual(2);
@@ -303,7 +303,7 @@ describe("LSD.Layout", function() {
                   }
                 }
               });
-              var root = new LSD.Widget({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container4'});
+              var root = new LSD.Element({tag: 'body', pseudos: ['root'], document: Factory('document'), context: 'container4'});
               var built = root.addLayout(null, fragment)
               var article = root.childNodes[0];
               var container = article.element.getElement('span.booty.container');
@@ -319,7 +319,7 @@ describe("LSD.Layout", function() {
           describe("and layout consists of a single item that is already in nodes", function() {
             it ("should not build that item", function() {
               var element = new Element('section').adopt(new Element('div.wrapper'));
-              var instance = new LSD.Widget(element, {
+              var instance = new LSD.Element(element, {
                 layout: {
                   'div.wrapper': null
                 }
@@ -333,7 +333,7 @@ describe("LSD.Layout", function() {
                 describe("and layout definition doesnt have content", function() {
                   it("should build only the missing parts of layout", function() {
                     var element = new Element('section').adopt(new Element('div.wrapper'));
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'div.wrapper': null,
                         'h2': 'Pro tennis'
@@ -348,7 +348,7 @@ describe("LSD.Layout", function() {
                 describe("and only layout has contents", function() {
                   it("should build only the missing parts of layout and use the content from layout", function() {
                     var element = new Element('section').adopt(new Element('div.wrapper'));
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'div.wrapper': 'Life before Christ',
                         'h2': 'Pro tennis'
@@ -365,7 +365,7 @@ describe("LSD.Layout", function() {
                 describe("and both found element and a node in layout have contents", function() {
                   it("should build only the missing parts of layout and concat contents from node and layout", function() {
                     var element = new Element('section').adopt(new Element('div.wrapper', {html: 'Haters '}));
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'div.wrapper': 'gonna hate',
                         'h2': 'Pro tennis'
@@ -381,7 +381,7 @@ describe("LSD.Layout", function() {
                 describe("and a widget layout has a conditional branch", function() {
                   it ("should initialize branch and render layout", function() {
                     var element = new Element('section').adopt(new Element('div.wrapper', {html: 'Haters '}));
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'div.wrapper': [
                           'gonna ',
@@ -400,7 +400,7 @@ describe("LSD.Layout", function() {
                   describe("and condition value changes", function() {
                     it ("should remove layout", function() {
                       var element = new Element('section').adopt(new Element('div.wrapper', {html: 'Haters'}));
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'div.wrapper': [
                             ' gonna',
@@ -435,7 +435,7 @@ describe("LSD.Layout", function() {
                         ),
                         new Element('section')
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'header': null,
                           'section': null,
@@ -453,7 +453,7 @@ describe("LSD.Layout", function() {
                         ),
                         new Element('section')
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'header': null,
                           'section': null,
@@ -474,7 +474,7 @@ describe("LSD.Layout", function() {
                         new Element('hr'),
                         new Element('footer')
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'header +': 'Headers are for dummies',
                           'article ~': 'Great article',
@@ -494,7 +494,7 @@ describe("LSD.Layout", function() {
                       new Element('hr'),
                       new Element('footer')
                     );
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'header +': 'Headers are for dummies',
                         'article +': 'Great article',
@@ -516,7 +516,7 @@ describe("LSD.Layout", function() {
                         new Element('span.meta')
                       )
                     );
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'header': {
                           'span.title': 'Groan',
@@ -551,7 +551,7 @@ describe("LSD.Layout", function() {
                         new Element('span.high')
                       );
 
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'h1.high': {
                             'h2.medium': {
@@ -610,7 +610,7 @@ describe("LSD.Layout", function() {
                           new Element('span.high')
                         );
 
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             'h1.high': {
                               'h2.sodium': { //doesnt match here
@@ -661,7 +661,7 @@ describe("LSD.Layout", function() {
               describe("and order is not enforced", function() {
                 it("should append missing bits", function() {
                   var element = new Element('section').adopt(new Element('div.wrapper'));
-                  var instance = new LSD.Widget(element, {
+                  var instance = new LSD.Element(element, {
                     layout: {
                       'h2': 'Pro tennis',
                       'div.wrapper': null
@@ -677,7 +677,7 @@ describe("LSD.Layout", function() {
                 describe("by a simple combinator", function() {
                   it("should prepend missing bits", function() {
                     var element = new Element('section').adopt(new Element('div.wrapper'));
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'h2 +': 'Pro tennis',
                         'div.wrapper': null
@@ -693,7 +693,7 @@ describe("LSD.Layout", function() {
                 describe("by a simple ~ combinator", function() {
                   it("should prepend missing bits", function() {
                     var element = new Element('section').adopt(new Element('footer'), new Element('header'), new Element('nav'));
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'header ~': 'Pro tennis',
                         'footer': null
@@ -712,7 +712,7 @@ describe("LSD.Layout", function() {
                         new Element('header'),
                         new Element('hr')
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'header +': 'Headers are for dummies',
                           'article ~': 'Great article',
@@ -732,7 +732,7 @@ describe("LSD.Layout", function() {
                       new Element('hr'),
                       new Element('footer')
                     );
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'header +': 'Headers are for dummies',
                         'article +': 'Great article',
@@ -756,7 +756,7 @@ describe("LSD.Layout", function() {
                         new Element('menu'),
                         new Element('div')
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'nav ~ ': null,
                           'header +': 'Headers are for dummies',
@@ -790,7 +790,7 @@ describe("LSD.Layout", function() {
                           ),
                           new Element('div')
                         );
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             'nav ~ ': null,
                             'header +': {
@@ -837,7 +837,7 @@ describe("LSD.Layout", function() {
                             new Element('div')
                           )
                         );
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             'nav ~ ': null,
                             'header +': {
@@ -885,7 +885,7 @@ describe("LSD.Layout", function() {
                             new Element('div')
                           )
                         );
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             'nav ~ ': null,
                             'header +': {
@@ -922,7 +922,7 @@ describe("LSD.Layout", function() {
                         new Element('menu'),
                         new Element('div')
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'nav ~ ': null,
                           'header +': 'Headers are for dummies',
@@ -947,7 +947,7 @@ describe("LSD.Layout", function() {
                         html: 'Hey ${object}, you are at ${deed}! '
                       })
                     );
-                    var instance = new LSD.Widget(element, {
+                    var instance = new LSD.Element(element, {
                       layout: {
                         'header': {
                           'h1': '${object} at ${deed}'
@@ -980,7 +980,7 @@ describe("LSD.Layout", function() {
                           })
                         )
                       );
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'header': {
                             'h1': '${object} at ${deed}'
@@ -1018,7 +1018,7 @@ describe("LSD.Layout", function() {
                           new Element('nav')
                         )
                       )
-                      var instance = new LSD.Widget(element, {
+                      var instance = new LSD.Element(element, {
                         layout: {
                           'header ~': {
                             'form': null
@@ -1075,7 +1075,7 @@ describe("LSD.Layout", function() {
                           new Element('menu')
                         );
                         element.appendChild(document.createTextNode('Krist'));
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             'menu ~ ': null,
                             'button': null,
@@ -1098,7 +1098,7 @@ describe("LSD.Layout", function() {
                           new Element('menu')
                         );
                         element.appendChild(document.createTextNode('Krist'));
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             'menu ~ ': null,
                             '::container ~': null,
@@ -1119,7 +1119,7 @@ describe("LSD.Layout", function() {
                           new Element('menu')
                         );
                         element.appendChild(document.createTextNode('Krist'));
-                        var instance = new LSD.Widget(element, {
+                        var instance = new LSD.Element(element, {
                           layout: {
                             '::container +': null,
                             'button +': null,
@@ -1160,7 +1160,7 @@ describe("LSD.Layout", function() {
                           }
                         }
                       })
-                      var root = new LSD.Widget({tag: 'body', pseudos: ['root'], context: 'layoutmix1', document: Factory('document')})
+                      var root = new LSD.Element({tag: 'body', pseudos: ['root'], context: 'layoutmix1', document: Factory('document')})
                       var element = new Element('section').adopt(
                         new Element('article').adopt(
                           new Element('form').adopt(
@@ -1190,7 +1190,7 @@ describe("LSD.Layout", function() {
               describe("and order is not enforced", function() {
                 it("should append missing bits", function() {
                   var element = new Element('section').adopt(new Element('header'), new Element('footer'));
-                  var instance = new LSD.Widget(element, {
+                  var instance = new LSD.Element(element, {
                     layout: {
                       'header': 'Pro tennis',
                       'section.doughnuts': null,
@@ -1204,7 +1204,7 @@ describe("LSD.Layout", function() {
               describe("and order is enforced", function() {
                 it("should fill in the blanks", function() {
                   var element = new Element('section').adopt(new Element('header'), new Element('footer'));
-                  var instance = new LSD.Widget(element, {
+                  var instance = new LSD.Element(element, {
                     layout: {
                       'header +': 'Pro tennis',
                       'section.doughnuts +': null,
@@ -1220,7 +1220,7 @@ describe("LSD.Layout", function() {
           describe("and layout consists of elements that are already provided by the nodes, but with different content", function() {
             it("should append missing content", function() {
                 var element = new Element('section').adopt(new Element('div.wrapper').adopt(new Element('h1', {html: 'Serious business'})));
-                var instance = new LSD.Widget(element, {
+                var instance = new LSD.Element(element, {
                   layout: {
                     'div.wrapper': {
                       'h2': 'Pro tennis'
@@ -1239,7 +1239,7 @@ describe("LSD.Layout", function() {
           describe("and it's simple layout", function() {
             it ("should build that item", function() {
               var element = new Element('section');
-              var instance = new LSD.Widget(element, {
+              var instance = new LSD.Element(element, {
                 layout: {
                   'div.wrapper': null
                 }

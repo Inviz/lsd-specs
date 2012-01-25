@@ -30,7 +30,7 @@ describe('LSD.Module.Tag', function() {
     })
     
     it ('should set the widget class and implement its methods', function() {
-      var widget = new LSD.Widget({
+      var widget = new LSD.Element({
         context: Context
       });
       expect(widget.getBody).toBeFalsy();
@@ -39,7 +39,7 @@ describe('LSD.Module.Tag', function() {
     });
     
     it ('should change the class after it was set once', function() {
-      var widget = new LSD.Widget({
+      var widget = new LSD.Element({
         context: Context
       });
       widget.property = 1;
@@ -54,7 +54,7 @@ describe('LSD.Module.Tag', function() {
     });
     
     it ('should create a functioning widget', function() {
-      var widget = new LSD.Widget({
+      var widget = new LSD.Element({
         context: Context
       });
       widget.properties.set('tag', 'button');
@@ -66,7 +66,7 @@ describe('LSD.Module.Tag', function() {
       describe('and type attribute', function() {
         describe('and there is no subclassed widget', function() {
           it ('should find original widget role by tag name', function() {
-            var instance = new LSD.Widget({
+            var instance = new LSD.Element({
               tag: 'button',
               context: Context,
               attributes: {
@@ -78,7 +78,7 @@ describe('LSD.Module.Tag', function() {
         })
         describe('and there is subclassed widget', function() {
           it ('should find a subclassed widget role by tag name and type attribute', function() {
-            var instance = new LSD.Widget({
+            var instance = new LSD.Element({
               tag: 'button',
               context: Context,
               attributes: {
@@ -91,7 +91,7 @@ describe('LSD.Module.Tag', function() {
         describe('and kind attribute', function() {
           describe('and there is a deeply subclassed widget role', function() {
             it ('should find a deeply subclassed widget role by tag name, type and kind attribute', function() {
-              var instance = new LSD.Widget({
+              var instance = new LSD.Element({
                 tag: 'button',
                 context: Context,
                 attributes: {
@@ -103,7 +103,7 @@ describe('LSD.Module.Tag', function() {
             })
             describe('but type doesnt match', function() {
               it ('should find original widget role', function() {
-                var instance = new LSD.Widget({
+                var instance = new LSD.Element({
                   tag: 'button',
                   context: Context,
                   attributes: {
@@ -118,7 +118,7 @@ describe('LSD.Module.Tag', function() {
           describe('and there is no deeply subclassed widget role', function() {
             describe('and there is no subclassed widget role', function() {
               it ('should find original widget role by tag name', function() {
-                var instance = new LSD.Widget({
+                var instance = new LSD.Element({
                   tag: 'body',
                   context: Context,
                   attributes: {
@@ -131,7 +131,7 @@ describe('LSD.Module.Tag', function() {
             })
             describe('and there is subclassed widget role', function() {
               it ('should find a subclassed widget role by tag name and type', function() {
-                var instance = new LSD.Widget({
+                var instance = new LSD.Element({
                   tag: 'button',
                   context: Context,
                   attributes: {
@@ -148,7 +148,7 @@ describe('LSD.Module.Tag', function() {
       describe('and kind attribute', function() {
         describe('and there is no subclassed widget', function() {
           it ('should find an original widget role by tag name', function() {
-            var instance = new LSD.Widget({
+            var instance = new LSD.Element({
               tag: 'button',
               context: Context,
               attributes: {
@@ -160,7 +160,7 @@ describe('LSD.Module.Tag', function() {
         })
         describe('and there is subclassed widget', function() {
           it ('should find subclassed widget role by tag name and kind attribute', function() {
-            var instance = new LSD.Widget({
+            var instance = new LSD.Element({
               tag: 'button',
               context: Context,
               attributes: {
@@ -176,7 +176,7 @@ describe('LSD.Module.Tag', function() {
     describe('when given a source', function() {
       describe('and tag name', function() {
         it('should use source instead of a tag name', function() {
-          var instance = new LSD.Widget({
+          var instance = new LSD.Element({
             tag: 'button',
             source: 'body',
             context: Context
@@ -187,7 +187,7 @@ describe('LSD.Module.Tag', function() {
         describe('and type attribute', function() {
           describe('and there is no subclassed widget', function() {
             it ('should find original widget role by source option', function() {
-              var instance = new LSD.Widget({
+              var instance = new LSD.Element({
                 tag: 'body',
                 source: 'button',
                 context: Context,
@@ -200,7 +200,7 @@ describe('LSD.Module.Tag', function() {
           })
           describe('and there is subclassed widget', function() {
             it ('should find a subclassed widget by source option and type attribute', function() {
-              var instance = new LSD.Widget({
+              var instance = new LSD.Element({
                 tag: 'body',
                 source: 'button',
                 context: Context,
@@ -214,7 +214,7 @@ describe('LSD.Module.Tag', function() {
           describe('and kind attribute', function() {
             describe('and there is a deeply subclassed widget role', function() {
               it ('should find a deeply subclassed widget role by source option, kind and tag attributes', function() {
-                var instance = new LSD.Widget({
+                var instance = new LSD.Element({
                   tag: 'body',
                   source: 'button',
                   context: Context,
@@ -227,7 +227,7 @@ describe('LSD.Module.Tag', function() {
               })
               describe('but type doesnt match', function() {
                 it ('should find an original widget role by source', function() {
-                  var instance = new LSD.Widget({
+                  var instance = new LSD.Element({
                     tag: 'body',
                     source: 'button',
                     context: Context,
@@ -244,7 +244,7 @@ describe('LSD.Module.Tag', function() {
             describe('and there is no deeply subclassed widget', function() {
               describe('and there is no subclassed widget', function() {
                 it ('should find original widget role by source option', function() {
-                  var instance = new LSD.Widget({
+                  var instance = new LSD.Element({
                     tag: 'button',
                     source: 'body',
                     context: Context,
@@ -258,7 +258,7 @@ describe('LSD.Module.Tag', function() {
               })
               describe('and there is subclassed widget', function() {
                 it ('should find a subclassed widget by source option and type attribute', function() {
-                  var instance = new LSD.Widget({
+                  var instance = new LSD.Element({
                     tag: 'body',
                     source: 'button',
                     context: Context,
@@ -276,7 +276,7 @@ describe('LSD.Module.Tag', function() {
         describe('and kind attribute', function() {
           describe('and there is no subclassed widget', function() {
             it ('should find original widget role', function() {
-              var instance = new LSD.Widget({
+              var instance = new LSD.Element({
                 tag: 'body',
                 source: 'button',
                 context: Context,
@@ -289,7 +289,7 @@ describe('LSD.Module.Tag', function() {
           })
           describe('and there is subclassed widget', function() {
             it ('should find a subclassed widget', function() {
-              var instance = new LSD.Widget({
+              var instance = new LSD.Element({
                 tag: 'body',
                 source: 'button',
                 context: Context,
@@ -309,7 +309,7 @@ describe('LSD.Module.Tag', function() {
             var element = document.createElement('button');
             element.setAttribute('type', 'submit');
             element.setAttribute('kind', 'bang')
-            var instance = new LSD.Widget(element, {context: Context});
+            var instance = new LSD.Element(element, {context: Context});
             expect(instance.role).toEqual(Context.Button.Submit.Bang);
           });
           describe("and source is given too", function() {
@@ -317,7 +317,7 @@ describe('LSD.Module.Tag', function() {
               var element = document.createElement('body');
               element.setAttribute('type', 'submit');
               element.setAttribute('kind', 'bang')
-              var instance = new LSD.Widget(element, {context: Context, source: 'button'});
+              var instance = new LSD.Element(element, {context: Context, source: 'button'});
               expect(instance.role).toEqual(Context.Button.Submit.Bang);
             });
             describe("but the role path doesnt match", function() {
@@ -325,7 +325,7 @@ describe('LSD.Module.Tag', function() {
                 var element = document.createElement('button');
                 element.setAttribute('type', 'submit');
                 element.setAttribute('kind', 'bang')
-                var instance = new LSD.Widget(element, {context: Context, source: 'body'});
+                var instance = new LSD.Element(element, {context: Context, source: 'body'});
                 expect(instance.role).toEqual(Context.Body);
               })
             })
@@ -336,7 +336,7 @@ describe('LSD.Module.Tag', function() {
     
     it ('should create a widget off an element and replace it when tag is changed', function() {
       var element = document.createElement('body');
-      var widget = new LSD.Widget(element, {context: Context});
+      var widget = new LSD.Element(element, {context: Context});
       widget.build();
       expect(widget.tagName).toEqual('body');
       expect(widget.getBody).toBeTruthy();
@@ -347,7 +347,7 @@ describe('LSD.Module.Tag', function() {
     
     it('should implement options and methods from a button role', function() {
       var clicked = false;
-      LSD.Widget.Buttonesque = new Class({
+      LSD.Element.Buttonesque = new Class({
         options: {
           events: {
             element: {
@@ -361,8 +361,8 @@ describe('LSD.Module.Tag', function() {
         }
       });
       var element = new Element('div');
-      var instance = new LSD.Widget(element, {tag:'buttonesque', context: 'widget'});
-      expect(instance.role).toEqual(LSD.Widget.Buttonesque)
+      var instance = new LSD.Element(element, {tag:'buttonesque', context: 'widget'});
+      expect(instance.role).toEqual(LSD.Element.Buttonesque)
       element.fireEvent('click');
       expect(clicked).toBeTruthy();
     });
@@ -373,7 +373,7 @@ describe('LSD.Module.Tag', function() {
       LSD.Mixin.Zizzoro = new Class({
         bang: function() {}
       })
-      var instance = new LSD.Widget;
+      var instance = new LSD.Element;
       expect(instance.bang).toBeFalsy()
       instance.mixins.include('zizzoro');
       expect(instance.bang).toBeTruthy()

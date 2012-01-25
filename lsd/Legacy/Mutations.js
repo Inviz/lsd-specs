@@ -22,7 +22,7 @@ describe('Layout', function() {
         })
         var parse = function(element, options) {
           if (element.indexOf) element = new Element('div', {html: element});
-          return new LSD.Widget(element, Object.append({context: Context, document: Factory('document')}, options));
+          return new LSD.Element(element, Object.append({context: Context, document: Factory('document')}, options));
         }
         new LSD.Type('Clean');
         Context.Superform = new Class({
@@ -123,7 +123,7 @@ describe('Layout', function() {
         it('should should simply clone complex layout', function() {
           var fragment = parse(superform);
           var html = fragment.element.innerHTML;
-          var clone = new LSD.Widget(fragment.element, {clone: true, document: fragment.document});
+          var clone = new LSD.Element(fragment.element, {clone: true, document: fragment.document});
           expect(html).toEqual(fragment.element.innerHTML)
           expect(Slick.search(fragment, 'meter').length).toEqual(2);
           expect(Slick.search(fragment, 'meter').map(function(e) { return e.attributes.id})).toEqual(['bc', 'e'])
@@ -170,7 +170,7 @@ describe('Layout', function() {
                 }
               }
             });
-            var widget = new LSD.Widget(element, {
+            var widget = new LSD.Element(element, {
               mutations: {
                 'div > section.content > ul': 'list'
               },
@@ -220,7 +220,7 @@ describe('Layout', function() {
                 }
               }
             });
-            var widget = new LSD.Widget(element, {
+            var widget = new LSD.Element(element, {
               mutations: {
                 'aside > div': 'div'
               },
@@ -268,7 +268,7 @@ describe('Layout', function() {
                   </ul>                     \
                   </section>'
               })
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 mutations: {
                   '> section.content > ul': 'list',
                   '> section.content > ul menu': 'menu',

@@ -381,4 +381,26 @@ describe("LSD.Object", function() {
       })
     })
   })
+  describe('when object sets reference to another object', function() {
+    describe('and then mixes value into it', function() {
+      it ('should lazily reference object and make a fork of it on the fly', function() {
+        var object = new LSD.Object({title: 'object'});
+        var referenced = new LSD.Object({title: 'referenced'});
+        var other = new LSD.Object({title: 'other'});
+        object.set('property', referenced);
+        expect(referenced._parent).toEqual(object);
+        expect(object.property).toBe(referenced);
+        other.set('property', referenced);
+        expect(object.property).toEqual(referenced);
+        expect(other.property).toEqual(referenced);
+        expect(referenced._parent).toBe(object);
+        other.property.set('price', 123);
+        expect(object.property.price).toEqual(123);
+        other.set('property.rating', 666);
+        expect(other.property.rating).toEqual(666);
+        expect(other.property).toNotBe(object.property)
+        expect(object.property.rating).toBeUndefined();
+      })
+    })
+  })
 })

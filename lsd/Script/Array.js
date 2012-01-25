@@ -750,3 +750,28 @@ describe('LSD.Array', function() {
     })
   })
 });
+
+describe('LSD.Collection', function() {
+  it('should sort pushed objects automatically', function() {
+    var o = new LSD.Object({sourceIndex: 0});
+    var a = new LSD.Object({sourceIndex: 1});
+    var b = new LSD.Object({sourceIndex: 2});
+    var c = new LSD.Object({sourceIndex: 3});
+    var d = new LSD.Object({sourceIndex: 4});
+    var collection = new LSD.Collection;
+    collection.push(b)
+    expect(collection.slice()).toEqual([b])
+    collection.push(a)
+    expect(collection.slice()).toEqual([a, b])
+    collection.push(d)
+    expect(collection.slice()).toEqual([a, b, d])
+    collection.push(c)
+    expect(collection.slice()).toEqual([a, b, c, d])
+    collection.push(o)
+    expect(collection.slice()).toEqual([o, a, b, c, d]);
+    a.set('sourceIndex', 5)
+    expect(collection.slice()).toEqual([o, b, c, d, a]);
+    o.set('sourceIndex', 2.5)
+    expect(collection.slice()).toEqual([b, o, c, d, a]);
+  })
+})

@@ -6,7 +6,7 @@ describe("LSD.Interpolation", function() {
       The person is ${person_age} years old has left ${pluralize(person_comments_count, '% comment')}."
       
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes.length).toEqual(9)
     expect(element.childNodes[5].textContent).toEqual('${person_age}')
     widget.variables.set('person_age', 123);
@@ -26,7 +26,7 @@ describe("LSD.Interpolation", function() {
       <p>${person_age + person_year - 1}</p>\
       Age is ${person_age}, Year is ${person_year}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes.length).toEqual(6);
     expect(element.childNodes[1].textContent).toEqual('${person_age + person_year - 1}');
     expect(element.childNodes[3].textContent).toEqual('${person_age}');
@@ -53,7 +53,7 @@ describe("LSD.Interpolation", function() {
     
     var html = "${666 - 616}${3 * 6 / 10}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes[0].textContent).toEqual('50');
     expect(element.childNodes[1].textContent).toEqual('1.8');
   });
@@ -61,7 +61,7 @@ describe("LSD.Interpolation", function() {
   it ("should do basic arythmetics", function() {
     var html = "${a + b * c + 1}${a * b + c - 1}${a * b + c - 1 * 3}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes.length).toEqual(3)
     expect(element.childNodes[0].textContent).toEqual('${a + b * c + 1}');
     expect(element.childNodes[1].textContent).toEqual('${a * b + c - 1}');
@@ -76,37 +76,37 @@ describe("LSD.Interpolation", function() {
   it ("should not choke on a deeply nested arythmetics", function() {
     var html = "${a + a * a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('6');
     
     var html = "${a + a * a + a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('8');
     
     var html = "${a + a * a + a - a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('6');
     
     var html = "${a + a * a + a - a / a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('7');
     
     var html = "${a + a * a + a - a / a - a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('5');
     
     var html = "${a + a * a + a - a / a - a - a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('3');
     widget.variables.set('a', 3);
@@ -118,18 +118,18 @@ describe("LSD.Interpolation", function() {
   xit ("should handle parenthesises", function() {
     var html = "${a + a * (a + a) - a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('6');
     var html = "${a + a * a + a - a / a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('7');
     
     var html = "${a + a * a + a - a / a - a}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 2);
     expect(element.childNodes[0].textContent).toEqual('5');
   })
@@ -137,7 +137,7 @@ describe("LSD.Interpolation", function() {
   it ("should do logical expressions", function() {
     var html = "${a && b}${a || b}${a ^ b}";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     widget.variables.set('a', 0);
     widget.variables.set('b', 1);
     expect(element.childNodes.length).toEqual(3);
@@ -153,7 +153,7 @@ describe("LSD.Interpolation", function() {
   it ("should lazily iterate expressions to set up interpolation placeholder", function() {
     var html = "Hello there ${name || 'boy'}!";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes[1].textContent).toEqual('boy');
     widget.variables.set('name', 'dog');
     expect(element.childNodes[1].textContent).toEqual('dog');
@@ -166,7 +166,7 @@ describe("LSD.Interpolation", function() {
   it ("should lazily iterate expressions complex expressions to set up interpolation placeholder", function() {
     var html = "Hello there ${dog && name || 'boy'}!";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes[1].textContent).toEqual('boy');
     widget.variables.set('name', 'dog');
     expect(element.childNodes[1].textContent).toEqual('boy');
@@ -183,7 +183,7 @@ describe("LSD.Interpolation", function() {
   it ("should use interpolators from widget", function() {
     var html = "Hello there ${name}!";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect(element.childNodes[1].textContent).toEqual('${name}');
     widget.setAttribute('data-name', 'Hippo');
     expect(widget.dataset.name).toEqual('Hippo');
@@ -215,7 +215,7 @@ describe("LSD.Interpolation", function() {
   it ("should fallback to parent interpolation", function() {
     var html = "Hello there ${name}!";
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
   })
   
   it ("should interpolate using microdata", function() {
@@ -238,7 +238,7 @@ describe("LSD.Interpolation", function() {
       </p>\
     "
     var element = new Element('div', {html: html});
-    var widget = new LSD.Widget(element);
+    var widget = new LSD.Element(element);
     expect($(widget).getLast().childNodes[1].textContent).toEqual('Jesus')
     expect($(widget).getLast().childNodes[3].textContent).toEqual('Teh Savior')
     expect($(widget).getLast().childNodes[5].textContent).toEqual('Heaven')
@@ -273,7 +273,7 @@ describe("LSD.Interpolation", function() {
       and who is the ${person.name}?\
     "
     var element = new Element('div', {html: html});
-    var widget = $w = new LSD.Widget(element, {mutations: {'article': true}});
+    var widget = $w = new LSD.Element(element, {mutations: {'article': true}});
     var wrap = $(widget).getLast().getLast();
     expect(widget.childNodes.length).toEqual(1);
     expect(element.getElement('article').childNodes[1].textContent).toEqual('Article of the year');
@@ -305,7 +305,7 @@ describe("LSD.Interpolation", function() {
         </details>\
       </li>"
     var element = new Element('div', {html: html});
-    var widget = $w = new LSD.Widget(element, {mutations: {'li': true}});
+    var widget = $w = new LSD.Element(element, {mutations: {'li': true}});
     var wrap = $(widget).getLast().getLast();
     expect(widget.childNodes.length).toEqual(1);
     expect(element.getElement('article').childNodes[1].textContent).toEqual('ARTICLE OF THE YEAR');
@@ -366,7 +366,7 @@ describe("LSD.Interpolation", function() {
     var element = new Element('div', {html: html});
     var widget = $w = Factory('root', {}, element);
     expect(element.get('text')).toEqual('0');
-    var item = new LSD.Widget({tag: 'item'});
+    var item = new LSD.Element({tag: 'item'});
     widget.appendChild(item);
     expect(element.get('text')).toEqual('1');
   });
@@ -377,7 +377,7 @@ describe("LSD.Interpolation", function() {
         <video src='${url}'></video>\
       ";
       var element = new Element('div', {html: html});
-      var widget = new LSD.Widget(element);
+      var widget = new LSD.Element(element);
       var video = element.getElement('video');
       
       expect(video.getAttribute('src')).toEqual('${url}')
@@ -391,7 +391,7 @@ describe("LSD.Interpolation", function() {
           <video src='${id}.mpg'></video>\
         ";
         var element = new Element('div', {html: html});
-        var widget = new LSD.Widget(element);
+        var widget = new LSD.Element(element);
         var video = element.getElement('video');
         
         expect(video.getAttribute('src')).toEqual('${id}.mpg')
@@ -405,7 +405,7 @@ describe("LSD.Interpolation", function() {
             <video src='movies/${movie.type}/${movie.id}.${Player.extension}'></video>\
           ";
           var element = new Element('div', {html: html});
-          var widget = new LSD.Widget(element);
+          var widget = new LSD.Element(element);
           var video = element.getElement('video');
           
           var ad = new LSD.Object({type: 'ad', id: 'weird'});

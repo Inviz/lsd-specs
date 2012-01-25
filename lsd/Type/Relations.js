@@ -2,12 +2,12 @@ describe('LSD.Type.Relations', function() {
   describe('when initialized on an object', function() {
     describe('and related widget is set explicitly', function() {
       it ('should assign widget', function() {
-        var widget = new LSD.Widget({
+        var widget = new LSD.Element({
           relations: {
             buttons: {}
           }
         });
-        var button = new LSD.Widget({tagName: 'button'})
+        var button = new LSD.Element({tagName: 'button'})
         widget.relations.set('buttons', button);
         expect(widget.buttons.clone()).toEqual(LSD.Array(button))
         widget.relations.unset('buttons', button)
@@ -19,7 +19,7 @@ describe('LSD.Type.Relations', function() {
         describe('and relation defines events to be passed to widget', function() {
           it ("should add events to the widget when it matches, and remove them when it matches no more", function() {
             var click = function() {};
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 buttons: {
                   events: {
@@ -28,18 +28,16 @@ describe('LSD.Type.Relations', function() {
                 }
               }
             })
-            var button = new LSD.Widget({tagName: 'button'})
+            var button = new LSD.Element({tagName: 'button'})
             widget.relations.set('buttons', button);
-            expect(widget.events).toBeFalsy()
             expect(button.events.click).toEqual([click])
             widget.relations.unset('buttons', button);
-            expect(widget.events).toBeFalsy()
             expect(button.events.click).toEqual([])
           });
         });
         describe('and relation defines attributes to be passed to widget', function() {
           it ("should set the attributes to the widget when it matches, and unset them when it matches no more", function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 buttons: {
                   attributes: {
@@ -48,18 +46,16 @@ describe('LSD.Type.Relations', function() {
                 }
               }
             })
-            var button = new LSD.Widget({tagName: 'button'})
+            var button = new LSD.Element({tagName: 'button'})
             widget.relations.set('buttons', button);
-            expect(widget.attributes).toBeFalsy();
             expect(button.attributes.title).toEqual('Click me bro!');
             widget.relations.unset('buttons', button);
-            expect(widget.events).toBeFalsy()
             expect(button.attributes.title).toBeUndefined()
           });
         });
         describe('and relation defines custom options set to be passed to widget', function() {
           it ("should merge those unknown options into the widget", function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 buttons: {
                   buffalos: {
@@ -68,12 +64,11 @@ describe('LSD.Type.Relations', function() {
                 }
               }
             })
-            var button = new LSD.Widget({tagName: 'button'})
+            var button = new LSD.Element({tagName: 'button'})
             widget.relations.set('buttons', button);
             expect(widget.buffalos).toBeFalsy();
             expect(button.buffalos.title).toEqual('Click me bro!');
             widget.relations.unset('buttons', button);
-            expect(widget.events).toBeFalsy()
             expect(button.buffalos.title).toBeUndefined()
           })
         })
@@ -109,13 +104,13 @@ describe('LSD.Type.Relations', function() {
             var as = {
               as: 'weedget'
             }
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 buttons: as
               }
             })
-            var button = new LSD.Widget({tagName: 'button'});
-            var button2 = new LSD.Widget({tagName: 'button'})
+            var button = new LSD.Element({tagName: 'button'});
+            var button2 = new LSD.Element({tagName: 'button'})
             widget.relations.set('buttons', button);
             expect(button.as).toBeUndefined();
             expect(button.weedget).toEqual(widget);
@@ -154,18 +149,18 @@ describe('LSD.Type.Relations', function() {
             var collection = {
               collection: 'labels'
             }
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 buttons: collection
               }
             })
-            var widget2 = new LSD.Widget({
+            var widget2 = new LSD.Element({
               relations: {
                 buttons: collection
               }
             })
-            var button = new LSD.Widget({tagName: 'button'});
-            var button2 = new LSD.Widget({tagName: 'button'});
+            var button = new LSD.Element({tagName: 'button'});
+            var button2 = new LSD.Element({tagName: 'button'});
             widget.relations.set('buttons', button);
             expect(button.collection).toBeUndefined();
             expect(button.labels.clone()).toEqual(LSD.Array(widget));
@@ -215,15 +210,15 @@ describe('LSD.Type.Relations', function() {
               add: add,
               remove: remove
             };
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 buttons: {
                   callbacks: callbacks
                 }
               }
             })
-            var button = new LSD.Widget({tagName: 'button'});
-            var button2 = new LSD.Widget({tagName: 'button'});
+            var button = new LSD.Element({tagName: 'button'});
+            var button2 = new LSD.Element({tagName: 'button'});
             expect(button.callbacks).toBeUndefined()
             widget.relations.set('buttons', button);
             expect(button.callbacks).toBeUndefined()
@@ -249,29 +244,29 @@ describe('LSD.Type.Relations', function() {
         });
         describe('and relation is defined as `singular`', function() {
           it ('should write the first matched widget', function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               relations: {
                 button: {
                   singular: true
                 }
               }
             });
-            var button = new LSD.Widget({tagName: 'button'});
-            var button2 = new LSD.Widget({tagName: 'button'});
+            var button = new LSD.Element({tagName: 'button'});
+            var button2 = new LSD.Element({tagName: 'button'});
             widget.relations.set('button', button);
-            expect(widget.relations.button.clone()).toEqual(LSD.Array(button));
+            expect(widget.relations.button.slice()).toEqual([button]);
             expect(widget.button).toEqual(button);
             widget.relations.mix({button: {singular: true}}, null, null, false);
-            expect(widget.button.clone()).toEqual(LSD.Array(button));
+            expect(widget.button.slice()).toEqual([button]);
             widget.relations.set('button', button2);
-            expect(widget.button.clone()).toEqual(LSD.Array(button, button2));
+            expect(widget.button.slice()).toEqual([button, button2]);
             widget.relations.mix({button: {singular: true}});
             expect(widget.button).toEqual(button);
             widget.relations.unset('button', button);
-            expect(widget.relations.button.clone()).toEqual(LSD.Array(button2));
+            expect(widget.relations.button.slice()).toEqual([button2]);
             expect(widget.button).toEqual(button2);
             widget.relations.mix({button: {singular: true}}, null, null, false);
-            expect(widget.button.clone()).toEqual(LSD.Array(button2));
+            expect(widget.button.slice()).toEqual([button2]);
             widget.relations.mix({button: {singular: true}});
             expect(widget.button).toEqual(button2);
             widget.relations.set('button', button);
@@ -281,7 +276,7 @@ describe('LSD.Type.Relations', function() {
             widget.relations.unset('button', button);
             expect(widget.button).toBeNull()
             widget.relations.mix({button: {singular: true}}, null, null, false);
-            expect(widget.button.clone()).toEqual(LSD.Array());
+            expect(widget.button.slice()).toEqual([]);
           })
         })
       })

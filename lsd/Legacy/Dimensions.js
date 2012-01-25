@@ -1,7 +1,7 @@
 describe("LSD.Trait.Dimensions", function() {
   
   var Dimensioned = new Class({
-    Extends: LSD.Widget.Paint,
+    Extends: Element.Paint,
     
     options: {
       layers: {

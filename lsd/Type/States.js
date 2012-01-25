@@ -21,7 +21,8 @@ describe("LSD.Type.States", function() {
 
     it ("should undefine methods", function() {
       var widget = new LSD.Object({
-        states: new LSD.Type.States
+        states: new LSD.Type.States,
+        pseudos: new LSD.Object
       });
       widget.states.set('built', false);
       widget.build();
@@ -87,7 +88,8 @@ describe("LSD.Type.States", function() {
 
     it ("should toggle states by using the defined methods", function() {
       var widget = new LSD.Object.Stack({
-        states: new LSD.Type.States
+        states: new LSD.Type.States,
+        pseudos: new LSD.Object
       });
       widget.states.set('built', false);
       widget.build();

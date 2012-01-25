@@ -5,7 +5,7 @@ describe("LSD.Layout", function() {
         it ("should parse comments and interpolate them", function() {
           var element = new Element('div', {html: LSD.Test.Template.urgency});
           $e = element
-          var widget = $w = new LSD.Widget(element, {document: Factory('document')});
+          var widget = $w = new LSD.Element(element, {document: Factory('document')});
           widget.variables.merge(widget.attributes);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
@@ -58,7 +58,7 @@ describe("LSD.Layout", function() {
               <!-- end -->                      \
               <li><b>123</b> <b>321</b></li>    '
           });
-          var widget = new LSD.Widget(element, {
+          var widget = new LSD.Element(element, {
             context: 'clean',
             mutations: {
               'li': true,
@@ -80,7 +80,7 @@ describe("LSD.Layout", function() {
                 <h2>${item.title}</h2>        \
               <!-- end -->                   '
             });
-            var widget = new LSD.Widget(element, {
+            var widget = new LSD.Element(element, {
               context: 'clean'
             });
             widget.variables.set('items', [
@@ -107,7 +107,7 @@ describe("LSD.Layout", function() {
                   </li>                                                    \
                 <!-- end -->                                               '
               });                                                          
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean'
               });
               widget.variables.set('kids', [
@@ -144,7 +144,7 @@ describe("LSD.Layout", function() {
               var element = new Element('div', {
                 html: LSD.Test.Template.blogposts                                   
               })
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean'
               });
               expect(element.get('text').clean()).toEqual('Posts. No posts yet.')
@@ -179,7 +179,7 @@ describe("LSD.Layout", function() {
                   <!-- end -->                      \
                   </section>                        '
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'section': true,
@@ -206,7 +206,7 @@ describe("LSD.Layout", function() {
                   <!-- end -->                      \
                   </section>                        '
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'section': true,
@@ -233,7 +233,7 @@ describe("LSD.Layout", function() {
                   <!-- end -->                      \
                   </section>                        '
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'section': true,
@@ -273,7 +273,7 @@ describe("LSD.Layout", function() {
                 <!-- end -->                    \
                 </div>                          '
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'div': true,
@@ -305,7 +305,7 @@ describe("LSD.Layout", function() {
                 <!-- end -->                    \
                 </div>                          '
               });
-              var widget = $w = new LSD.Widget(element, {
+              var widget = $w = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'div': true
@@ -361,7 +361,7 @@ describe("LSD.Layout", function() {
                 <!-- end -->                    \
                 </div>                          '
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'div': true
@@ -446,7 +446,7 @@ describe("LSD.Layout", function() {
                 <!-- end -->                    \
                 </div>                          '
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'div': true
@@ -496,7 +496,7 @@ describe("LSD.Layout", function() {
               var element = new Element('div', {
                 html: LSD.Test.Template.greetings_parents
               });
-              var widget = $w = new LSD.Widget(element, {
+              var widget = $w = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'div': true
@@ -564,7 +564,7 @@ describe("LSD.Layout", function() {
               var element = new Element('div', {
                 html: LSD.Test.Template.time_range
               });
-              var widget = new LSD.Widget(element, {
+              var widget = new LSD.Element(element, {
                 context: 'clean',
                 mutations: {
                   'div': true
@@ -636,9 +636,9 @@ describe("LSD.Layout", function() {
       describe("complex reallife setup", function() {
         it ("should clone, mutate and adopt elements to manipulate them with data", function() {
           var layout = new LSD.Layout;
-          var parent = new LSD.Widget({document: Factory('document')});
+          var parent = new LSD.Element({document: Factory('document')});
           var element = layout.render(document.createFragment(LSD.Test.Template.resource_field), parent);
-          var widget = $w = new LSD.Widget({
+          var widget = $w = new LSD.Element({
             mutations: {
               '>  fieldset': 'fieldset'
             },
@@ -716,7 +716,7 @@ describe("LSD.Layout", function() {
           });
           var doc = Factory('document');
           doc.layout = new LSD.Layout;
-          var widget = $w = new LSD.Widget(element, {
+          var widget = $w = new LSD.Element(element, {
             context: 'clean',
             document: doc,
           });

@@ -18,7 +18,7 @@ describe("LSD.Module.Accessories.Events", function() {
       });
 
       var element = new Element('selftest');
-      var widget = new LSD.Widget(element, {context: Context});
+      var widget = new LSD.Element(element, {context: Context});
       widget.fireEvent('touch');
       expect(clicked).toBeTruthy();
     });
@@ -40,7 +40,7 @@ describe("LSD.Module.Accessories.Events", function() {
       });
 
       var element = new Element('elementtest');
-      new LSD.Widget(element, {context: Context});
+      new LSD.Element(element, {context: Context});
       element.fireEvent("click");
       expect(clicked).toBeTruthy();
     });
@@ -61,8 +61,8 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      var parent = new LSD.Widget
-      var widget = new LSD.Widget(new Element('parenttest'), {context: Context});
+      var parent = new LSD.Element
+      var widget = new LSD.Element(new Element('parenttest'), {context: Context});
 
       parent.appendChild(widget);
       parent.fireEvent('click');
@@ -87,7 +87,7 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
       var doc = Factory('document');
-      var widget = new LSD.Widget(new Element('documenttest'), {context: Context, document: doc});
+      var widget = new LSD.Element(new Element('documenttest'), {context: Context, document: doc});
       doc.fireEvent("click");
       expect(clicked).toBeTruthy();
     });
@@ -109,7 +109,7 @@ describe("LSD.Module.Accessories.Events", function() {
         }
       });
 
-      new LSD.Widget(new Element('windowtest'), {context: Context});
+      new LSD.Element(new Element('windowtest'), {context: Context});
 
       window.fireEvent("resize");
       expect(resized).toBeTruthy();
@@ -136,8 +136,8 @@ describe("LSD.Module.Accessories.Events", function() {
       });
 
 
-      var widget = new LSD.Widget(new Element('relaytest'), {context: Context});
-      var button = new LSD.Widget({tag: 'span', inline: null});
+      var widget = new LSD.Element(new Element('relaytest'), {context: Context});
+      var button = new LSD.Element({tag: 'span', inline: null});
       button.inject(widget);
       widget.element.fireEvent('click', {target: button.element});
 

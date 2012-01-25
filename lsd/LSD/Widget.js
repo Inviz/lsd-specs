@@ -1,17 +1,53 @@
-describe('LSD.Widget', function() {
+describe('LSD.Element', function() {
   describe('#initialize', function() {
     describe('when given no arguments', function() {
       it ('should create an instance of a widget', function() {
-        var widget = new LSD.Widget;
-        expect(widget.appendChild).toEqual(LSD.Widget.prototype.appendChild)
+        var widget = new LSD.Element;
+        expect(widget.appendChild).toEqual(LSD.Element.prototype.appendChild)
       })
     })
+    
+    
+    describe("when given arguments", function() {
+      it ("should instantiate without arguments", function() {
+        var instance = new LSD.Element;
+        expect(instance instanceof LSD.Element).toBeTruthy()
+      });
+
+      it ('should instantiate with element as argument', function() {
+        var element = new Element('div');
+        var instance = new LSD.Element(element);
+        expect(instance.origin == element).toBeTruthy();
+      });
+
+      it ('should instantiate with options as argument', function() {
+        var options = {magic: 784};
+        var instance = new LSD.Element(options);
+        expect(instance.magic == 784).toBeTruthy();
+      });
+
+      it ('should instantiate with options and element as arguments', function() {
+        var options = {'honk': 'kong'};
+        var element = new Element('div');
+        var instance = new LSD.Element(options, element);
+        expect(instance.honk == 'kong').toBeTruthy();
+        expect(instance.origin == element).toBeTruthy();
+      });
+
+      it ('should instantiate with element and options as arguments', function() {
+        var options = {'honk': 'kong'};
+        var element = new Element('div');
+        var instance = new LSD.Element(element, options);
+        expect(instance.honk == 'kong').toBeTruthy();
+        expect(instance.origin == element).toBeTruthy();
+      });
+    });
   })
   
   describe('#properties', function() {
     describe('.attributes', function() {
       it ('when an attributes are given', function() {
-        var widget = new LSD.Widget({
+        var widget = new LSD.Element({
           attributes: {
             title: 'Click here'
           }
@@ -27,7 +63,7 @@ describe('LSD.Widget', function() {
     describe('.origin', function() {
       describe('when widget doesnt have its own attributes', function() {
         it ('should extract attributes', function() {
-          var widget = new LSD.Widget;
+          var widget = new LSD.Element;
           var element = document.createElement('button');
           element.setAttribute('onclick', 'roll');
           widget.set('origin', element);
@@ -37,7 +73,7 @@ describe('LSD.Widget', function() {
       describe('when widget has its own attributes', function() {
         describe('and widget attributes dont overlap with element attributes', function() {
           it ('should merge attributes together', function() {
-            var widget = new LSD.Widget({attributes: {id: 'josh'}});
+            var widget = new LSD.Element({attributes: {id: 'josh'}});
             var element = document.createElement('button');
             element.setAttribute('name', 'jack');
             widget.set('origin', element);
@@ -47,7 +83,7 @@ describe('LSD.Widget', function() {
         })
         describe('and widget attributes overlap with element attributes', function() {
           it ('should give priority to widget attributes and restore to element attributes when overlapping widget attribute is removed', function() {
-            var widget = new LSD.Widget({attributes: {name: 'josh'}});
+            var widget = new LSD.Element({attributes: {name: 'josh'}});
             var element = document.createElement('button');
             element.setAttribute('name', 'jack');
             widget.set('origin', element);
@@ -61,11 +97,66 @@ describe('LSD.Widget', function() {
         })
       })
     });
+    describe('.sourceIndex', function() {
+      describe('when used out of document', function() {
+        it('should assign a property to element structures', function() {
+          var f = new LSD.Element
+          var a = new LSD.Element;
+          var b = new LSD.Element;
+          var c = new LSD.Element;
+          var bb = new LSD.Element;
+          var bb2 = new LSD.Element;
+          var cc = new LSD.Element;
+          var d = new LSD.Element;
+          a.children.push(c);
+          //expect(a.sourceIndex).toEqual(0);
+          expect(c.sourceIndex).toEqual(1);
+          a.children.unshift(b);
+          expect(b.sourceIndex).toEqual(1);
+          expect(c.sourceIndex).toEqual(2);
+          b.children.push(bb)
+          expect(b.sourceIndex).toEqual(1);
+          expect(b.sourceLastIndex).toEqual(2);
+          expect(bb.sourceIndex).toEqual(2);
+          expect(c.sourceIndex).toEqual(3);
+          c.children.push(cc)
+          expect(c.sourceLastIndex).toEqual(4);
+          a.children.unshift(f);
+          expect(f.sourceIndex).toEqual(1);
+          expect(b.sourceIndex).toEqual(2);
+          expect(b.sourceLastIndex).toEqual(3);
+          expect(bb.sourceIndex).toEqual(3);
+          expect(c.sourceIndex).toEqual(4);
+          expect(c.sourceLastIndex).toEqual(5);
+          expect(cc.sourceIndex).toEqual(5);
+          a.children.push(d)
+          expect(d.sourceIndex).toEqual(6);
+          a.children.shift()
+          expect(b.sourceIndex).toEqual(1);
+          expect(b.sourceLastIndex).toEqual(2);
+          expect(bb.sourceIndex).toEqual(2);
+          expect(c.sourceIndex).toEqual(3);
+          expect(c.sourceLastIndex).toEqual(4);
+          expect(cc.sourceIndex).toEqual(4);
+          expect(d.sourceIndex).toEqual(5);
+          a.children.splice(1, 1);
+          expect(b.sourceIndex).toEqual(1);
+          expect(bb.sourceIndex).toEqual(2);
+          expect(d.sourceIndex).toEqual(3);
+          a.children.shift()
+          expect(d.sourceIndex).toEqual(1);
+          //debugger
+          //a.children.push(b)
+          //expect(b.sourceIndex).toEqual(2);
+          //expect(bb.sourceIndex).toEqual(3);
+        })
+      })
+    });
     describe('.inline', function() {
       describe('when localName is given', function() {
         describe('when inline is set to true', function() {
           it('should build widget with tag from the localName', function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               localName: 'h2',
               inline: true
             });
@@ -74,7 +165,7 @@ describe('LSD.Widget', function() {
         })
         describe('when inline is set to false', function() {
           it('should build widget with tag from the localName', function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               localName: 'h2',
               inline: false
             });
@@ -85,7 +176,7 @@ describe('LSD.Widget', function() {
       describe('when no localName is given', function() {
         describe('when inline is set to true', function() {
           it('should build widget with tag from the localName', function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               inline: true
             });
             expect(widget.localName).toEqual('span');
@@ -93,7 +184,7 @@ describe('LSD.Widget', function() {
         })
         describe('when inline is set to false', function() {
           it('should build widget with tag from the localName', function() {
-            var widget = new LSD.Widget({
+            var widget = new LSD.Element({
               inline: false
             });
             expect(widget.localName).toEqual('div');
@@ -106,7 +197,7 @@ describe('LSD.Widget', function() {
   describe('#build', function() {
     describe('when no tags was given', function() {
       it ('should create a div', function() {
-        var widget = new LSD.Widget;
+        var widget = new LSD.Element;
         widget.build();
         expect(widget.element).toBeTruthy();
         expect(widget.tagName).toBeNull();
@@ -116,7 +207,7 @@ describe('LSD.Widget', function() {
     });
     describe('when localName was given', function() {
       it ('should use that tagName to build a new element', function() {
-        var widget = new LSD.Widget({
+        var widget = new LSD.Element({
           tagName: 'h2'
         });
         widget.build();
@@ -127,7 +218,7 @@ describe('LSD.Widget', function() {
     });
     describe('when localName and tagName was given', function() {
       it ('should use localName for element and tagName for the widget', function() {
-        var widget = new LSD.Widget({
+        var widget = new LSD.Element({
           tagName: 'h2',
           localName: 'h3'
         });
@@ -139,14 +230,14 @@ describe('LSD.Widget', function() {
     });
     describe('when attributes are given', function() {
       it ('should build element with those attributes', function() {
-        var widget = new LSD.Widget({
+        var widget = new LSD.Element({
           attributes: {
             hidden: true,
             title: 'Click me'
           }
         });
         widget.build();
-        expect(widget.element.getAttribute('hidden')).toBeTruthy();
+        expect(widget.element.getAttribute('hidden')).toNotEqual(null);
         expect(widget.element.getAttribute('title')).toEqual('Click me');
       });
     });
@@ -156,20 +247,20 @@ describe('LSD.Widget', function() {
     describe('when specific tag is used in selector', function() {
       describe('and tag is not defined', function() {
         it ('should not match that selector', function() {
-          var widget = new LSD.Widget;
+          var widget = new LSD.Element;
           expect(widget.test('div')).toBeFalsy();
         })
       });
       describe('and tag is defined', function() {
         describe('and tags match', function() {
           it ('should be truthy', function() {
-            var widget = new LSD.Widget({tagName: 'div'});
+            var widget = new LSD.Element({tagName: 'div'});
             expect(widget.test('div')).toBeTruthy();
           })
         })
         describe('and tags dont match', function() {
           it ('should be falsy', function() {
-            var widget = new LSD.Widget({tagName: 'h2'});
+            var widget = new LSD.Element({tagName: 'h2'});
             expect(widget.test('div')).toBeFalsy();
           })
         })
@@ -178,26 +269,26 @@ describe('LSD.Widget', function() {
     describe('when attributes are used in selector', function() {
       describe('when attribute is defined', function() {
         it ('should not match the selector', function() {
-          var widget = new LSD.Widget;
+          var widget = new LSD.Element;
           expect(widget.test('[hidden]')).toBeFalsy();
         })
       });
       describe('when attribute is defined', function() {
         describe('and attribute value is not given', function() {
           it ('should match the selector', function() {
-            var widget = new LSD.Widget({attributes: {hidden: true}});
+            var widget = new LSD.Element({attributes: {hidden: true}});
             expect(widget.test('[hidden]')).toBeTruthy();
           })
         })
         describe('and attributes match', function() {
           it ('should match the selector', function() {
-            var widget = new LSD.Widget({attributes: {title: 'lol'}});
+            var widget = new LSD.Element({attributes: {title: 'lol'}});
             expect(widget.test('[title=lol]')).toBeTruthy();
           })
         });
         describe('and attributes dont match', function() {
           it ('should not match the selector', function() {
-            var widget = new LSD.Widget({attributes: {title: 'lol'}});
+            var widget = new LSD.Element({attributes: {title: 'lol'}});
             expect(widget.test('[title=lul]')).toBeFalsy();
           })
         });

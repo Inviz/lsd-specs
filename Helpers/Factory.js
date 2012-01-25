@@ -10,7 +10,7 @@ LSD.Factory.Class = function(options) {
   return new Class({options: options})
 };
 LSD.Factory.Widget = function(options, element) {
-  return new LSD.Widget(options, element)
+  return new LSD.Element(options, element)
 };
 
 LSD.Factory.Document = function(fresh) {

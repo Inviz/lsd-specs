@@ -42,7 +42,9 @@ Configuration.sets = {
       'Children',
       'States',
       'Matches',
-      'Relations'
+      'Relations',
+      'Allocations',
+      'Attributes'
     ]
   },
   'lsd': {

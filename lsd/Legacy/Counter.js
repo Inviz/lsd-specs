@@ -20,13 +20,13 @@ describe("LSD.Action.Counter", function() {
   Object.each(tests, function(expectation, input) {
     it("should increment: " + input, function() {
       var element = new Element('div', {html: input});
-      var widget = new LSD.Widget;
+      var widget = new Element;
       widget.execute({action: 'counter', target: element})
       expect(element.get('html')).toEqual(expectation);
     });
     it("should decrement: " + expectation, function() {
       var element = new Element('div', {html: expectation});
-      var widget = new LSD.Widget;
+      var widget = new Element;
       widget.execute({action: 'decrement', target: element})
       expect(element.get('html')).toEqual(input.replace(/only\s|just\s|\syet/g, '').replace('one', 1));
     });
