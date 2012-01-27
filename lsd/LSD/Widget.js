@@ -108,20 +108,20 @@ describe('LSD.Element', function() {
           var bb2 = new LSD.Element;
           var cc = new LSD.Element;
           var d = new LSD.Element;
-          a.children.push(c);
+          a.childNodes.push(c);
           //expect(a.sourceIndex).toEqual(0);
           expect(c.sourceIndex).toEqual(1);
-          a.children.unshift(b);
+          a.childNodes.unshift(b);
           expect(b.sourceIndex).toEqual(1);
           expect(c.sourceIndex).toEqual(2);
-          b.children.push(bb)
+          b.childNodes.push(bb)
           expect(b.sourceIndex).toEqual(1);
           expect(b.sourceLastIndex).toEqual(2);
           expect(bb.sourceIndex).toEqual(2);
           expect(c.sourceIndex).toEqual(3);
-          c.children.push(cc)
+          c.childNodes.push(cc)
           expect(c.sourceLastIndex).toEqual(4);
-          a.children.unshift(f);
+          a.childNodes.unshift(f);
           expect(f.sourceIndex).toEqual(1);
           expect(b.sourceIndex).toEqual(2);
           expect(b.sourceLastIndex).toEqual(3);
@@ -129,9 +129,9 @@ describe('LSD.Element', function() {
           expect(c.sourceIndex).toEqual(4);
           expect(c.sourceLastIndex).toEqual(5);
           expect(cc.sourceIndex).toEqual(5);
-          a.children.push(d)
+          a.childNodes.push(d)
           expect(d.sourceIndex).toEqual(6);
-          a.children.shift()
+          a.childNodes.shift()
           expect(b.sourceIndex).toEqual(1);
           expect(b.sourceLastIndex).toEqual(2);
           expect(bb.sourceIndex).toEqual(2);
@@ -139,14 +139,14 @@ describe('LSD.Element', function() {
           expect(c.sourceLastIndex).toEqual(4);
           expect(cc.sourceIndex).toEqual(4);
           expect(d.sourceIndex).toEqual(5);
-          a.children.splice(1, 1);
+          a.childNodes.splice(1, 1);
           expect(b.sourceIndex).toEqual(1);
           expect(bb.sourceIndex).toEqual(2);
           expect(d.sourceIndex).toEqual(3);
-          a.children.shift()
+          a.childNodes.shift()
           expect(d.sourceIndex).toEqual(1);
           //debugger
-          //a.children.push(b)
+          //a.childNodes.push(b)
           //expect(b.sourceIndex).toEqual(2);
           //expect(bb.sourceIndex).toEqual(3);
         })

@@ -295,4 +295,55 @@ describe("LSD.Type.Children", function() {
       
     })
   })
-})
+  
+  describe("paired LSD.Type.Children.Virtual", function() {
+    describe("when given nodes", function() {
+      it ("should transparently place the nodes from virtual collection to real children collection", function() {
+        var parent = new LSD.Object({
+          childNodes: new LSD.Type.Children
+        });
+        var fragment = new LSD.Object({
+          childNodes: new LSD.Type.Children.Virtual
+        });
+        var subfragment = new LSD.Object({
+          childNodes: new LSD.Type.Children.Virtual
+        });
+        var a = new LSD.Object({id: 'a'});
+        var b = new LSD.Object({id: 'b'});
+        var c = new LSD.Object({id: 'c'});
+        var d = new LSD.Object({id: 'd'});
+        var e = new LSD.Object({id: 'e'});
+        fragment.childNodes.push(a);
+        parent.childNodes.push(fragment);
+        expect(parent.childNodes.slice()).toEqual([fragment, a])
+        parent.childNodes.push(e);
+        expect(parent.childNodes.slice()).toEqual([fragment, a, e]);
+        fragment.childNodes.push(b);
+        expect(parent.childNodes.slice()).toEqual([fragment, a, b, e])
+        parent.childNodes.erase(fragment);
+        expect(parent.childNodes.slice()).toEqual([e])
+        parent.childNodes.push(fragment);
+        expect(parent.childNodes.slice()).toEqual([e, fragment, a, b])
+        parent.childNodes.push(d);
+        expect(parent.childNodes.slice()).toEqual([e, fragment, a, b, d])
+        subfragment.childNodes.push(c);
+        fragment.childNodes.push(subfragment)
+        expect(parent.childNodes[0]).toEqual(e);
+        expect(parent.childNodes[1]).toEqual(fragment);
+        expect(parent.childNodes[2]).toEqual(a);
+        expect(parent.childNodes[3]).toEqual(b);
+        expect(parent.childNodes[4]).toEqual(subfragment);
+        expect(parent.childNodes[5]).toEqual(c);
+        expect(parent.childNodes[6]).toEqual(d);
+        subfragment.childNodes.pop();
+        expect(parent.childNodes[0]).toEqual(e);
+        expect(parent.childNodes[1]).toEqual(fragment);
+        expect(parent.childNodes[2]).toEqual(a);
+        expect(parent.childNodes[3]).toEqual(b);
+        expect(parent.childNodes[4]).toEqual(subfragment);
+        expect(parent.childNodes[6]).toEqual(d);
+      })
+    })
+  })
+});
+
