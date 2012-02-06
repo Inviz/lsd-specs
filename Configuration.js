@@ -168,7 +168,8 @@ Configuration.sets = {
   'mixin': {
     path: 'lsd/Mixin/',
     files: [
-      'Fieldset'
+      'Fieldset',
+      'Datalist'
     ]
   }
   
