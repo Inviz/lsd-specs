@@ -72,7 +72,7 @@ describe('LSD.Mixin.Datalist', function() {
         var widget = new LSD.Widget({tag: 'input', attributes: {list: true}, pseudos: {value: true}});
         widget.toElement().inject(document.body)
         widget.element.set('value', 'abc,, def').selectRange(4, 4);
-        widget.setCurrentValue('fed')
+        widget.setCurrentValue('fed', true)
         expect(widget.element.get('value')).toEqual('abc, fed, def');
         expect(widget.element.getSelectedRange()).toEqual({start: 4, end: 8})
       })
@@ -80,7 +80,7 @@ describe('LSD.Mixin.Datalist', function() {
         var widget = new LSD.Widget({tag: 'input', attributes: {list: true}, pseudos: {value: true}});
         widget.toElement().inject(document.body)
         widget.element.set('value', 'abc, def, efg').selectRange(4, 4);
-        widget.setCurrentValue('defence')
+        widget.setCurrentValue('defence', true)
         expect(widget.element.get('value')).toEqual('abc, defence, efg')
         expect(widget.element.getSelectedRange()).toEqual({start: 4, end: 12})
       })
@@ -96,7 +96,7 @@ describe('LSD.Mixin.Datalist', function() {
         var widget = new LSD.Widget({tag: 'input', attributes: {list: true}, pseudos: {value: true}});
         widget.toElement().inject(document.body)
         widget.element.set('value', 'abc, def, efg').selectRange(8, 8);
-        widget.setCurrentValue('defence')
+        widget.setCurrentValue('defence', true)
         expect(widget.element.get('value')).toEqual('abc, defence, efg')
         expect(widget.element.getSelectedRange()).toEqual({start: 8, end: 12})
       })
