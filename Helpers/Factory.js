@@ -1,5 +1,5 @@
 LSD.Factory = function(type) {
-  type = LSD.toClassName(type);
+  type = type.capitalize()
   var factory = LSD.Factory[type] || LSD.Factory.Widget[type];
   if (!factory) throw "Unknown factory: " + type;
   return factory.apply(this, Array.prototype.slice.call(arguments, 1))
@@ -24,14 +24,14 @@ LSD.Factory.Type = function() {
   for (var i = 0, j = arguments.length; i < j; i++) {
     var arg = arguments[i];
     if (typeof arg == 'string') {
-      type[LSD.toClassName(arg)] = LSD.Factory.Class[LSD.toClassName(arg)]();
+      type[arg.capitalize()] = LSD.Factory.Class[arg.capitalize()]();
     } else {
       for (var selector in arg) {
-        var klass = LSD.Factory.Class[LSD.toClassName(arg[selector])]();
+        var klass = LSD.Factory.Class[arg[selector].capitalize()]();
         Object.merge(klass, {options: LSD.Module.Selectors.parse(selector)})
         var source = LSD.Layout.getSource(klass.options.attributes, klass.options.tag);
         for (var i = 0, bit, obj = type; bit = source[i++];) {
-          bit = LSD.toClassName(bit);
+          bit = bit.capitalize();
           obj = obj[bit] || (obj[bit] = (source[i] ? {} : klass));
         }
         console.error(type, source, klass.options, selector)
@@ -94,7 +94,7 @@ LSD.Factory.Options = {
 }
 
 Object.each(LSD.Factory.Options, function(value, key) {
-  key = LSD.toClassName(key);
+  key = key.capitalize();
   LSD.Factory.Widget[key] = function(options, element) {
     if (options && options.nodeType) options = [element, element = options][0];
     return LSD.Factory.Widget(Object.merge(value.call ? value() : value, options), element);

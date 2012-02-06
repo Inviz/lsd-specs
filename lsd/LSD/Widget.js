@@ -95,6 +95,80 @@ describe('LSD.Element', function() {
             
           })
         })
+      });
+      describe('when attributes contain interpolated values', function() {
+        describe('when value is interpolated', function() {
+          it ('should watch for values and update attribute', function() {
+            var widget = new LSD.Element;
+            var element = document.createElement('button');
+            element.setAttribute('tabindex', '${x + 1}')
+            widget.set('origin', element);
+            expect(widget.attributes.tabindex).toBeUndefined();
+            widget.variables.set('x', 5);
+            expect(widget.attributes.tabindex).toBe(6);
+            widget.variables.set('x', -1)
+            expect(widget.attributes.tabindex).toBe(0);
+            widget.unset('origin', element)
+            expect(widget.attributes.tabindex).toBeUndefined();
+          })
+        })
+        describe('when interpolation is within a single attribute', function() {
+          it ('should watch for values and update attribute', function() {
+            var widget = new LSD.Element;
+            var element = document.createElement('button');
+            element.setAttribute('title', 'xxx${x + 1}xx')
+            widget.set('origin', element);
+            expect(widget.attributes.title).toBeUndefined();
+            widget.variables.set('x', 5);
+            expect(widget.attributes.title).toBe('xxx6xx');
+            widget.variables.set('x', -1)
+            expect(widget.attributes.title).toBe('xxx0xx');
+            widget.unset('origin', element)
+            expect(widget.attributes.title).toBeUndefined();
+          })
+        });
+        describe('when interpolation is not within a value of attribute', function() {
+          describe('and interpolation is simple', function() {
+            it ('should watch for values and update attribute', function() {
+              var widget = new LSD.Element;
+              var wrapper = document.createElement('div');
+              wrapper.innerHTML = '<button ${object} />';
+              var element = wrapper.firstChild;
+              widget.set('origin', element);
+              expect(widget.attributes.title).toBeUndefined();
+              widget.variables.set('object', {title: 'Jeeez nigga'})
+              expect(widget.attributes.title).toBe('Jeeez nigga');
+              widget.variables.set('object', {title: 'Jeeezos chr0ss'})
+              expect(widget.attributes.title).toBe('Jeeezos chr0ss');
+              widget.unset('origin', element);
+              expect(widget.attributes.title).toBeUndefined();
+            })
+          });
+          describe('and interpolation is complex - contains spaces', function() {
+            it ('should watch for values and update attribute', function() {
+              var widget = new LSD.Element;
+              var wrapper = document.createElement('div');
+              wrapper.innerHTML = '<button ${condition && object} />';
+              var element = wrapper.firstChild;
+              widget.set('origin', element);
+              expect(widget.attributes.title).toBeUndefined();
+              widget.variables.set('object', {title: 'Jeeez nigga'})
+              expect(widget.attributes.title).toBeUndefined();
+              widget.variables.set('condition', true)
+              expect(widget.attributes.title).toBe('Jeeez nigga');
+              widget.variables.set('condition', false)
+              expect(widget.attributes.title).toBeUndefined();
+              widget.variables.set('object', {title: 'Jeeezos chr0ss'})
+              expect(widget.attributes.title).toBeUndefined();
+              widget.variables.set('condition', true)
+              expect(widget.attributes.title).toBe('Jeeezos chr0ss');
+              widget.variables.set('object', {title: 'Jeeezos chr0sZ'})
+              expect(widget.attributes.title).toBe('Jeeezos chr0ssZ');
+              widget.unset('origin', element);
+              expect(widget.attributes.title).toBeUndefined();
+            })
+          })
+        })
       })
     });
     describe('.sourceIndex', function() {

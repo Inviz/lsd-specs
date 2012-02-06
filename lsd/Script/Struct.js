@@ -365,5 +365,88 @@ describe("LSD.Struct", function() {
         })
       })
     });
+    describe('when dynamic properties are defined', function() {
+      describe('and the property is defined on the top level', function() {
+
+      });
+      describe('and the property is defined in imports object', function() {
+        describe('and the property is a link to another property', function() {
+          it ('should update the dynamic property when the linked property is updated', function() {
+            var Struct = new LSD.Struct({
+              imports: {
+                name: 'title'
+              }
+            });
+            var object = new Struct;
+            expect(object.name).toBeUndefined();
+            object.set('title', 'Rock');
+            expect(object.name).toEqual(object.title);
+            expect(object.name).toEqual('Rock');
+            object.reset('title', 'Jazz');
+            expect(object.name).toEqual(object.title);
+            expect(object.name).toEqual('Jazz');
+            object.unset('title', 'Jazz');
+            expect(object.name).toEqual(object.title);
+            expect(object.name).toBeUndefined();
+          })
+        });
+        describe('and the property is a link to a property in another object', function() {
+          it ('should update the dynamic property when the linked property is updated', function() {
+            var Struct = new LSD.Struct({
+              imports: {
+                name: 'post.title'
+              }
+            });
+            var post = new Struct;
+            var object = new Struct({post: post});
+            expect(object.name).toBeUndefined();
+            post.set('title', 'Rock');
+            expect(object.name).toEqual(object.post.title);
+            expect(object.name).toEqual('Rock');
+            post.reset('title', 'Jazz');
+            expect(object.name).toEqual(object.post.title);
+            expect(object.name).toEqual('Jazz');
+            post.unset('title', 'Jazz');
+            expect(object.name).toEqual(object.post.title);
+            expect(object.name).toBeUndefined();
+          })
+        });
+        describe('and the property is a script', function() {
+          it ('should compile script, watch all variables, and update result on changes', function() {
+            var Struct = new LSD.Struct({
+              imports: {
+                total: 'cash * ratio - 1'
+              }
+            });
+            var object = new Struct();
+            object.set('cash', 500);
+            expect(object.total).toBeUndefined()
+            object.set('ratio', 0.5);
+            expect(object.total).toEqual(249)
+            object.set('cash', 600)
+            expect(object.total).toEqual(299)
+            object.set('ratio', 0.3);
+            expect(object.total).toEqual(179)
+          })
+        })
+      });
+      describe('and the property is defined in exports object', function() {
+        describe('and the property is a link to another property', function() {
+          it ('should update the dynamic property when the linked property is updated', function() {
+            
+          })
+        });
+        describe('and the property is a link to a property in another object', function() {
+          it ('should update the dynamic property when the linked property is updated', function() {
+            
+          })
+        });
+        describe('and the property is a script', function() {
+          it ('should compile script, watch all variables, and update result on changes', function() {
+            
+          })
+        })
+      })
+    })
   })
 })

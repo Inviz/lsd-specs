@@ -357,6 +357,23 @@ describe('LSD.Array', function() {
           expect(array.slice()).toEqual(['A', 'B', 'C'])
         })
       });
+      describe('when given additional values to insert', function() {
+        describe('and no were not rejected', function() {
+          it ('should insert new values and shift array', function() {
+            
+          });
+        })
+        describe('and some values were rejected', function() {
+          it ('should insert new values that were not rejected and shift array to fit only the accepted values', function() {
+            
+          });
+        });
+        describe('when all values were rejected', function() {
+          it ('should not shift array at all', function() {
+            
+          })
+        })
+      })
     });
     describe('when given index larger than length of array', function() {
       
@@ -604,6 +621,16 @@ describe('LSD.Array', function() {
         expect(filtered.slice()).toEqual(['Harry', 'Claus', 'Jesus', 'Jehrar']);
         scope.variables.set('divisor', 3)
         expect(filtered.slice()).toEqual(['Harry', 'Michael', 'Jehrar']);
+        scope.variables.set('divisor', 2)
+        expect(filtered.slice()).toEqual(['Harry', 'Claus', 'Jesus', 'Jehrar']);
+        scope.variables.set('divisor', 4)
+        expect(filtered.slice()).toEqual(['Harry', 'Jesus']);
+        scope.variables.set('result', 1)
+        expect(filtered.slice()).toEqual(['Gomes', 'Jahmal']);
+        scope.variables.set('result', 2)
+        expect(filtered.slice()).toEqual(['Claus', 'Jehrar']);
+        scope.variables.set('result', 3)
+        expect(filtered.slice()).toEqual(['Michael']);
       });
     })
   });

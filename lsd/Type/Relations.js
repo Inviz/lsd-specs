@@ -7,7 +7,7 @@ describe('LSD.Type.Relations', function() {
             buttons: {}
           }
         });
-        var button = new LSD.Element({tagName: 'button'})
+        var button = new LSD.Element({tagName: 'button'});
         widget.relations.set('buttons', button);
         expect(widget.buttons.clone()).toEqual(LSD.Array(button))
         widget.relations.unset('buttons', button)

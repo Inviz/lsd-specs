@@ -241,13 +241,13 @@ describe("LSD.Script.Function", function() {
     });
     describe("and functions dont have explicit arguments", function() {
       it ("should be able to pipe both arguments and context", function() {
-        var scope = new LSD.Element({tag: 'container'});
-        scope.methods.set('request', function() {
+        var scope = new LSD.Element({tagName: 'container'});
+        scope.request = function() {
           return true
-        });
-        scope.methods.set('create', function(success) {
-          if (success === true) return new LSD.Element({tag: 'response'}) 
-        });
+        };
+        scope.create = function(success) {
+          if (success === true) return new LSD.Element({tagName: 'response'}) 
+        };
         var script = new LSD.Script('request(), create(), grab()', scope)
         expect(scope.childNodes[0].tagName).toEqual('response')
       })
