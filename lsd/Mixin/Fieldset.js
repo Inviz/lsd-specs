@@ -15,14 +15,14 @@ describe("LSD.Mixin.Fieldset", function() {
           expect(fieldset.childNodes.length).toEqual(2);
           expect(fieldset.fields.name.getValue()).toEqual('Jack');
           expect(fieldset.fields.organization.getValue()).toEqual('Wall Street');
-          expect(fieldset.params.name).toEqual('Jack');
-          expect(fieldset.params.organization).toEqual('Wall Street')
+          expect(fieldset.values.name).toEqual('Jack');
+          expect(fieldset.values.organization).toEqual('Wall Street')
           fieldset.childNodes[1].dispose();
           expect(fieldset.fields.organization).toBeUndefined()
-          expect(fieldset.params.organization).toBeUndefined()
+          expect(fieldset.values.organization).toBeUndefined()
           fieldset.childNodes[0].dispose();
           expect(fieldset.fields.name).toBeUndefined()
-          expect(fieldset.params.name).toBeUndefined()
+          expect(fieldset.values.name).toBeUndefined()
         })
       });
       describe("and inputs have nested names", function() {
@@ -39,14 +39,14 @@ describe("LSD.Mixin.Fieldset", function() {
             expect(fieldset.childNodes.length).toEqual(2);
             expect(fieldset.fields.person.name.getValue()).toEqual('Jack');
             expect(fieldset.fields.person.organization.getValue()).toEqual('Wall Street');
-            expect(fieldset.params.person.name).toEqual('Jack');
-            expect(fieldset.params.person.organization).toEqual('Wall Street')
+            expect(fieldset.values.person.name).toEqual('Jack');
+            expect(fieldset.values.person.organization).toEqual('Wall Street')
             fieldset.childNodes[0].dispose();
             expect(fieldset.fields.person.name).toBeUndefined()
-            expect(fieldset.params.person.name).toBeUndefined()
+            expect(fieldset.values.person.name).toBeUndefined()
             fieldset.childNodes[0].dispose();
             expect(fieldset.fields.person.organization).toBeUndefined()
-            expect(fieldset.params.person.organization).toBeUndefined()
+            expect(fieldset.values.person.organization).toBeUndefined()
           })
         });
         describe("and there is an object with numbers as all of its properties", function() {
@@ -63,8 +63,8 @@ describe("LSD.Mixin.Fieldset", function() {
               expect(fieldset.childNodes.length).toEqual(2);
               expect(fieldset.fields.people[0].getValue()).toEqual('Jack');
               expect(fieldset.fields.people[1].getValue()).toEqual('Adolf');
-              expect(fieldset.params.people[0]).toEqual('Jack');
-              expect(fieldset.params.people[1]).toEqual('Adolf')
+              expect(fieldset.values.people[0]).toEqual('Jack');
+              expect(fieldset.values.people[1]).toEqual('Adolf')
             });
           })
           describe("and values in that objects are objects", function() {
@@ -80,8 +80,8 @@ describe("LSD.Mixin.Fieldset", function() {
               expect(fieldset.childNodes.length).toEqual(2);
               expect(fieldset.fields.people[0].name.getValue()).toEqual('Jack');
               expect(fieldset.fields.people[1].name.getValue()).toEqual('Adolf');
-              expect(fieldset.params.people[0].name).toEqual('Jack');
-              expect(fieldset.params.people[1].name).toEqual('Adolf')
+              expect(fieldset.values.people[0].name).toEqual('Jack');
+              expect(fieldset.values.people[1].name).toEqual('Adolf')
             })
           })
         });
@@ -102,10 +102,10 @@ describe("LSD.Mixin.Fieldset", function() {
             expect(fieldset.fields.people[1].name.getValue()).toEqual('Adolf');
             expect(fieldset.fields.people[3].name.getValue()).toEqual('Helen');
             expect(fieldset.fields.people[4].name.getValue()).toEqual('Max');
-            expect(fieldset.params.people[0].name).toEqual('Jack');
-            expect(fieldset.params.people[1].name).toEqual('Adolf')
-            expect(fieldset.params.people[3].name).toEqual('Helen');
-            expect(fieldset.params.people[4].name).toEqual('Max')
+            expect(fieldset.values.people[0].name).toEqual('Jack');
+            expect(fieldset.values.people[1].name).toEqual('Adolf')
+            expect(fieldset.values.people[3].name).toEqual('Helen');
+            expect(fieldset.values.people[4].name).toEqual('Max')
           });
         });
         describe("and some of the properties are numbers and some are not", function() {
@@ -126,9 +126,9 @@ describe("LSD.Mixin.Fieldset", function() {
           fieldset.build();
           expect(fieldset.childNodes.length).toEqual(2);
           expect(fieldset.fields.name[0].getValue()).toEqual('Jack');
-          expect(fieldset.params.name[0]).toEqual('Jack');
+          expect(fieldset.values.name[0]).toEqual('Jack');
           expect(fieldset.fields.name[1].getValue()).toEqual('Stewie');
-          expect(fieldset.params.name[1]).toEqual('Stewie');
+          expect(fieldset.values.name[1]).toEqual('Stewie');
         })
       })
     })
@@ -148,9 +148,9 @@ describe("LSD.Mixin.Fieldset", function() {
         var nested = fieldset.childNodes[0];
         expect(fieldset.childNodes.length).toEqual(1);
         expect(fieldset.fields.name.getValue()).toEqual('Jack');
-        expect(fieldset.params.name).toEqual('Jack');
+        expect(fieldset.values.name).toEqual('Jack');
         expect(nested.fields.name.getValue()).toEqual('Jack');
-        expect(nested.params.name).toEqual('Jack');
+        expect(nested.values.name).toEqual('Jack');
       })
     });
     describe("and input is nested in the parent fieldset", function() {
@@ -166,9 +166,9 @@ describe("LSD.Mixin.Fieldset", function() {
         var nested = fieldset.childNodes[0];
         expect(fieldset.childNodes.length).toEqual(2);
         expect(fieldset.fields.name.getValue()).toEqual('Jack');
-        expect(fieldset.params.name).toEqual('Jack');
+        expect(fieldset.values.name).toEqual('Jack');
         expect(nested.fields.name).toBeFalsy()
-        expect(nested.params.name).toBeFalsy()
+        expect(nested.values.name).toBeFalsy()
       })
     })
   })
