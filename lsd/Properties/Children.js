@@ -1,7 +1,7 @@
-describe("LSD.Type.Children", function() {
+describe("LSD.Properties.ChildNodes", function() {
   describe("when given objects", function() {
     it ("should update length", function() {
-      var children = new LSD.Type.Children;
+      var children = new LSD.Properties.ChildNodes;
       var a = new LSD.Object;
       var b = new LSD.Object;
       expect(children.length).toEqual(0);
@@ -14,7 +14,7 @@ describe("LSD.Type.Children", function() {
     });
     describe("when objects are observable objects", function() {
       it ("should make the inserted objects link to previous and next object", function() {
-        var children = new LSD.Type.Children;
+        var children = new LSD.Properties.ChildNodes;
         var a = new LSD.Object;
         var b = new LSD.Object;
         var c = new LSD.Object;
@@ -72,7 +72,7 @@ describe("LSD.Type.Children", function() {
         expect(a.previousSibling).toBeUndefined();
       });
       it ("should maintain first/last links", function() {
-        var children = new LSD.Type.Children;
+        var children = new LSD.Properties.ChildNodes;
         var a = new LSD.Object({id: 'a'});
         var b = new LSD.Object({id: 'b'});;
         var c = new LSD.Object({id: 'c'});;
@@ -105,7 +105,7 @@ describe("LSD.Type.Children", function() {
         expect(children.last).toBeNull();
       });
       it ("should maintain parentNode link on each item of the array", function() {
-        var children = new LSD.Type.Children;
+        var children = new LSD.Properties.ChildNodes;
         var widget = new LSD.Object({
           childNodes: children
         });
@@ -133,7 +133,7 @@ describe("LSD.Type.Children", function() {
     })
     describe("when objects are stack based observable objects", function() {
       it ("should make the inserted objects link to previous and next object", function() {
-        var children = new LSD.Type.Children;
+        var children = new LSD.Properties.ChildNodes;
         var a = new LSD.Object.Stack;
         var b = new LSD.Object.Stack;
         var c = new LSD.Object.Stack;
@@ -192,7 +192,7 @@ describe("LSD.Type.Children", function() {
       });
       
       it ("should maintain first/last links", function() {
-        var children = new LSD.Type.Children;
+        var children = new LSD.Properties.ChildNodes;
         var a = new LSD.Object.Stack({id: 'a'});
         var b = new LSD.Object.Stack({id: 'b'});;
         var c = new LSD.Object.Stack({id: 'c'});;
@@ -226,7 +226,7 @@ describe("LSD.Type.Children", function() {
       });
       
       it ("should maintain parentNode link on each item of the array", function() {
-        var children = new LSD.Type.Children;
+        var children = new LSD.Properties.ChildNodes;
         var widget = new LSD.Object({
           childNodes: children
         });
@@ -255,7 +255,7 @@ describe("LSD.Type.Children", function() {
   });
   describe("when attached to an object", function() {
     it ("should export firstChild/lastChild properties", function() {
-      var children = new LSD.Type.Children;
+      var children = new LSD.Properties.ChildNodes;
       var widget = new LSD.Object.Stack({
         childNodes: children
       });
@@ -296,17 +296,17 @@ describe("LSD.Type.Children", function() {
     })
   })
   
-  describe("paired LSD.Type.Children.Virtual", function() {
+  describe("paired LSD.Properties.ChildNodes.Virtual", function() {
     describe("when given nodes", function() {
       it ("should transparently place the nodes from virtual collection to real children collection", function() {
         var parent = new LSD.Object({
-          childNodes: new LSD.Type.Children
+          childNodes: new LSD.Properties.ChildNodes
         });
         var fragment = new LSD.Object({
-          childNodes: new LSD.Type.Children.Virtual
+          childNodes: new LSD.Properties.ChildNodes.Virtual
         });
         var subfragment = new LSD.Object({
-          childNodes: new LSD.Type.Children.Virtual
+          childNodes: new LSD.Properties.ChildNodes.Virtual
         });
         var a = new LSD.Object({id: 'a'});
         var b = new LSD.Object({id: 'b'});

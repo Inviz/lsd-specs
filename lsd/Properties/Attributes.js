@@ -1,4 +1,4 @@
-describe("LSD.Type.Attributes", function() {
+describe("LSD.Properties.Attributes", function() {
   
   it ("should manage attributes", function() {
     var instance = new LSD.Element({tag: 'div'});
@@ -14,12 +14,12 @@ describe("LSD.Type.Attributes", function() {
   it ("should manage pseudos via attributes", function() {
     var instance = new LSD.Element({tag: 'div'});
     instance.setAttribute("disabled", true);
-    expect(instance.pseudos["disabled"]).toBeTruthy();
+    expect(instance["disabled"]).toBeTruthy();
     expect(instance.attributes["disabled"]).toBeTruthy();
     instance.build();
     expect(instance.element["disabled"]).toBeTruthy();
     instance.removeAttribute("disabled");
-    expect(instance.pseudos["disabled"]).toBeFalsy();
+    expect(instance["disabled"]).toBeFalsy();
     expect(instance.attributes["disabled"]).toBeFalsy();
     expect(instance.element["disabled"]).toBeFalsy();
   });
@@ -28,34 +28,34 @@ describe("LSD.Type.Attributes", function() {
 
   it ("should manage attributes & pseudos via states", function() {
     var instance = new LSD.Element;
-    instance.states.set("disabled", true);
-    expect(instance.pseudos["disabled"]).toBeTruthy();
+    instance.set("disabled", true);
+    expect(instance["disabled"]).toBeTruthy();
     expect(instance.attributes["disabled"]).toBeTruthy();
-    instance.states.unset("disabled", true);
-    expect(instance.pseudos["disabled"]).toBeFalsy();
+    instance.unset("disabled", true);
+    expect(instance["disabled"]).toBeFalsy();
     expect(instance.attributes["disabled"]).toBeFalsy();
   });
 
   it ("should set state when state was already defined and class with the name of the state was added", function() {
     var element = new Element('div');
     var instance = new LSD.Element(element);
-    instance.states.set('selected');
-    instance.classes.add('selected');
+    instance.set('selected');
+    instance.classList.add('selected');
     expect(instance.selected).toBeTruthy();
   });
 
   it ("should set state when class with the name of the state was added and state was already defined", function() {
     var element = new Element('div');
     var instance = new LSD.Element(element);
-    instance.classes.add('selected');
-    instance.states.set('selected');
+    instance.classList.add('selected');
+    instance.set('selected');
     expect(instance.selected).toBeTruthy();
   });
   
   it ("should be able to set state through a class without state defined", function() {
     var element = new Element('div');
     var instance = new LSD.Element(element);
-    instance.classes.add('selected');
+    instance.classList.add('selected');
     expect(instance.selected).toBeTruthy();
   });
   
@@ -64,11 +64,11 @@ describe("LSD.Type.Attributes", function() {
     element.setAttribute('checked', 'checked');
     var instance = new LSD.Element(element);
     expect(instance.checked).toBeTruthy();
-    expect(instance.pseudos.checked).toBeTruthy();
+    expect(instance.checked).toBeTruthy();
     expect(instance.attributes.checked).toBeTruthy();
     instance.removeAttribute('checked');
     expect(instance.checked).toBeFalsy();
-    expect(instance.pseudos.checked).toBeFalsy();
+    expect(instance.checked).toBeFalsy();
     expect(instance.attributes.checked).toBeFalsy();
   })
   
@@ -79,26 +79,26 @@ describe("LSD.Type.Attributes", function() {
     expect(instance.checked).toBeTruthy();
     instance.uncheck();
     expect(instance.checked).toBeFalsy();
-    expect(instance.pseudos.checked).toBeFalsy();
+    expect(instance.checked).toBeFalsy();
     expect(instance.attributes.checked).toBeFalsy();
     instance.setAttribute('checked', true);
     expect(instance.checked).toBeTruthy();
-    expect(instance.pseudos.checked).toBeTruthy();
+    expect(instance.checked).toBeTruthy();
     expect(instance.attributes.checked).toBeTruthy();
     instance.uncheck();
     expect(instance.checked).toBeFalsy();
-    expect(instance.pseudos.checked).toBeFalsy();
+    expect(instance.checked).toBeFalsy();
     expect(instance.attributes.checked).toBeFalsy();
   })
   
   it ("should not remove the state from widget, if the state was given by an attribute AND explicitly", function() {
     var element = new Element('div');
     element.setAttribute('checked', 'checked');
-    var instance = new LSD.Element(element, {states: {checked: undefined}});
+    var instance = new LSD.Element(element, {checked: undefined});
     expect(instance.checked).toBeTruthy();
     instance.uncheck();
     expect(instance.checked).toBeFalsy();
-    expect(instance.pseudos.checked).toBeFalsy();
+    expect(instance.checked).toBeFalsy();
     expect(instance.attributes.checked).toBeFalsy();
     expect(instance.check).toBeTruthy();
   })
@@ -107,27 +107,27 @@ describe("LSD.Type.Attributes", function() {
     var instance = new LSD.Element;
     expect(instance.checked).toBeFalsy()
     expect(instance.check).toBeFalsy()
-    instance.states.set('checked', null);
+    instance.set('checked', null);
     expect(instance.check).toBeTruthy()
     expect(instance.checked).toBeFalsy()
-    instance.states.unset('checked', null);
+    instance.unset('checked', null);
     expect(instance.checked).toBeFalsy()
     expect(instance.check).toBeFalsy()
   });
   
   it ("should be able to watch other state", function() {
     var instance = new LSD.Element;
-    instance.states.watch('checked', 'selected');
+    instance.watch('checked', 'selected');
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
     expect(instance.select).toBeFalsy();
-    instance.states.set('checked', true);
+    instance.set('checked', true);
     expect(instance.checked).toBeTruthy();
     expect(instance.selected).toBeTruthy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    instance.states.unset('checked', true);
+    instance.unset('checked', true);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
@@ -136,17 +136,17 @@ describe("LSD.Type.Attributes", function() {
   
   it ("should be able to watch other state and proxy nulls", function() {
     var instance = new LSD.Element;
-    instance.states.watch('checked', 'selected');
+    instance.watch('checked', 'selected');
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
     expect(instance.select).toBeFalsy();
-    instance.states.set('checked', null);
+    instance.set('checked', null);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    instance.states.unset('checked', null);
+    instance.unset('checked', null);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
@@ -155,51 +155,51 @@ describe("LSD.Type.Attributes", function() {
   
   it ("should allow circular watch", function() {
     var instance = new LSD.Element;
-    instance.states.watch('checked', 'selected');
-    instance.states.watch('selected', 'checked');
-    instance.states.set('checked', null);
+    instance.watch('checked', 'selected');
+    instance.watch('selected', 'checked');
+    instance.set('checked', null);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance.states._stack.checked.length).toEqual(1);
-    expect(instance.states._stack.selected.length).toEqual(1);
-    instance.states.unset('selected', null);
+    expect(instance._stack.checked.length).toEqual(1);
+    expect(instance._stack.selected.length).toEqual(1);
+    instance.unset('selected', null);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
     expect(instance.select).toBeFalsy();
-    expect(instance.states._stack.checked.length).toEqual(0);
-    expect(instance.states._stack.selected.length).toEqual(0);
+    expect(instance._stack.checked.length).toEqual(0);
+    expect(instance._stack.selected.length).toEqual(0);
     window.$lol = true
-    instance.states.set('checked', true);
+    instance.set('checked', true);
     expect(instance.checked).toBeTruthy();
     expect(instance.selected).toBeTruthy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance.states._stack.checked.length).toEqual(1);
-    expect(instance.states._stack.selected.length).toEqual(1);
-    instance.states.set('checked', false);
+    expect(instance._stack.checked.length).toEqual(1);
+    expect(instance._stack.selected.length).toEqual(1);
+    instance.set('checked', false);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance.states._stack.checked.length).toEqual(2);
-    expect(instance.states._stack.selected.length).toEqual(1);
-    instance.states.unset('checked', false);
+    expect(instance._stack.checked.length).toEqual(2);
+    expect(instance._stack.selected.length).toEqual(1);
+    instance.unset('checked', false);
     expect(instance.checked).toBeTruthy();
     expect(instance.selected).toBeTruthy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance.states._stack.checked.length).toEqual(1);
-    expect(instance.states._stack.selected.length).toEqual(1);
-    instance.states.unset('checked', true);
+    expect(instance._stack.checked.length).toEqual(1);
+    expect(instance._stack.selected.length).toEqual(1);
+    instance.unset('checked', true);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
     expect(instance.select).toBeFalsy();
-    expect(instance.states._stack.checked.length).toEqual(0);
-    expect(instance.states._stack.selected.length).toEqual(0);
+    expect(instance._stack.checked.length).toEqual(0);
+    expect(instance._stack.selected.length).toEqual(0);
   })
   
   it ("should make attributes type='checkbox' and checked='checked'", function() {
@@ -220,41 +220,23 @@ describe("LSD.Type.Attributes", function() {
   })
 });
 
-describe("LSD.Type.Pseudos", function() {
-  it ("should manage pseudos", function() {
+describe("LSD.Properties.Classes", function() {
+  it ("should manage states", function() {
     var instance = new LSD.Element;
-    instance.addPseudo("disabled");
-    expect(instance.pseudos["disabled"]).toBeTruthy();
-    instance.removePseudo("disabled");
-    expect(instance.pseudos["disabled"]).toBeFalsy();
-  });
-})
-
-describe("LSD.Type.Classes", function() {
-  it ("should manage pseudos", function() {
-    var instance = new LSD.Element;
-    instance.addPseudo("disabled");
-    expect(instance.pseudos["disabled"]).toBeTruthy();
-    instance.removePseudo("disabled");
-    expect(instance.pseudos["disabled"]).toBeFalsy();
+    instance.set("empty", true);
+    expect(instance.classList["empty"]).toBeTruthy();
+    instance.unset("empty", true);
+    expect(instance.classList["empty"]).toBeFalsy();
   });  
 
-  it ("should manage classes", function() {
+  it ("should manage classList", function() {
     var instance = new LSD.Element;
-    instance.classes.add("first");
-    instance.classes.add("second");
+    instance.classList.add("first");
+    instance.classList.add("second");
     expect(instance.hasClass("first")).toBeTruthy();
     expect(instance.hasClass("second")).toBeTruthy();
-    instance.classes.remove("first");
+    instance.classList.remove("first");
     expect(instance.hasClass("first")).toBeFalsy();
     expect(instance.hasClass("second")).toBeTruthy();
-  });
-
-  it ("should manage classes via states", function() {
-    var instance = new LSD.Element({tag: 'div'});
-    instance.states.set("custom", true);
-    expect(instance.hasClass("is-custom")).toBeTruthy();
-    instance.states.set("empty", true);
-    expect(instance.hasClass('empty')).toBeTruthy();
   });
 })

@@ -4,29 +4,29 @@ describe("LSD.Script.Function", function() {
     describe("and the first given argument is array", function() {
       describe("and the method is set in array prototype", function() {
         it("should execute that array method", function() {
-          var scope = new LSD.Script.Scope;
+          var scope = new LSD.Object.Stack;
           var script = new LSD.Script('slice(object, 1)', scope);
-          scope.variables.set('object', [1, 2, 3]);
+          scope.set('object', [1, 2, 3]);
           expect(script.value).toEqual([2, 3]);
         });
       });
       describe("and method is not set in array prototype", function() {
         describe("and there is a fallback method defined", function() {
           it("should use fallback method", function() {
-            var scope = new LSD.Script.Scope;
-            scope.methods.set('slicez', function(object, index, offset) {
+            var scope = new LSD.Object.Stack;
+            scope.set('slicez', function(object, index, offset) {
               return object.slice(index, offset)
             })
             var script = new LSD.Script('slicez(object, 1, 3)', scope);
-            scope.variables.set('object', [1, 2, 3]);
+            scope.set('object', [1, 2, 3]);
             expect(script.value).toEqual([2, 3]);
           });
         });
         describe("and the method is not defined as fallback", function() {
           it ("should not execute any method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('void(object)', scope);
-            scope.variables.set('object', [1, 2, 3]);
+            scope.set('object', [1, 2, 3]);
             expect(script.value).toEqual(null);
           })
         })
@@ -36,29 +36,29 @@ describe("LSD.Script.Function", function() {
     describe("and the first given argument is number", function() {
       describe("and the method is set in number prototype", function() {
         it("should execute that number method", function() {
-          var scope = new LSD.Script.Scope;
+          var scope = new LSD.Object.Stack;
           var script = new LSD.Script('round(object)', scope);
-          scope.variables.set('object', 2.51);
+          scope.set('object', 2.51);
           expect(script.value).toEqual(3);
         });
       });
       describe("and method is not set in number prototype", function() {
         describe("and there is a fallback method defined", function() {
           it("should use fallback method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('count(object)', scope);
-            scope.methods.set('count', function(object) {
+            scope.set('count', function(object) {
               return object.length != null ? object.length : object;
             })
-            scope.variables.set('object', 2);
+            scope.set('object', 2);
             expect(script.value).toEqual(2);
           });
         });
         describe("and the method is not defined as fallback", function() {
           it ("should not execute any method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('void(object)', scope);
-            scope.variables.set('object', 2);
+            scope.set('object', 2);
             expect(script.value).toEqual(null);
           })
         })
@@ -69,33 +69,33 @@ describe("LSD.Script.Function", function() {
     describe("and the first given argument is object", function() {
       describe("and the method is set in object base class", function() {
         it("should execute that object method", function() {
-          var scope = new LSD.Script.Scope;
+          var scope = new LSD.Object.Stack;
           var script = new LSD.Script('keys(object)', scope);
-          scope.variables.set('object', {a: 1, b: 2, y: 3});
+          scope.set('object', {a: 1, b: 2, y: 3});
           expect(script.value).toEqual(['a', 'b', 'y']);
         });
       });
       describe("and method is not set in object prototype", function() {
         describe("and there is a fallback method defined", function() {
           it("should use fallback method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('keyz(object)', scope);
-            scope.methods.set('keyz', function(object) {
+            scope.set('keyz', function(object) {
           		var keys = [];
           		for (var key in object){
           			if (hasOwnProperty.call(object, key)) keys.push(key);
           		}
           		return keys;
             })
-            scope.variables.set('object', {a: 1, b: 2, y: 3});
+            scope.set('object', {a: 1, b: 2, y: 3});
             expect(script.value).toEqual(['a', 'b', 'y']);
           });
         });
         describe("and the method is not defined as fallback", function() {
           it ("should not execute any method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('void(object)', scope);
-            scope.variables.set('object', {a: 1});
+            scope.set('object', {a: 1});
             expect(script.value).toEqual(null);
           })
         })
@@ -105,29 +105,29 @@ describe("LSD.Script.Function", function() {
     describe("and the first given argument is element", function() {
       describe("and the method is set in element prototype", function() {
         it("should execute that element method", function() {
-          var scope = new LSD.Script.Scope;
+          var scope = new LSD.Object.Stack;
           var script = new LSD.Script('getAttribute(object, "title")', scope);
-          scope.variables.set('object', new Element('div', {title: 'Loleo'}));
+          scope.set('object', new Element('div', {title: 'Loleo'}));
           expect(script.value).toEqual('Loleo');
         });
       });
       describe("and method is not set in element prototype", function() {
         describe("and there is a fallback method defined", function() {
           it("should use fallback method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('getSomething(object, "title")', scope);
-            scope.methods.set('getSomething', function(object, name) {
+            scope.set('getSomething', function(object, name) {
               return object.getAttribute(name)
             })
-            scope.variables.set('object', new Element('div', {title: 'Loleo'}));
+            scope.set('object', new Element('div', {title: 'Loleo'}));
             expect(script.value).toEqual('Loleo');
           });
         });
         describe("and the method is not defined as fallback", function() {
           it ("should not execute any method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('void(object)', scope);
-            scope.variables.set('object', new Element('div', {title: 'Loleo'}));
+            scope.set('object', new Element('div', {title: 'Loleo'}));
             expect(script.value).toEqual(null);
           })
         })
@@ -138,21 +138,21 @@ describe("LSD.Script.Function", function() {
     describe("and the first given argument is widget", function() {
       describe("and the method is set in widget prototype", function() {
         it("should execute that widget method", function() {
-          var scope = new LSD.Script.Scope;
+          var scope = new LSD.Object.Stack;
           var script = new LSD.Script('getAttribute(object, "title")', scope);
-          scope.variables.set('object', new LSD.Element({attributes: {title: 'Loleo'}}));
+          scope.set('object', new LSD.Element({attributes: {title: 'Loleo'}}));
           expect(script.value).toEqual('Loleo');
         });
       });
       describe("and method is not set in widget prototype", function() {
         describe("and there is a fallback method defined", function() {
           it("should use fallback method", function() {
-            var scope = new LSD.Script.Scope;
+            var scope = new LSD.Object.Stack;
             var script = new LSD.Script('getSomething(object, "title")', scope);
-            scope.methods.set('getSomething', function(object, name) {
+            scope.set('getSomething', function(object, name) {
               return object.getAttribute(name)
             })
-            scope.variables.set('object', new LSD.Element({attributes: {title: 'Loleo'}}));
+            scope.set('object', new LSD.Element({attributes: {title: 'Loleo'}}));
             expect(script.value).toEqual('Loleo');
           });
         });
@@ -168,24 +168,24 @@ describe("LSD.Script.Function", function() {
   describe("when operator is used on two values", function() {
     describe("and that operator is =", function() {
       it ("should not evaluate first argument and use it as name to define the variable with the second value", function() {
-        var scope = new LSD.Script.Scope;
+        var scope = new LSD.Object.Stack;
         var script = new LSD.Script('incremented = number + 1', scope);
-        scope.variables.set('number', 1);
+        scope.set('number', 1);
         expect(script.value).toEqual(2)
-        expect(scope.variables.incremented).toEqual(2);
+        expect(scope.incremented).toEqual(2);
       })
     })
   });
   
   describe("when expression consists of multiple function calls", function() {
-    var scope = new LSD.Script.Scope;
-    scope.methods.set('submit', function() {
+    var scope = new LSD.Object.Stack;
+    scope.set('submit', function() {
       return 1337
     });
-    scope.methods.set('make', function(value) {
+    scope.set('make', function(value) {
       return new LSD.Element({attributes: {title: value}})
     });
-    scope.methods.set('return', function(value) {
+    scope.set('return', function(value) {
       return Array.from(arguments)
     });
     describe("when the pipee function doesnt have any arguments", function() {
@@ -195,11 +195,11 @@ describe("LSD.Script.Function", function() {
       });
       describe("and value changes", function() {
         it ("should reevaluate the expression and re-pipe value again", function() {
-          var local = new LSD.Script.Scope(scope);
-          local.variables.set('n', 1336)
+          var local = new LSD.Object.Stack(scope);
+          local.set('n', 1336)
           var script = new LSD.Script('return(n), return()', local);
           expect(script.value).toEqual([[1336]])
-          local.variables.set('n', 1338)
+          local.set('n', 1338)
           expect(script.value).toEqual([[1338]])
         })
       })
@@ -261,16 +261,16 @@ describe("LSD.Script.Function", function() {
       })
       describe("and context for that function call is a variable pointing to widget", function() {
         it("should use returned values", function() {
-          var local = new LSD.Script.Scope(scope);
-          local.variables.set('widget', new LSD.Element)
+          var local = new LSD.Object.Stack(scope);
+          local.set('widget', new LSD.Element)
           var script = new LSD.Script('widget.return()', local);
           expect(script.value[0].nodeType).toEqual(1)
         })
       })
       describe("and context for that function call is a variable pointing to simple value", function() {
         it("should use returned values", function() {
-          var local = new LSD.Script.Scope(scope);
-          local.variables.set('dog', 'hot')
+          var local = new LSD.Object.Stack(scope);
+          local.set('dog', 'hot')
           var script = new LSD.Script('dog.return()', local);
           expect(script.value).toEqual(['hot'])
         })
@@ -286,8 +286,8 @@ describe("LSD.Script.Function", function() {
       describe("a block", function() {
         describe("that iterates over widget collection", function() {
           it ("should use widget as a context", function() {
-            var local = new LSD.Script.Scope(scope);
-            local.variables.set('items', [
+            var local = new LSD.Object.Stack(scope);
+            local.set('items', [
               new LSD.Element({attributes: {title: 'L'}}),
               new LSD.Element({attributes: {title: 'S'}}),
               new LSD.Element({attributes: {title: 'D'}})
@@ -298,8 +298,8 @@ describe("LSD.Script.Function", function() {
         });
         describe("that iterates over element collection", function() {
           it ("should use element as a context", function() {
-            var local = new LSD.Script.Scope(scope);
-            local.variables.set('items', [
+            var local = new LSD.Object.Stack(scope);
+            local.set('items', [
               new Element('div[title=L]'),
               new Element('div[title=S]'),
               new Element('div[title=D]'),
@@ -311,7 +311,7 @@ describe("LSD.Script.Function", function() {
         describe("that iterates over element collection", function() {
           it ("should not change context", function() {
             var local = new LSD.Element({attributes: {title: 'LSD'}});
-            local.variables.set('items', ['L', 'S', 'D'])
+            local.set('items', ['L', 'S', 'D'])
             var script = new LSD.Script('items.map { getAttribute("title") }', local)
           })
         });
@@ -320,13 +320,13 @@ describe("LSD.Script.Function", function() {
     describe("when function uses .dot() notation", function() {
       describe("through a widget property", function() {
         it ("should be able to access value and call a function upon it", function() {
-          var local = new LSD.Script.Scope(scope);
+          var local = new LSD.Object.Stack(scope);
           var items = [
             new LSD.Element({attributes: {title: 'L'}}),
             new LSD.Element({attributes: {title: 'S'}}),
             new LSD.Element({attributes: {title: 'D'}})
           ];
-          local.variables.set('items', items)
+          local.set('items', items)
           var script = new LSD.Script('items.each { |item| item.attributes.set("food", "borscht")}', local)
           expect(items.every(function(item) { 
             return item.attributes.food == 'borscht'

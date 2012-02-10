@@ -1,7 +1,7 @@
-describe("LSD.Type.Matches", function() {
+describe("LSD.Properties.Matches", function() {
   describe("when given a selector and a callback", function() {
     it ("should store the callback by a parsed selector", function() {
-      var matches = new LSD.Type.Matches;
+      var matches = new LSD.Properties.Matches;
       var index = 0;
       var callback = function(widget, state) {
         index += state ? 1 : -1;
@@ -9,12 +9,12 @@ describe("LSD.Type.Matches", function() {
       var button = new LSD.Object({
         lsd: true,
         tagName: 'button',
-        matches: new LSD.Type.Matches
+        matches: new LSD.Properties.Matches
       });
       var link = new LSD.Element({
         lsd: true,
         tagName: 'a',
-        matches: new LSD.Type.Matches
+        matches: new LSD.Properties.Matches
       })
       matches.set('button + a', callback);
       expect(matches['button + a']).toEqual([])

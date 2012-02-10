@@ -1,4 +1,4 @@
-describe('LSD.Type.Relations', function() {
+describe('LSD.Properties.Relations', function() {
   describe('when initialized on an object', function() {
     describe('and related widget is set explicitly', function() {
       it ('should assign widget', function() {

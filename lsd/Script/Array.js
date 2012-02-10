@@ -540,41 +540,41 @@ describe('LSD.Array', function() {
     
     describe('when non-local variables are used in the block', function() {
       it ("should re-filter values as filter criteria change", function() {
-        var scope = new LSD.Script.Scope;
-        scope.variables.set('divisor', 2);
-        scope.variables.set('result', 0);
+        var scope = new LSD.Object.Stack;
+        scope.set('divisor', 2);
+        scope.set('result', 0);
         var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
         var filtered = array.filter(new LSD.Function('number', 'number % divisor == result', scope));
         expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
-        scope.variables.set('result', 1);
+        scope.set('result', 1);
         expect(filtered.slice()).toEqual([5, 1, 7, 3, 9])
-        scope.variables.set('divisor', 3);
+        scope.set('divisor', 3);
         expect(filtered.slice()).toEqual([4, 1, 7, 10])
-        scope.variables.set('divisor', 2);
+        scope.set('divisor', 2);
         expect(filtered.slice()).toEqual([5, 1, 7, 3, 9])
-        scope.variables.set('result', 0);
+        scope.set('result', 0);
         expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
-        scope.variables.set('divisor', 3);
+        scope.set('divisor', 3);
         expect(filtered.slice()).toEqual([6, 3, 9])
-        scope.variables.set('result', 2);
+        scope.set('result', 2);
         expect(filtered.slice()).toEqual([2, 8, 5])
-        scope.variables.set('result', 1);
+        scope.set('result', 1);
         expect(filtered.slice()).toEqual([4, 1, 7, 10])
-        scope.variables.set('divisor', 4);
+        scope.set('divisor', 4);
         expect(filtered.slice()).toEqual([5, 1, 9])
-        scope.variables.set('divisor', 5);
+        scope.set('divisor', 5);
         expect(filtered.slice()).toEqual([1, 6])
-        scope.variables.set('result', 2);
+        scope.set('result', 2);
         expect(filtered.slice()).toEqual([2, 7])
-        scope.variables.set('result', 3);
+        scope.set('result', 3);
         expect(filtered.slice()).toEqual([8, 3])
-        scope.variables.set('result', 4);
+        scope.set('result', 4);
         expect(filtered.slice()).toEqual([4, 9])
-        scope.variables.set('result', 5);
+        scope.set('result', 5);
         expect(filtered.slice()).toEqual([])
-        scope.variables.set('result', 0);
+        scope.set('result', 0);
         expect(filtered.slice()).toEqual([5, 10])
-        scope.variables.set('divisor', 3);
+        scope.set('divisor', 3);
         expect(filtered.slice()).toEqual([6, 3, 9])
         array.unshift(4);
         expect(filtered.slice()).toEqual([6, 3, 9]);
@@ -595,13 +595,13 @@ describe('LSD.Array', function() {
 
     describe('when given a block using index', function() {
       it ("should filter array based on index of the values", function() {
-        var scope = new LSD.Script.Scope;
-        scope.variables.set('divisor', 2)
-        scope.variables.set('result', 0)
+        var scope = new LSD.Object.Stack;
+        scope.set('divisor', 2)
+        scope.set('result', 0)
         var array = new LSD.Array('George', 'Harry', 'Bill', 'Jeff', 'Claus');
         var filtered = array.filter(new LSD.Function('name', 'index', 'index % divisor == result', scope))
         expect(filtered.slice()).toEqual(['George', 'Bill', 'Claus']);
-        scope.variables.set('result', 1)
+        scope.set('result', 1)
         expect(filtered.slice()).toEqual(['Harry', 'Jeff']);
         array.push('Michael')
         expect(filtered.slice()).toEqual(['Harry', 'Jeff', 'Michael']);
@@ -617,19 +617,19 @@ describe('LSD.Array', function() {
         expect(filtered.slice()).toEqual(['Gomes', 'Michael', 'Jahmal']);
         array.push('Jehrar')
         expect(filtered.slice()).toEqual(['Gomes', 'Michael', 'Jahmal']);
-        scope.variables.set('result', 0)
+        scope.set('result', 0)
         expect(filtered.slice()).toEqual(['Harry', 'Claus', 'Jesus', 'Jehrar']);
-        scope.variables.set('divisor', 3)
+        scope.set('divisor', 3)
         expect(filtered.slice()).toEqual(['Harry', 'Michael', 'Jehrar']);
-        scope.variables.set('divisor', 2)
+        scope.set('divisor', 2)
         expect(filtered.slice()).toEqual(['Harry', 'Claus', 'Jesus', 'Jehrar']);
-        scope.variables.set('divisor', 4)
+        scope.set('divisor', 4)
         expect(filtered.slice()).toEqual(['Harry', 'Jesus']);
-        scope.variables.set('result', 1)
+        scope.set('result', 1)
         expect(filtered.slice()).toEqual(['Gomes', 'Jahmal']);
-        scope.variables.set('result', 2)
+        scope.set('result', 2)
         expect(filtered.slice()).toEqual(['Claus', 'Jehrar']);
-        scope.variables.set('result', 3)
+        scope.set('result', 3)
         expect(filtered.slice()).toEqual(['Michael']);
       });
     })
@@ -674,8 +674,8 @@ describe('LSD.Array', function() {
   describe('#every', function() {
     it ('should update value asynchronously', function() {
       var array = new LSD.Array;
-      var scope = new LSD.Script.Scope;
-      scope.variables.set('array', array);
+      var scope = new LSD.Object.Stack;
+      scope.set('array', array);
       var script = new LSD.Script('every (array) { |item| item.selected }', scope);
       expect(script.value).toEqual(true);
       var first = new LSD.Object({selected: true})
@@ -711,8 +711,8 @@ describe('LSD.Array', function() {
   describe('#some', function() {
     it ("should calculate value asynchronously", function() {
       var array = new LSD.Array;
-      var scope = new LSD.Script.Scope;
-      scope.variables.set('array', array);
+      var scope = new LSD.Object.Stack;
+      scope.set('array', array);
       var script = new LSD.Script('array.some() { |item| item.shquared }', scope);
       expect(script.value).toEqual(false);
       var first = new LSD.Object({shquared: false});
@@ -744,13 +744,13 @@ describe('LSD.Array', function() {
   describe('#map', function() {
     it ("should invoke an iterator on each value and return an array with results", function() {
       var array = new LSD.Array;
-      var scope = new LSD.Script.Scope;
-      scope.variables.set('array', array);
+      var scope = new LSD.Object.Stack;
+      scope.set('array', array);
       var script = new LSD.Script('array.map() { |item| organization || item.organization || fallback }', scope);
       var first = new LSD.Object({organization: 'ICP'});
       var second = new LSD.Object;
       array.push(first, second);
-      scope.variables.set('fallback', 'BurgerKing')
+      scope.set('fallback', 'BurgerKing')
       expect(script.value).toEqual(['ICP', 'BurgerKing'])
       second.set('organization', 'ICPP')
       expect(script.value).toEqual(['ICP', 'ICPP'])
@@ -758,15 +758,15 @@ describe('LSD.Array', function() {
       expect(script.value).toEqual(['ICP', 'Jungo', 'BurgerKing', 'Chimp', 'ICPP'])
       array.shift()
       expect(script.value).toEqual(['Jungo', 'BurgerKing', 'Chimp', 'ICPP'])
-      scope.variables.set('fallback', 'McDonalds')
+      scope.set('fallback', 'McDonalds')
       expect(script.value).toEqual(['Jungo', 'McDonalds', 'Chimp', 'ICPP'])
-      scope.variables.set('organization', 'KGB')
+      scope.set('organization', 'KGB')
       expect(script.value).toEqual(['KGB', 'KGB', 'KGB', 'KGB'])
       array.splice(2, 1);
       expect(script.value).toEqual(['KGB', 'KGB', 'KGB']);
       array.unshift({})
       expect(script.value).toEqual(['KGB', 'KGB', 'KGB', 'KGB']);
-      scope.variables.unset('organization', 'KGB')
+      scope.unset('organization', 'KGB')
       expect(script.value).toEqual(['McDonalds', 'Jungo', 'McDonalds', 'ICPP'])
       array.splice(2, 1, {organization: 'Ding'}, {organization: 'Dong'})
       expect(script.value).toEqual(['McDonalds', 'Jungo', 'Ding', 'Dong', 'ICPP'])
@@ -778,14 +778,14 @@ describe('LSD.Array', function() {
   })
 });
 
-describe('LSD.Collection', function() {
+describe('LSD.NodeList', function() {
   it('should sort pushed objects automatically', function() {
     var o = new LSD.Object({sourceIndex: 0});
     var a = new LSD.Object({sourceIndex: 1});
     var b = new LSD.Object({sourceIndex: 2});
     var c = new LSD.Object({sourceIndex: 3});
     var d = new LSD.Object({sourceIndex: 4});
-    var collection = new LSD.Collection;
+    var collection = new LSD.NodeList;
     collection.push(b)
     expect(collection.slice()).toEqual([b])
     collection.push(a)

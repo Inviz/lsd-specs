@@ -1,103 +1,103 @@
 describe('LSD.Script.Expression', function() {
   describe('when give multiple comma separated expressions', function() {
     it ('should evaluate expressions sequentially', function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var result
       var callback = function(value) {
         result = value;
       }
       var script = LSD.Script('a, b', scope, callback);
       expect(result).toBeNull();
-      expect(scope.variables._watched['a']).toBeTruthy()
-      expect(scope.variables._watched['b']).toBeFalsy()
-      scope.variables.set('a', 1);
-      expect(scope.variables._watched['a']).toBeTruthy()
-      expect(scope.variables._watched['b']).toBeTruthy()
+      expect(scope._watched['a']).toBeTruthy()
+      expect(scope._watched['b']).toBeFalsy()
+      scope.set('a', 1);
+      expect(scope._watched['a']).toBeTruthy()
+      expect(scope._watched['b']).toBeTruthy()
       expect(result).toBeNull();
-      scope.variables.set('b', 2);
+      scope.set('b', 2);
       expect(result).toEqual(2);
-      scope.variables.set('a', 3);
+      scope.set('a', 3);
       expect(result).toEqual(2);
-      scope.variables.unset('b', 2);
+      scope.unset('b', 2);
       expect(result).toBeNull()
-      expect(scope.variables._watched['a']).toBeTruthy()
-      expect(scope.variables._watched['b']).toBeTruthy()
+      expect(scope._watched['a']).toBeTruthy()
+      expect(scope._watched['b']).toBeTruthy()
       script.detach();
-      //expect(scope.variables._watched['a']).toEqual([])
-      //expect(scope.variables._watched['b']).toEqual([])
+      //expect(scope._watched['a']).toEqual([])
+      //expect(scope._watched['b']).toEqual([])
     });
     
     it ('should evaluate function calls sequentially', function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var result, state
       var callback = function(value) {
         result = value;
       }
-      scope.methods.set('submit', function(value) {
+      scope.set('submit', function(value) {
         state = 'submitted'
         return value;
       });
-      scope.methods.set('update', function(value) {
+      scope.set('update', function(value) {
         state = 'updated'
         return value;
       });
       var script = LSD.Script('submit(a), update(b), update(c || 1)', scope, callback);
-      expect(scope.variables._watched['a']).toBeTruthy()
-      expect(scope.variables._watched['b']).toBeFalsy()
-      scope.variables.set('a', 1);
+      expect(scope._watched['a']).toBeTruthy()
+      expect(scope._watched['b']).toBeFalsy()
+      scope.set('a', 1);
       expect(state).toBe('submitted')
-      expect(scope.variables._watched['a']).toBeTruthy()
-      expect(scope.variables._watched['b']).toBeTruthy()
-      scope.variables.set('b', 1);
+      expect(scope._watched['a']).toBeTruthy()
+      expect(scope._watched['b']).toBeTruthy()
+      scope.set('b', 1);
       expect(state).toBe('updated')
       expect(result).toBe(1)
-      scope.variables.set('c', 4);
+      scope.set('c', 4);
       expect(result).toBe(4)
-      scope.variables.set('a', null);
-      expect(scope.variables._watched['a']).toBeTruthy()
-      //expect(scope.variables._watched['b']).toBeFalsy()
+      scope.set('a', null);
+      expect(scope._watched['a']).toBeTruthy()
+      //expect(scope._watched['b']).toBeFalsy()
     });
     
     it ("should lazily evaluate expressions with deep variables", function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       
       var script = new LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || 1', scope)
       expect(script.value).toEqual(1);
-      scope.variables.set('time_range.recurrence_rule.interval', 2);
+      scope.set('time_range.recurrence_rule.interval', 2);
       expect(script.value).toEqual(1);
-      scope.variables.set('time_range.starts_at', 3);
+      scope.set('time_range.starts_at', 3);
       expect(script.value).toEqual(2);
-      scope.variables.set('time_range.starts_at', 0);
+      scope.set('time_range.starts_at', 0);
       expect(script.value).toEqual(1);
     })
     
     it ("should lazily evaluate expression with deep variables and falsy fallbacks", function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var script = new LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || ""', scope)
       expect(script.value).toEqual("");
-      scope.variables.set('time_range.recurrence_rule.interval', 2);
+      scope.set('time_range.recurrence_rule.interval', 2);
       expect(script.value).toEqual("");
-      scope.variables.set('time_range.starts_at', 3);
+      scope.set('time_range.starts_at', 3);
       expect(script.value).toEqual(2);
-      scope.variables.set('time_range.starts_at', 0);
+      scope.set('time_range.starts_at', 0);
       expect(script.value).toEqual("");
     });
     
     it ("should be able to wait for asynchronous results returned from function calls", function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var read = new Chain;
       var write = new Chain;
-      scope.methods.set('read', function() {
+      scope.set('read', function() {
         return read;
       });
-      scope.methods.set('transform', function(content) {
+      scope.set('transform', function(content) {
         return '[' + content + ']';
       });
-      scope.methods.set('write', function(content) {
+      scope.set('write', function(content) {
         write.content = content
         return write;
       });
-      scope.methods.set('notify', function(content) {
+      scope.set('notify', function(content) {
         return 'Superb ' + content;
       });
       var script = new LSD.Script('read(), transform(), write(), notify()', scope);
@@ -113,7 +113,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should be able to handle failures and execute alternative actions", function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var invent = Object.append(new Chain, new Events);
       invent.onFailure = function(){ 
         return invent.fireEvent('failure', arguments); 
@@ -121,16 +121,16 @@ describe('LSD.Script.Expression', function() {
       invent.onSuccess = function(){ 
         return invent.fireEvent('success', arguments); 
       };
-      scope.methods.set('invent', function(content) {
+      scope.set('invent', function(content) {
         return invent;
       });
-      scope.methods.set('steal', function(reason) {
+      scope.set('steal', function(reason) {
         return 'Stole invention because ' + reason;
       });
-      scope.methods.set('unsteal', function(reason) {
+      scope.set('unsteal', function(reason) {
         return '';
       });
-      scope.methods.set('profit', function(biz) {
+      scope.set('profit', function(biz) {
         return '$$$ ' + biz
       });
       var write = new Chain;
@@ -151,7 +151,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should be able to stack multiple scripts together (kind of coroutines and aspects)", function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var submit = Object.append(new Chain, new Events);
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
@@ -159,7 +159,7 @@ describe('LSD.Script.Expression', function() {
       submit.onSuccess = function(){ 
         return submit.fireEvent('success', arguments); 
       };
-      scope.methods.merge({
+      scope.merge({
         submit: function(data) {
           submit.data = data;
           return submit;
@@ -189,7 +189,7 @@ describe('LSD.Script.Expression', function() {
     })
     
     it ("should be able to stack multiple scripts together and make one handle failures in another", function() {
-      var scope = new LSD.Script.Scope;
+      var scope = new LSD.Object.Stack;
       var submit = Object.append(new Chain, new Events);
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
@@ -198,7 +198,7 @@ describe('LSD.Script.Expression', function() {
         return submit.fireEvent('success', arguments); 
       };
       var errors = 0;
-      scope.methods.merge({
+      scope.merge({
         submit: function(data) {
           submit.data = data;
           return submit;

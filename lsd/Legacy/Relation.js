@@ -1,5 +1,5 @@
 describe("LSD.Relation", function() {
-  new LSD.Type('RelationTest');
+  new LSD.Properties('RelationTest');
   
   it ("should initialize with origin", function() {
     var list = new LSD.Element({tag: 'list', document: Factory('document')});

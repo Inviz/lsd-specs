@@ -1,4 +1,4 @@
-describe('LSD.Type.Allocations', function() {
+describe('LSD.Properties.Allocations', function() {
   describe('#set', function() {
     describe('with a known key', function() {
       describe('when second argument is not given', function() {

@@ -6,7 +6,7 @@ Configuration.name = 'Lovely Scalable Drawings projects';
 
 Configuration.presets = {
   'full': {
-    sets: ['script', 'type', 'lsd'],
+    sets: ['script', 'type', 'node'],
     source: ['lsd']
   },
   'type': {
@@ -37,20 +37,22 @@ Configuration.sets = {
     ]
   },
   'type': {
-    path: 'lsd/Type/',
+    path: 'lsd/Properties/',
     files: [
       'Children',
       'States',
       'Matches',
       'Relations',
       'Allocations',
-      'Attributes'
+      'Attributes',
+      'Resource'
     ]
   },
-  'lsd': {
-    path: 'lsd/LSD/',
+  'node': {
+    path: 'lsd/Node/',
     files: [
-      'Widget'
+      'Element',
+      'Fragment'
     ]
   }
 };

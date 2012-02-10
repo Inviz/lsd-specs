@@ -203,7 +203,7 @@ describe("LSD.Layout", function() {
                   Sometimes I wish this never ends\
                 </article>\
               ');
-              (new LSD.Type('Container1')).Article = new Class({
+              (new LSD.Properties('Container1')).Article = new Class({
                 options: {
                   layout: {
                     '::container': true
@@ -228,7 +228,7 @@ describe("LSD.Layout", function() {
                   <button>Disagree</button>\
                 </article>\
               ');
-              (new LSD.Type('Container2')).Article = new Class({
+              (new LSD.Properties('Container2')).Article = new Class({
                 options: {
                   layout: {
                     '::container': true
@@ -259,7 +259,7 @@ describe("LSD.Layout", function() {
                   <button>Unsee</button>\
                 </article>\
               ');
-              (new LSD.Type('Container3')).Article = new Class({
+              (new LSD.Properties('Container3')).Article = new Class({
                 options: {
                   layout: {
                     '::container': true,
@@ -296,7 +296,7 @@ describe("LSD.Layout", function() {
                   Sometimes I wish this never ends\
                 </article>\
               ');
-              (new LSD.Type('Container4')).Article = new Class({
+              (new LSD.Properties('Container4')).Article = new Class({
                 options: {
                   layout: {
                     'span.booty::container': true
@@ -1138,7 +1138,7 @@ describe("LSD.Layout", function() {
                 describe("and global layout is used", function() {
                   describe("and multiple widgets use the same element as the source of children", function() {
                     it("should distribute children", function() {
-                      var Type = new LSD.Type('Layoutmix1');
+                      var Type = new LSD.Properties('Layoutmix1');
                       Type.Article = new Class({
                         options: {
                           tag: 'article',

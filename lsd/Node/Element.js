@@ -54,7 +54,7 @@ describe('LSD.Element', function() {
         });
         expect(widget.attributes.title).toEqual('Click here');
         widget.set('attributes.title', 'Click there');
-        expect(widget.attributes instanceof LSD.Type.Attributes).toBeTruthy()
+        expect(widget.attributes instanceof LSD.Properties.Attributes).toBeTruthy()
         expect(widget.attributes.title).toEqual('Click there');
         widget.unset('attributes.title', 'Click there');
         widget.set('attributes.title', 'Click here');

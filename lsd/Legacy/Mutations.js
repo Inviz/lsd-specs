@@ -24,7 +24,7 @@ describe('Layout', function() {
           if (element.indexOf) element = new Element('div', {html: element});
           return new LSD.Element(element, Object.append({context: Context, document: Factory('document')}, options));
         }
-        new LSD.Type('Clean');
+        new LSD.Properties('Clean');
         Context.Superform = new Class({
           options: {
             mutations: {

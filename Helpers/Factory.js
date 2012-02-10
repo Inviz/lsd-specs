@@ -20,7 +20,7 @@ LSD.Factory.Document = function(fresh) {
 };
 
 LSD.Factory.Type = function() {
-  var type = new LSD.Type;
+  var type = new LSD.Properties;
   for (var i = 0, j = arguments.length; i < j; i++) {
     var arg = arguments[i];
     if (typeof arg == 'string') {
