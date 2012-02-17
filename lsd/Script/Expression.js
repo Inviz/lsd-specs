@@ -139,12 +139,12 @@ describe('LSD.Script.Expression', function() {
       invent.onFailure('I was drunk')
       expect(script.value).toEqual('$$$ Stole invention because I was drunk');
       script.prepiped = 1;
-      script.set(null, true);
+      script.setValue(null, true);
       expect(script.value).toBeNull()
       invent.onSuccess('Fair invention')
       expect(script.value).toEqual('$$$ Fair invention');
       script.prepiped = 2;
-      script.set(null, true);
+      script.setValue(null, true);
       expect(script.value).toBeNull()
       invent.onFailure('Dog ate my homework')
       expect(script.value).toEqual('$$$ Stole invention because Dog ate my homework');
@@ -235,7 +235,7 @@ describe('LSD.Script.Expression', function() {
       expect(advice.value).toEqual('Error: HiJack... Boom');
       expect(errors).toEqual(1);
       advice.piped = advice.prepiped = 'Oh! ';
-      advice.set(null, true)
+      advice.setValue(null, true)
       expect(advice.value).toBeNull()
       submit.onSuccess(submit.data + 'Jackie');
       expect(advice.value).toEqual('Oh! HiJackie... Boom');

@@ -219,10 +219,60 @@ describe('LSD.Element', function() {
           expect(d.sourceIndex).toEqual(3);
           a.childNodes.shift()
           expect(d.sourceIndex).toEqual(1);
-          //debugger
-          //a.childNodes.push(b)
-          //expect(b.sourceIndex).toEqual(2);
-          //expect(bb.sourceIndex).toEqual(3);
+          a.childNodes.push(b)
+          expect(b.sourceIndex).toEqual(2);
+          expect(bb.sourceIndex).toEqual(3);
+        })
+        
+        it ("should be kept when doing regular manipulations", function() {
+            var root = new LSD.Element({tag: 'root'})
+
+            var pane1 = new LSD.Element({tag: 'pane'});
+            var pane2 = new LSD.Element({tag: 'pane'});
+            var pane3 = new LSD.Element({tag: 'pane'});
+
+            pane2.appendChild(pane3);
+            expect(pane2.sourceIndex).toBeUndefined()
+            expect(pane3.sourceIndex).toEqual(1);
+            expect(pane2.sourceLastIndex).toEqual(1);
+            expect(pane3.sourceLastIndex).toBeFalsy();
+
+            root.appendChild(pane2)
+            expect(root.sourceLastIndex).toEqual(2);
+            expect(root.sourceIndex).toBeUndefined()
+            expect(pane2.sourceIndex).toEqual(1);
+            expect(pane2.sourceLastIndex).toEqual(2);
+            expect(pane3.sourceIndex).toEqual(2);
+            expect(pane3.sourceLastIndex).toBeFalsy();
+            
+            expect(pane2.sourceLastIndex).toEqual(2);
+            root.appendChild(pane1);
+            expect(root.sourceLastIndex).toEqual(3);
+            expect(pane1.sourceIndex).toEqual(3);
+            
+            var rooty = new LSD.Element({tag: 'root'})
+            rooty.appendChild(root);
+            expect(rooty.sourceLastIndex).toEqual(4);
+            expect(rooty.sourceIndex).toBeUndefined()
+            expect(root.sourceLastIndex).toEqual(4);
+            expect(root.sourceIndex).toEqual(1);
+            expect(pane2.sourceIndex).toEqual(2);
+            expect(pane2.sourceLastIndex).toEqual(3);
+            expect(pane3.sourceIndex).toEqual(3);
+            expect(pane3.sourceLastIndex).toBeFalsy();
+            
+            var pane4 = new LSD.Element({tag: 'kane'});
+            pane2.appendChild(pane4);
+            expect(rooty.sourceLastIndex).toEqual(5);
+            expect(rooty.sourceIndex).toBeUndefined()
+            expect(root.sourceLastIndex).toEqual(5);
+            expect(root.sourceIndex).toEqual(1);
+            expect(pane1.sourceIndex).toEqual(5);
+            expect(pane2.sourceIndex).toEqual(2);
+            expect(pane2.sourceLastIndex).toEqual(4);
+            expect(pane3.sourceLastIndex).toBeFalsy();
+            expect(pane3.sourceIndex).toEqual(3);
+            expect(pane4.sourceIndex).toEqual(4);
         })
       })
     });

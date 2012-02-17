@@ -775,7 +775,50 @@ describe('LSD.Array', function() {
       array.splice(0, 2)
       expect(script.value).toEqual(['Dong', 'ICPP'])
     })
-  })
+  });
+  
+  
+  describe('#limit', function() {
+    describe('when called on a bare array', function() {
+      it ("should return proxy of a collection without making a splice", function() {
+        var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+        var limited = array.limit(5);
+        expect(limited._limit).toEqual(5);
+        expect(limited.length).toEqual(0);
+      });
+      describe('and later called filter', function() {
+        it ("should seek the collection and stop when it has enough results", function() {
+          var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+          var limited = array.limit(3);
+          expect(limited._limit).toEqual(3);
+          expect(limited.length).toEqual(0);
+          var block = new LSD.Function('number', 'number % 2')
+          var filtered = limited.filter(block)
+          expect(filtered.slice()).toEqual([1, 3, 5]);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '2', '4'])
+          array.splice(2, 1);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '3', '5'])
+          expect(filtered.slice()).toEqual([1, 5, 7]);
+          array.splice(2, 1);
+          expect(filtered.slice()).toEqual([1, 5, 7]);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '2', '4'])
+          array.splice(2, 1);
+          expect(filtered.slice()).toEqual([1, 7, 9]);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '3', '5'])
+          console.error('fourth splice !')
+          array.splice(0, 1);
+
+          expect(filtered.slice()).toEqual([7, 9, 11]);
+          expect(Object.keys(block.block.yields)).toEqual(['2', '4', '6'])
+        })
+      })
+    })
+    describe('when called after a kicker', function() {
+      it ("should return spliced observable collection", function() {
+        
+      })
+    })
+  });
 });
 
 describe('LSD.NodeList', function() {

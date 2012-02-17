@@ -13,27 +13,27 @@ describe("LSD.Properties.Attributes", function() {
 
   it ("should manage pseudos via attributes", function() {
     var instance = new LSD.Element({tag: 'div'});
-    instance.setAttribute("disabled", true);
-    expect(instance["disabled"]).toBeTruthy();
-    expect(instance.attributes["disabled"]).toBeTruthy();
+    instance.setAttribute("empty", true);
+    expect(instance["empty"]).toBeTruthy();
+    expect(instance.attributes["empty"]).toBeTruthy();
     instance.build();
-    expect(instance.element["disabled"]).toBeTruthy();
-    instance.removeAttribute("disabled");
-    expect(instance["disabled"]).toBeFalsy();
-    expect(instance.attributes["disabled"]).toBeFalsy();
-    expect(instance.element["disabled"]).toBeFalsy();
+    expect(instance.element["empty"]).toBeTruthy();
+    instance.removeAttribute("empty");
+    expect(instance["empty"]).toBeFalsy();
+    expect(instance.attributes["empty"]).toBeFalsy();
+    expect(instance.element["empty"]).toBeFalsy();
   });
 
 
 
   it ("should manage attributes & pseudos via states", function() {
     var instance = new LSD.Element;
-    instance.set("disabled", true);
-    expect(instance["disabled"]).toBeTruthy();
-    expect(instance.attributes["disabled"]).toBeTruthy();
-    instance.unset("disabled", true);
-    expect(instance["disabled"]).toBeFalsy();
-    expect(instance.attributes["disabled"]).toBeFalsy();
+    instance.set("checked", true);
+    expect(instance["checked"]).toBeTruthy();
+    expect(instance.attributes["checked"]).toBeTruthy();
+    instance.unset("checked", true);
+    expect(instance["checked"]).toBeFalsy();
+    expect(instance.attributes["checked"]).toBeFalsy();
   });
 
   it ("should set state when state was already defined and class with the name of the state was added", function() {

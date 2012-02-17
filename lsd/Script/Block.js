@@ -31,7 +31,7 @@ describe("LSD.Script.Block", function() {
     scope.methods.set('map', function(array, fn, bind) {
       if (fn.results == null) {
         var results = fn.results = [];
-        array.iterate(fn, function(result, value, index, state) {
+        array.seek(fn, function(result, value, index, state) {
           count++;
           if (state) results[index] = result;
           else results.splice(index, 1);
@@ -85,7 +85,7 @@ describe("LSD.Script.Block", function() {
     scope.methods.set('map', function(array, fn, bind) {
       if (fn.results == null) {
         var results = fn.results = [];
-        array.iterate(fn, function(result, value, index, state) {
+        array.seek(fn, function(result, value, index, state) {
           count++;
           if (state) results[index] = result;
           else results.splice(index, 1);
