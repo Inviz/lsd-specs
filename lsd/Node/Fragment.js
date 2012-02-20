@@ -58,6 +58,13 @@ describe("LSD.Fragment", function() {
         fragment.render('Gold Digger');
         expect(fragment.childNodes[0].nodeType).toEqual(3);
         expect(fragment.childNodes[0].nodeValue).toEqual('Gold Digger');
+      });
+      describe('and string contains html', function() {
+        it ("should parse html and render widgets", function() {
+          var fragment = new LSD.Fragment('<b>Gold</b> Digger');
+          expect(fragment.childNodes[0].nodeType).toEqual(1);
+          expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Gold');
+        })
       })
     })
     describe('when given object', function() {
@@ -81,6 +88,33 @@ describe("LSD.Fragment", function() {
           expect(fragment.childNodes[1].classList.cancel).toBeTruthy();
           expect(fragment.childNodes[1].className).toEqual('cancel')
           expect(fragment.childNodes[1].childNodes[0].nodeValue).toEqual('Cancel');
+        })
+      });
+      describe('and it has a nested object', function() {
+        describe('and the key to nested object contains keyword', function() {
+          it ('should create an instruction for the keyword', function() {
+            var fragment = new LSD.Fragment({
+              'if (a > 1)': {
+                'button': 'JEEEZ',
+                'if (b < 1)': 'Test',
+                'section': null
+              },
+              'footer': null
+            });
+            expect(fragment.childNodes[0].nodeType).toEqual(5);
+            expect(fragment.childNodes[0].name).toEqual('if');
+            expect(fragment.childNodes[0].args[0].name).toEqual('>');
+            expect(fragment.childNodes[0].childNodes[0].nodeType).toEqual(1);
+            expect(fragment.childNodes[0].childNodes[0].nodeName).toEqual('button');
+            expect(fragment.childNodes[0].childNodes[0].childNodes[0].nodeType).toEqual(3);
+            expect(fragment.childNodes[0].childNodes[0].childNodes[0].nodeValue).toEqual('JEEEZ');
+            expect(fragment.childNodes[0].childNodes[1].nodeType).toEqual(5);
+            expect(fragment.childNodes[0].childNodes[1].name).toEqual('if');
+            expect(fragment.childNodes[0].childNodes[1].args[0].name).toEqual('<');
+            expect(fragment.childNodes[0].childNodes[1].childNodes[0].nodeType).toEqual(3);
+            expect(fragment.childNodes[0].childNodes[1].childNodes[0].nodeValue).toEqual('Test');
+            expect(fragment.childNodes[1].nodeName).toEqual('footer');
+          })
         })
       })
     });

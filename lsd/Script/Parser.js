@@ -9,6 +9,24 @@ describe('LSD.Script.Parser', function() {
     "'a'": 'a',
     "''": '',
     '1 + 1': {type: 'function', name: '+', value: [1, 1]},
+    '1 + 2 + 3 + 4 + 5 + 6': {type: 'function', name: '+', value: [
+      {type: 'function', name: '+', value: [
+        {type: 'function', name: '+', value: [
+          {type: 'function', name: '+', value: [
+            {type: 'function', name: '+', value: [1, 2]}
+          , 3]}
+        , 4]}
+      , 5]}
+    , 6]},
+    '1 * 2 + 3 - 4 * 5 / 6 + 7': {type: 'function', name: '+', value: [
+      {type: 'function', name: '/', value: [
+        {type: 'function', name: '-', value: [
+          {type: 'function', name: '+', value: [
+            {type: 'function', name: '*', value: [1, 2]}
+          , 3]}
+        , {type: 'function', name: '*', value: [4, 5]}]}
+      , 6]}
+    , 7]},  
     'a = 1': {type: 'function', name: '=', value: [{type: 'variable', name: 'a'}, 1]},
     'a = ($$ buttons)': {type: 'function', name: '=', value: [{type: 'variable', name: 'a'}, {type: 'selector', value: '$$ buttons'}]},
     'a ||= 1': {type: 'function', name: '||=', value: [{type: 'variable', name: 'a'}, 1]},
@@ -78,7 +96,7 @@ describe('LSD.Script.Parser', function() {
         {type: 'selector', value: '& button'}, 
         {type: 'block', value: [
           {type: 'function', name: 'match', value: [
-            {type: 'variable', name: 'button'},
+            {type: 'variable', name: 'button', local: true},
             ".gross"
           ]}
         ], locals: [{type: 'variable', name: 'button'}]}
@@ -90,7 +108,7 @@ describe('LSD.Script.Parser', function() {
           {type: 'selector', value: '& button'}, 
           {type: 'block', value: [
             {type: 'function', name: 'match', value: [
-              {type: 'variable', name: 'button'},
+              {type: 'variable', name: 'button', local: true},
               ".gross"
             ]}
           ], locals: [{type: 'variable', name: 'button'}]}
@@ -117,9 +135,9 @@ describe('LSD.Script.Parser', function() {
         {type: 'selector', value: '$ button'},
         {type: 'block', value: [
           {type: 'function', name: 'publish', value: [
-            {type: 'variable', name: 'b'},
+            {type: 'variable', name: 'b', local: true},
             {type: 'block', value: [
-              {type: 'variable', name: 'r.body'}
+              {type: 'variable', name: 'r.body', local: true}
             ], locals: [{type: 'variable', name: 'r'}]}
           ]}
         ], locals: [{type: 'variable', name: 'b'}]}
@@ -129,9 +147,9 @@ describe('LSD.Script.Parser', function() {
         {type: 'selector', value: '$ button'},
         {type: 'block', value: [
           {type: 'function', name: 'publish', value: [
-            {type: 'variable', name: 'b'},
+            {type: 'variable', name: 'b', local: true},
             {type: 'block', value: [
-              {type: 'variable', name: 'r.body'}
+              {type: 'variable', name: 'r.body', local: true}
             ], locals: [{type: 'variable', name: 'r'}]}
           ]}
         ], locals: [{type: 'variable', name: 'b'}]}
@@ -239,7 +257,7 @@ describe('LSD.Script.Parser', function() {
               {type: 'variable', name: 'input.checked'},
               {type: 'block', value: [
                 {type: 'function', name: 'check', value: [
-                  {type: 'variable', name: 'checkbox'}
+                  {type: 'variable', name: 'checkbox', local: true}
                 ]}
               ]}
             ]}
@@ -249,12 +267,12 @@ describe('LSD.Script.Parser', function() {
           {type: 'function', name: 'every', value: [
             {type: 'variable', name: 'checkboxes'},
             {type: 'block', value: [
-              {type: 'variable', name: 'c.checked'}
+              {type: 'variable', name: 'c.checked', local: true}
             ], locals: [{type: 'variable', name: 'c'}]}
           ]},
           {type: 'block', value: [
             {type: 'function', name: 'check', value: [
-              {type: 'variable', name: 'input'}
+              {type: 'variable', name: 'input', local: true}
             ]}
           ]}
         ]}
@@ -358,4 +376,51 @@ describe('LSD.Script.Parser', function() {
       })
     })
   });
+});
+
+describe("LSD.Script.toJS", function() {
+  it ("should compile native types", function() {
+    expect(LSD.Script.toJS('""')).toEqual('""')
+    expect(LSD.Script.toJS("''")).toEqual('""')
+    expect(LSD.Script.toJS('1')).toEqual('1');
+  });
+  it ("should compile variables", function() {
+    expect(LSD.Script.toJS('a')).toEqual('this.a')
+    expect(LSD.Script.toJS('a_b')).toEqual('this.a_b')
+    expect(LSD.Script.toJS('a_b', {get: 'get'})).toEqual('get("a_b")');
+    expect(LSD.Script.toJS('a_b', {get: 'this.get'})).toEqual('this.get("a_b")');
+  });
+  it ("should compile function calls", function() {
+    expect(LSD.Script.toJS('a()')).toEqual('a()')
+    expect(LSD.Script.toJS('a.a()')).toEqual('a(this.a)')
+    expect(LSD.Script.toJS('a.a(1)')).toEqual('a(this.a, 1)')
+    expect(LSD.Script.toJS('a()', {call: 'dispatch'})).toEqual('this.dispatch("a")')
+    expect(LSD.Script.toJS('a.a()', {call: 'dispatch'})).toEqual('this.dispatch("a", this.a)')
+    expect(LSD.Script.toJS('a.a(1)', {call: 'dispatch'})).toEqual('this.dispatch("a", this.a, 1)')
+    expect(LSD.Script.toJS('a.a(1, "jeez")', {call: '__dispatch'})).toEqual('this.__dispatch("a", this.a, 1, "jeez")')
+  })
+  it ("should compile operators", function() {
+    expect(LSD.Script.toJS('a * b')).toEqual('this.a * this.b')
+    expect(LSD.Script.toJS('a * b - c')).toEqual('this.a * this.b - this.c')
+  })
+  it ("should compile blocks", function() {
+    expect(LSD.Script.toJS('{|a| a}')).toEqual('function(a) { return a }')
+    expect(LSD.Script.toJS('{|a| b}')).toEqual('function(a) { return this.b }')
+    expect(LSD.Script.toJS('{|a| b}', {get: 'get'})).toEqual('function(a) { return get("b") }')
+    expect(LSD.Script.toJS('{|a| 123, a, b}')).toEqual('function(a) { 123; a; return this.b }')
+    expect(LSD.Script.toJS('{|a| 123, b, a}')).toEqual('function(a) { 123; this.b; return a }')
+    expect(LSD.Script.toJS('{|a| 123, a}', {get: 'get'})).toEqual('function(a) { 123; return a }')
+    expect(LSD.Script.toJS('{|a| 123, b}', {get: 'get'})).toEqual('function(a) { 123; return get("b") }')
+  })
+  //xit ("should compile multiline", function() {
+  //  console.log(LSD.Script.toJS('                                  \n\
+  //  (& input.parent[type=checkbox]).each() |input|     \n\
+  //    checkboxes = (& input.child[type=checkbox])    \n\
+  //    checkboxes.each() |checkbox|                \n\
+  //      if (input.checked)                         \n\
+  //        checkbox.check()                         \n\
+  //    if (checkboxes.every() {|c| c.checked})        \n\
+  //      input.check()                              \n\
+  //  '))
+  //})
 })

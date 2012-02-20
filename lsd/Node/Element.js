@@ -182,20 +182,26 @@ describe('LSD.Element', function() {
           var bb2 = new LSD.Element;
           var cc = new LSD.Element;
           var d = new LSD.Element;
-          a.childNodes.push(c);
+          a.childNodes.push(c); // c
           //expect(a.sourceIndex).toEqual(0);
           expect(c.sourceIndex).toEqual(1);
-          a.childNodes.unshift(b);
+          a.childNodes.unshift(b); // b, c
+          expect(b._stack.previousSibling[0]).toBe(null)
+          expect(b.previousSibling).toBe(null)
+          expect(b._stack.nextSibling[0]).toEqual(c)
+          expect(b.nextSibling).toEqual(c)
           expect(b.sourceIndex).toEqual(1);
           expect(c.sourceIndex).toEqual(2);
-          b.childNodes.push(bb)
+          b.childNodes.push(bb) // b[bb], c
           expect(b.sourceIndex).toEqual(1);
           expect(b.sourceLastIndex).toEqual(2);
           expect(bb.sourceIndex).toEqual(2);
           expect(c.sourceIndex).toEqual(3);
-          c.childNodes.push(cc)
+          c.childNodes.push(cc) // b[bb], c[cc]
           expect(c.sourceLastIndex).toEqual(4);
-          a.childNodes.unshift(f);
+          a.childNodes.unshift(f); // f, b[bb], c[cc]
+          expect(b._stack.previousSibling[0]).toEqual(f)
+          expect(b._stack.nextSibling[0]).toEqual(c)
           expect(f.sourceIndex).toEqual(1);
           expect(b.sourceIndex).toEqual(2);
           expect(b.sourceLastIndex).toEqual(3);
@@ -203,9 +209,9 @@ describe('LSD.Element', function() {
           expect(c.sourceIndex).toEqual(4);
           expect(c.sourceLastIndex).toEqual(5);
           expect(cc.sourceIndex).toEqual(5);
-          a.childNodes.push(d)
+          a.childNodes.push(d) // f, b[bb], c[cc], d
           expect(d.sourceIndex).toEqual(6);
-          a.childNodes.shift()
+          a.childNodes.shift() // b[bb], c[cc], d
           expect(b.sourceIndex).toEqual(1);
           expect(b.sourceLastIndex).toEqual(2);
           expect(bb.sourceIndex).toEqual(2);
@@ -213,13 +219,21 @@ describe('LSD.Element', function() {
           expect(c.sourceLastIndex).toEqual(4);
           expect(cc.sourceIndex).toEqual(4);
           expect(d.sourceIndex).toEqual(5);
-          a.childNodes.splice(1, 1);
+          a.childNodes.splice(1, 1); // b[bb], d
           expect(b.sourceIndex).toEqual(1);
           expect(bb.sourceIndex).toEqual(2);
           expect(d.sourceIndex).toEqual(3);
-          a.childNodes.shift()
+          expect(b.previousElementSibling).toBeUndefined()
+          expect(b.nextElementSibling).toBe(d)
+          expect(b._stack.nextElementSibling.length).toBe(1)
+          a.childNodes.shift() // d
+          expect(b.parentNode).toBeUndefined()
+          expect(b.previousSibling).toBeUndefined()
+          expect(b.nextSibling).toBeUndefined()
+          expect(b.previousElementSibling).toBeUndefined()
+          expect(b.nextElementSibling).toBeUndefined()
           expect(d.sourceIndex).toEqual(1);
-          a.childNodes.push(b)
+          a.childNodes.push(b) // d, b[bb]
           expect(b.sourceIndex).toEqual(2);
           expect(bb.sourceIndex).toEqual(3);
         })

@@ -779,16 +779,16 @@ describe('LSD.Array', function() {
   
   
   describe('#limit', function() {
-    describe('when called on a bare array', function() {
-      it ("should return proxy of a collection without making a splice", function() {
-        var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
-        var limited = array.limit(5);
-        expect(limited._limit).toEqual(5);
-        expect(limited.length).toEqual(0);
-      });
-      describe('and later called filter', function() {
+    it ("should return proxy of a collection without making a splice", function() {
+      var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+      var limited = array.limit(5);
+      expect(limited._limit).toEqual(5);
+      expect(limited.length).toEqual(0);
+    });
+    describe('and later called filter', function() {
+      describe('and elements are added and removed one by one', function() {
         it ("should seek the collection and stop when it has enough results", function() {
-          var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+          var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
           var limited = array.limit(3);
           expect(limited._limit).toEqual(3);
           expect(limited.length).toEqual(0);
@@ -805,20 +805,79 @@ describe('LSD.Array', function() {
           array.splice(2, 1);
           expect(filtered.slice()).toEqual([1, 7, 9]);
           expect(Object.keys(block.block.yields)).toEqual(['0', '3', '5'])
-          console.error('fourth splice !')
           array.splice(0, 1);
-
           expect(filtered.slice()).toEqual([7, 9, 11]);
+          expect(Object.keys(block.block.yields)).toEqual(['2', '4', '6'])
+          array.pop();
+          expect(filtered.slice()).toEqual([7, 9]);
+          expect(Object.keys(block.block.yields)).toEqual(['2', '4'])
+          array.shift();
+          expect(filtered.slice()).toEqual([7, 9]);
+          expect(Object.keys(block.block.yields)).toEqual(['1', '3'])
+          array.shift();
+          expect(filtered.slice()).toEqual([7, 9]);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '2'])
+          array.shift();
+          expect(filtered.slice()).toEqual([9]);
+          expect(Object.keys(block.block.yields)).toEqual(['1'])
+          array.unshift(3);
+          expect(filtered.slice()).toEqual([3, 9]);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '2'])
+          array.pop();
+          expect(filtered.slice()).toEqual([3, 9]);
+          expect(Object.keys(block.block.yields)).toEqual(['0', '2'])
+          array.pop();
+          expect(filtered.slice()).toEqual([3]);
+          expect(Object.keys(block.block.yields)).toEqual(['0'])
+          array.shift();
+          expect(filtered.slice()).toEqual([]);
+          expect(Object.keys(block.block.yields)).toEqual([])
+        })
+      })
+      describe('and elements are changed in batches', function() {
+        it ("should seek the collection and stop when it has enough results", function() {
+          var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+          var limited = array.limit(3);
+          expect(limited._limit).toEqual(3);
+          expect(limited.length).toEqual(0);
+          var block = new LSD.Function('number', 'number % 2 == 0')
+          var filtered = limited.filter(block)
+          expect(filtered.slice()).toEqual([2, 4, 6]);
+          array.splice(1, 3);
+          expect(filtered.slice()).toEqual([6, 8, 10]);
+          array.splice(-2, 2, 12, 13);
+          expect(filtered.slice()).toEqual([6, 8, 12]);
           expect(Object.keys(block.block.yields)).toEqual(['2', '4', '6'])
         })
       })
     })
     describe('when called after a kicker', function() {
       it ("should return spliced observable collection", function() {
-        
       })
     })
   });
+  describe('#offset', function() {
+    it ("should return proxy of a collection without making a splice", function() {
+      var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+      var limited = array.offset(5);
+      expect(limited._offset).toEqual(5);
+      expect(limited.length).toEqual(0);
+    });  
+    describe('and later called filter', function() {
+      describe('and elements are added and removed one by one', function() {
+        it ("should seek the collection and stop when it has enough results", function() {
+          var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
+          var offsetted = array.offset(2);
+          expect(offsetted._offset).toEqual(2);
+          expect(offsetted.length).toEqual(0);
+          var block = new LSD.Function('number', 'number % 2')
+          var filtered = offsetted.filter(block)
+          expect(filtered.slice()).toEqual([5, 7, 9, 11]);
+          expect(Object.keys(block.block.yields)).toEqual(['4', '6', '8', '10'])
+        })
+      })
+    })
+  })
 });
 
 describe('LSD.NodeList', function() {

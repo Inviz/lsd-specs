@@ -68,9 +68,6 @@ describe("LSD.Interpolation", function() {
     widget.variables.set('a', 1);
     widget.variables.set('b', 3);
     widget.variables.set('c', 7);
-    //xitexpect(element.childNodes[0].textContent).toEqual('23');
-    //xitexpect(element.childNodes[1].textContent).toEqual('9');
-    //xitexpect(element.childNodes[1].textContent).toEqual('9');
   })
   
   it ("should not choke on a deeply nested arythmetics", function() {
