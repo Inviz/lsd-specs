@@ -874,6 +874,8 @@ describe('LSD.Array', function() {
           var filtered = offsetted.filter(block)
           expect(filtered.slice()).toEqual([5, 7, 9, 11]);
           expect(Object.keys(block.block.yields)).toEqual(['4', '6', '8', '10'])
+          array.shift();
+          expect(filtered.slice()).toEqual([7, 9, 11]);
         })
       })
     })

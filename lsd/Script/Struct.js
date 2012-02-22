@@ -448,5 +448,34 @@ describe("LSD.Struct", function() {
         })
       })
     })
-  })
+  });
+  describe('Extends', function() {
+    describe('when given object', function() {
+      
+    });
+    describe('when given LSD.Struct', function() {
+      it ('should clone prototype objects', function() {
+        var Class = new LSD.Struct({
+          first: function(){}
+        });
+        var Subclass = new LSD.Struct({
+          Extends: Class,
+          second: function(){}
+        });
+        expect(Class.prototype._properties.first).toBeDefined()
+        expect(Class.prototype._properties.second).toBeUndefined()
+        expect(Subclass.prototype._properties).toNotBe(Class.prototype._properties)
+        expect(Subclass.prototype._properties.first).toBeDefined()
+        expect(Subclass.prototype._properties.second).toBeDefined()
+      })
+    });
+    describe('when given mootools class', function() {
+      
+    });
+    describe('when constructor', function() {
+      
+    });
+    describe('when given function', function() {
+    });
+  });
 })

@@ -63,7 +63,18 @@ describe("LSD.Fragment", function() {
         it ("should parse html and render widgets", function() {
           var fragment = new LSD.Fragment('<b>Gold</b> Digger');
           expect(fragment.childNodes[0].nodeType).toEqual(1);
+          expect(fragment.childNodes[0].nodeName).toEqual('b');
           expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Gold');
+        })
+        describe('and html contains conditional comments', function() {
+          it ("should recognize conditional branches in HTML and render widgets accordingly", function() {
+            var fragment = new LSD.Fragment('<!--if (a)-->1<!--else-->2<!--end-->');
+            console.log(fragment)
+            expect(fragment.childNodes[0].nodeType).toEqual(5);
+            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('1');
+            expect(fragment.childNodes[1].nodeType).toEqual(5);
+            console.log(fragment)
+          });
         })
       })
     })

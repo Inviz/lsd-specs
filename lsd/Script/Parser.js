@@ -114,6 +114,26 @@ describe('LSD.Script.Parser', function() {
           ], locals: [{type: 'variable', name: 'button'}]}
         ]}
       ]},
+    'if (a > 1) { 2 }':
+      {type: 'function', name: 'if', value: [
+        {type: 'function', name: '>', value: [
+          {type: 'variable', name: 'a'},
+          1
+        ]},
+        {type: 'block', value: [
+          2
+        ]}
+      ]},
+    'if a > 1 { 2 }':
+      {type: 'function', name: 'if', value: [
+        {type: 'function', name: '>', value: [
+          {type: 'variable', name: 'a'},
+          1
+        ]},
+        {type: 'block', value: [
+          2
+        ]}
+      ]},
     'if (a > 1) { 2 } else { 0 }': [
       {type: 'function', name: 'if', value: [
         {type: 'function', name: '>', value: [
