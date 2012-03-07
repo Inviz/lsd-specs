@@ -48,7 +48,7 @@ describe("LSD.Properties.Attributes", function() {
     var element = new Element('div');
     var instance = new LSD.Element(element);
     instance.classList.add('selected');
-    instance.set('selected');
+    instance.set('selected', true); //FIXME
     expect(instance.selected).toBeTruthy();
   });
   
@@ -94,7 +94,8 @@ describe("LSD.Properties.Attributes", function() {
   it ("should not remove the state from widget, if the state was given by an attribute AND explicitly", function() {
     var element = new Element('div');
     element.setAttribute('checked', 'checked');
-    var instance = new LSD.Element(element, {checked: undefined});
+    var instance = new LSD.Element({checked: false});
+    instance.set('origin', element);
     expect(instance.checked).toBeTruthy();
     instance.uncheck();
     expect(instance.checked).toBeFalsy();

@@ -526,7 +526,7 @@ describe('LSD.Array', function() {
     describe('paired with sort', function() {
       it ("should sort filtered results", function() {
         var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
-        var filtered = array.filter(new LSD.Function('number', 'number % 2 == 0'));
+        var filtered = array.filter(zzz = new LSD.Function('number', 'number % 2 == 0'));
         var sorted = filtered.sort()
         expect(filtered.slice()).toEqual([4, 2, 8, 6, 10])
         expect(sorted.slice()).toEqual([2, 4, 6, 8, 10])
@@ -676,7 +676,7 @@ describe('LSD.Array', function() {
       var array = new LSD.Array;
       var scope = new LSD.Object.Stack;
       scope.set('array', array);
-      var script = new LSD.Script('every (array) { |item| item.selected }', scope);
+      var script = LSD.Script('every (array) { |item| item.selected }', scope);
       expect(script.value).toEqual(true);
       var first = new LSD.Object({selected: true})
       array.push(first);
@@ -713,7 +713,7 @@ describe('LSD.Array', function() {
       var array = new LSD.Array;
       var scope = new LSD.Object.Stack;
       scope.set('array', array);
-      var script = new LSD.Script('array.some() { |item| item.shquared }', scope);
+      var script = LSD.Script('array.some() { |item| item.shquared }', scope);
       expect(script.value).toEqual(false);
       var first = new LSD.Object({shquared: false});
       array.push(first);
@@ -746,7 +746,7 @@ describe('LSD.Array', function() {
       var array = new LSD.Array;
       var scope = new LSD.Object.Stack;
       scope.set('array', array);
-      var script = new LSD.Script('array.map() { |item| organization || item.organization || fallback }', scope);
+      var script = LSD.Script('array.map() { |item| organization || item.organization || fallback }', scope);
       var first = new LSD.Object({organization: 'ICP'});
       var second = new LSD.Object;
       array.push(first, second);

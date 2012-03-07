@@ -1,6 +1,7 @@
 describe('LSD.Script.Parser', function() {
   var Examples = { 
     'a': {type: 'variable', name: 'a'},
+    'a, b': [{type: 'variable', name: 'a'}, {type: 'variable', name: 'b'}],
     '1': 1,
     '0': 0,
     '-1': -1,
@@ -30,6 +31,13 @@ describe('LSD.Script.Parser', function() {
     'a = 1': {type: 'function', name: '=', value: [{type: 'variable', name: 'a'}, 1]},
     'a = ($$ buttons)': {type: 'function', name: '=', value: [{type: 'variable', name: 'a'}, {type: 'selector', value: '$$ buttons'}]},
     'a ||= 1': {type: 'function', name: '||=', value: [{type: 'variable', name: 'a'}, 1]},
+    'a(a)': {type: 'function', name: 'a', value: [{type: 'variable', name: 'a'}]},
+    'a a': {type: 'function', name: 'a', value: [{type: 'variable', name: 'a'}]},
+    'a 1': {type: 'function', name: 'a', value: [1]},
+    'a 1 + 1': {type: 'function', name: 'a', value: [{type: 'function', name: '+', value: [1, 1]}]},
+    'a 1 + 1, 2 + 2': {type: 'function', name: 'a', value: [{type: 'function', name: '+', value: [1, 1]}, {type: 'function', name: '+', value: [2, 2]}]},
+    'a(a 1)': {type: 'function', name: 'a', value: [{type: 'function', name: 'a', value: [1]}]},
+    'ding "a", 2': {type: 'function', name: 'ding', value: ["a", 2]},
     'ding("a", 2)': {type: 'function', name: 'ding', value: ["a", 2]},
     'item.ding': {type: 'variable', name: 'item.ding'},
     'item.ding()': {type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]},
@@ -90,6 +98,29 @@ describe('LSD.Script.Parser', function() {
           {type: 'variable', name: 'time_range.recurrence_rule.type'}
         ]},
         'a'
+      ]},
+    'filter buttons {|button| button.match(".gross")}': 
+      {type: 'function', name: 'filter', value: [
+        {type: 'variable', name: 'buttons'}, 
+        {type: 'block', value: [
+          {type: 'function', name: 'match', value: [
+            {type: 'variable', name: 'button', local: true},
+            ".gross"
+          ]}
+        ], locals: [{type: 'variable', name: 'button'}]}
+      ]},
+    'filter buttons + 25 {|button| button.match(".gross")}': 
+      {type: 'function', name: 'filter', value: [
+        {type: 'function', name: '+', value: [{
+          type: 'variable', name: 'buttons'},
+          25
+        ]}, 
+        {type: 'block', value: [
+          {type: 'function', name: 'match', value: [
+            {type: 'variable', name: 'button', local: true},
+            ".gross"
+          ]}
+        ], locals: [{type: 'variable', name: 'button'}]}
       ]},
     'filter (& button) {|button| button.match(".gross")}': 
       {type: 'function', name: 'filter', value: [
@@ -274,7 +305,7 @@ describe('LSD.Script.Parser', function() {
           {type: 'variable', name: 'checkboxes'},
           {type: 'block', value: [
             {type: 'function', name: 'if', value: [
-              {type: 'variable', name: 'input.checked'},
+              {type: 'variable', name: 'input.checked', local: true},
               {type: 'block', value: [
                 {type: 'function', name: 'check', value: [
                   {type: 'variable', name: 'checkbox', local: true}
@@ -336,7 +367,7 @@ describe('LSD.Script.Parser', function() {
       {type: 'function', name: 'some', value: [
         {type: 'variable', name: 'masters'},
         {type: 'block', value: [
-          {type: 'variable', name: 'master.states.checked'}
+          {type: 'variable', name: 'master.states.checked', local: true}
         ], locals: [{type: 'variable', name: 'master'}]}
       ]},
       {type: 'block', value: [
@@ -344,7 +375,7 @@ describe('LSD.Script.Parser', function() {
           {type: 'variable', name: 'slaves'},
           {type: 'block', value: [
             {type: 'function', name: 'check', value: [
-              {type: 'variable', name: 'slave'}
+              {type: 'variable', name: 'slave', local: true}
             ]}
           ], locals: [{type: 'variable', name: 'slave'}]}
         ]}
@@ -354,7 +385,7 @@ describe('LSD.Script.Parser', function() {
       {type: 'function', name: 'every', value: [
         {type: 'variable', name: 'slaves'},
         {type: 'block', value: [
-          {type: 'variable', name: 'slave.states.checked'}
+          {type: 'variable', name: 'slave.states.checked', local: true}
         ], locals: [{type: 'variable', name: 'slave'}]}
       ]},
       {type: 'block', value: [
@@ -362,7 +393,7 @@ describe('LSD.Script.Parser', function() {
           {type: 'variable', name: 'masters'},
           {type: 'block', value: [
             {type: 'function', name: 'check', value: [
-              {type: 'variable', name: 'master'}
+              {type: 'variable', name: 'master', local: true}
             ]}
           ], locals: [{type: 'variable', name: 'master'}]}
         ]}
@@ -376,7 +407,7 @@ describe('LSD.Script.Parser', function() {
   };
   var clean = function(object) {
     if (object.push) return Array.each(object, clean);
-    if (object.scope) delete object.scope;
+    if (object.stack) delete object.stack;
     if (object.precedence) delete object.precedence;
     if (object.index) delete object.index;
     if (object.value && object.value.length) Array.each(object.value, clean);
@@ -427,7 +458,7 @@ describe("LSD.Script.toJS", function() {
     expect(LSD.Script.toJS('{|a| a}')).toEqual('function(a) { return a }')
     expect(LSD.Script.toJS('{|a| b}')).toEqual('function(a) { return this.b }')
     expect(LSD.Script.toJS('{|a| b}', {get: 'get'})).toEqual('function(a) { return get("b") }')
-    expect(LSD.Script.toJS('{|a| 123, a, b}')).toEqual('function(a) { 123; a; return this.b }')
+    expect(LSD.Script.toJS('{|a| "l", a, b}')).toEqual('function(a) { "l"; a; return this.b }')
     expect(LSD.Script.toJS('{|a| 123, b, a}')).toEqual('function(a) { 123; this.b; return a }')
     expect(LSD.Script.toJS('{|a| 123, a}', {get: 'get'})).toEqual('function(a) { 123; return a }')
     expect(LSD.Script.toJS('{|a| 123, b}', {get: 'get'})).toEqual('function(a) { 123; return get("b") }')

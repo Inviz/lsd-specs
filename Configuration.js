@@ -33,7 +33,8 @@ Configuration.sets = {
       'Function',
       'Block',
       'Interpolation',
-      'Parser'
+      'Parser',
+      'Script'
     ]
   },
   'type': {

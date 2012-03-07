@@ -22,7 +22,7 @@ describe('LSD.Script.Expression', function() {
       expect(result).toBeNull()
       expect(scope._watched['a']).toBeTruthy()
       expect(scope._watched['b']).toBeTruthy()
-      script.detach();
+      script.set('attached', false);
       //expect(scope._watched['a']).toEqual([])
       //expect(scope._watched['b']).toEqual([])
     });
@@ -60,8 +60,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should lazily evaluate expressions with deep variables", function() {
       var scope = new LSD.Object.Stack;
-      
-      var script = new LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || 1', scope)
+      var script = LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || 1', scope)
       expect(script.value).toEqual(1);
       scope.set('time_range.recurrence_rule.interval', 2);
       expect(script.value).toEqual(1);
@@ -73,7 +72,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should lazily evaluate expression with deep variables and falsy fallbacks", function() {
       var scope = new LSD.Object.Stack;
-      var script = new LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || ""', scope)
+      var script = LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || ""', scope)
       expect(script.value).toEqual("");
       scope.set('time_range.recurrence_rule.interval', 2);
       expect(script.value).toEqual("");
@@ -100,7 +99,7 @@ describe('LSD.Script.Expression', function() {
       scope.set('notify', function(content) {
         return 'Superb ' + content;
       });
-      var script = new LSD.Script('read(), transform(), write(), notify()', scope);
+      var script = LSD.Script('read(), transform(), write(), notify()', scope);
       expect(script.value).toBeUndefined()
       expect(script.args[0].value).toEqual(read);
       expect(script.args[1].variable).toBeUndefined();
@@ -134,17 +133,59 @@ describe('LSD.Script.Expression', function() {
         return '$$$ ' + biz
       });
       var write = new Chain;
-      var script = $script = new LSD.Script('invent() || steal(), profit()', scope);
+      var script = $script = LSD.Script('invent() || steal(), profit()', scope);
       expect(script.value).toBeNull()
       invent.onFailure('I was drunk')
       expect(script.value).toEqual('$$$ Stole invention because I was drunk');
       script.prepiped = 1;
-      script.setValue(null, true);
+      delete script.executed;
+      script.set('executed', true);
       expect(script.value).toBeNull()
       invent.onSuccess('Fair invention')
       expect(script.value).toEqual('$$$ Fair invention');
       script.prepiped = 2;
-      script.setValue(null, true);
+      delete script.executed;
+      script.set('executed', true);
+      expect(script.value).toBeNull()
+      invent.onFailure('Dog ate my homework')
+      expect(script.value).toEqual('$$$ Stole invention because Dog ate my homework');
+    });
+    
+    it ("should be able to handle failures and execute alternative actions in methods without parentheses", function() {
+      var scope = new LSD.Object.Stack({methods: {}});
+      var invent = Object.append(new Chain, new Events);
+      invent.onFailure = function(){ 
+        return invent.fireEvent('failure', arguments); 
+      };
+      invent.onSuccess = function(){ 
+        return invent.fireEvent('success', arguments); 
+      };
+      scope.methods.set('invent', function(content) {
+        return invent;
+      });
+      scope.methods.set('steal', function(reason) {
+        return 'Stole invention because ' + reason;
+      });
+      scope.methods.set('unsteal', function(reason) {
+        return '';
+      });
+      scope.methods.set('profit', function(biz) {
+        return '$$$ ' + biz
+      });
+      var write = new Chain;
+      var script = $script = LSD.Script('invent || steal, profit', scope);
+      expect(script.value).toBeNull()
+      invent.onFailure('I was drunk')
+      expect(script.value).toEqual('$$$ Stole invention because I was drunk');
+      script.prepiped = 1;
+      delete script.executed;
+      script.set('executed', true);
+      expect(script.value).toBeNull()
+      invent.onSuccess('Fair invention')
+      expect(script.value).toEqual('$$$ Fair invention');
+      script.prepiped = 2;
+      delete script.executed;
+      script.set('executed', true);
       expect(script.value).toBeNull()
       invent.onFailure('Dog ate my homework')
       expect(script.value).toEqual('$$$ Stole invention because Dog ate my homework');
@@ -171,13 +212,13 @@ describe('LSD.Script.Expression', function() {
           return data + "... Boom"
         }
       });
-      var script = LSD.Script.compile('submit()', scope);
-      var advice = LSD.Script.compile('before(), yield(), after()', scope);
-      advice.wrap(script);
+      var script = LSD.Script('submit()');
+      script.scope = scope;
+      var advice = LSD.Script('before(), yield(), after()');
+      script.set('wrapper', advice);
       expect(script.value).toBeUndefined()
-      expect(script.args[0]).toBeUndefined()
-      expect(advice.args[0].script).toBeUndefined()
-      advice.attach();
+      advice.scope = scope;
+      advice.set('attached', true);
       expect(script.value).toEqual(submit)
       expect(advice.value).toBeUndefined()
       expect(advice.args[0].script).toBeTruthy();
@@ -217,13 +258,14 @@ describe('LSD.Script.Expression', function() {
           return data + "... Boom"
         }
       });
-      var script = LSD.Script.compile('submit()', scope);
-      var advice = LSD.Script.compile('before(), yield() || error(), after()', scope);
-      advice.wrap(script);
+      var script = LSD.Script('submit()');
+      var advice = LSD.Script('before(), yield() || error(), after()');
+      script.scope = advice.scope = scope;
+      script.set('wrapper', advice);
       expect(script.value).toBeUndefined()
       expect(script.args[0]).toBeUndefined()
       expect(advice.args[0].script).toBeUndefined()
-      advice.attach();
+      advice.set('attached', true);
       expect(script.value).toEqual(submit)
       expect(advice.value).toBeNull()
       expect(advice.args[0].script).toBeTruthy();
@@ -235,7 +277,64 @@ describe('LSD.Script.Expression', function() {
       expect(advice.value).toEqual('Error: HiJack... Boom');
       expect(errors).toEqual(1);
       advice.piped = advice.prepiped = 'Oh! ';
-      advice.setValue(null, true)
+      delete advice.executed;
+      delete advice.evaluated;
+      advice.set('executed', true);
+      expect(advice.value).toBeNull()
+      submit.onSuccess(submit.data + 'Jackie');
+      expect(advice.value).toEqual('Oh! HiJackie... Boom');
+      expect(errors).toEqual(0);
+    })
+    
+    it ("should be able to stack multiple scripts together and make one handle failures in another", function() {
+      var scope = new LSD.Object.Stack({methods: {}});
+      var submit = Object.append(new Chain, new Events);
+      submit.onFailure = function(){ 
+        return submit.fireEvent('failure', arguments); 
+      };
+      submit.onSuccess = function(){ 
+        return submit.fireEvent('success', arguments); 
+      };
+      var errors = 0;
+      scope.methods.merge({
+        submit: function(data) {
+          submit.data = data;
+          return submit;
+        },
+        error: function(data) {
+          errors++;
+          return "Error: " + data
+        },
+        unerror: function() {
+          errors--;
+        },
+        before: function(data) {
+          return (data || '') + "Hi"
+        },
+        after: function(data) {
+          return data + "... Boom"
+        }
+      });
+      var script = LSD.Script('submit');
+      var advice = LSD.Script('before, yield || error, after');
+      script.scope = advice.scope = scope;
+      script.set('wrapper', advice);
+      expect(script.value).toBeUndefined()
+      expect(advice.args[0].script).toBeUndefined()
+      advice.set('attached', true);
+      expect(script.value).toEqual(submit)
+      expect(advice.value).toBeNull()
+      expect(advice.args[0].script).toBeTruthy();
+      expect(advice.args[1].script).toBeTruthy();
+      expect(advice.args[1].args[0].value).toEqual(submit);
+      expect(advice.args[1].value).toBeUndefined();
+      expect(advice.args[2].script).toBeUndefined();
+      submit.onFailure(submit.data + 'Jack');
+      expect(advice.value).toEqual('Error: HiJack... Boom');
+      expect(errors).toEqual(1);
+      advice.piped = advice.prepiped = 'Oh! ';
+      delete advice.executed;
+      advice.set('executed', true);
       expect(advice.value).toBeNull()
       submit.onSuccess(submit.data + 'Jackie');
       expect(advice.value).toEqual('Oh! HiJackie... Boom');

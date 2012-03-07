@@ -10,7 +10,7 @@ describe("LSD.Script.Block", function() {
   		}
   		return results;
     });
-    var script = $script =new LSD.Script('Lfilter (items) { |item| item.active == active }', scope);
+    var script = $script =LSD.Script('Lfilter (items) { |item| item.active == active }', scope);
     var count = 0;
     scope.set('active', true);
     expect(count).toEqual(0)
@@ -38,7 +38,7 @@ describe("LSD.Script.Block", function() {
       }
   		return fn.results;
     });
-    var script = new LSD.Script('Lmap (users) { |user| toUpperCase(user.name) + " " + (user.organization || organization) }', scope);
+    var script = LSD.Script('Lmap (users) { |user| toUpperCase(user.name) + " " + (user.organization || organization) }', scope);
     var count = 0;
     var ary = new LSD.Array(new LSD.Object({name: 'Michael'}), new LSD.Object({name: 'Alex'}));
     expect(count).toEqual(0);
@@ -105,8 +105,8 @@ describe("LSD.Script.Block", function() {
     })
     var ary = new LSD.Array(['George', 'Jeff', 'Josh']);
     scope.set('names', ary)
-    scope.set('salt', '123')
-    var script = new LSD.Script('Lmap (names) { |name| prettify(name) + " " + transform(salt) }', scope);
+    scope.set('salt', '123');
+    var script = LSD.Script('Lmap names { |name| prettify(name) + " " + transform(salt) }', scope);
     expect(script.value).toEqual(['~George~ 321', '~Jeff~ 321', '~Josh~ 321']);
     expect(count).toEqual(3)
     expect(a).toEqual(1)
@@ -121,7 +121,7 @@ describe("LSD.Script.Block", function() {
   
   it ("should execute and unroll conditional blocks", function() {
     var scope = new LSD.Object.Stack;
-    var script = new LSD.Script('if (a > 1) { zig = 1 }', scope);
+    var script = LSD.Script('if (a > 1) { zig = 1 }', scope);
     expect(scope.zig).toBeFalsy()
     scope.set('a', 2)
     expect(scope.zig).toEqual(1)
@@ -133,7 +133,7 @@ describe("LSD.Script.Block", function() {
   
   it ("should execute scenarios", function() {
     var scope = new LSD.Object.Stack;
-    var script = new LSD.Script('                  \n\
+    var script = LSD.Script('                  \n\
       each (masters) |input|                       \n\
         if (input.checked)                         \n\
           each(slaves) |checkbox|                  \n\
