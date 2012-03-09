@@ -41,6 +41,79 @@ describe('LSD.Script.Parser', function() {
     'ding("a", 2)': {type: 'function', name: 'ding', value: ["a", 2]},
     'item.ding': {type: 'variable', name: 'item.ding'},
     'item.ding()': {type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]},
+    'item.ding().dong': {type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong"]},
+    'item.ding().dong.dizzle': {type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]},
+    'item.ding().dong.dizzle.zip()': {type: 'function', name: 'zip', value: [{type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]}]},
+    'item.ding().dong.dizzle.zip().dang': {type: 'function', name: '[]', value: [{type: 'function', name: 'zip', value: [{type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]}]}, 'dang']},
+    'item.ding().dong.dizzle.zip().dang 1': {type: 'function', name: 'dang', value: [{type: 'function', name: 'zip', value: [{type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]}]}, 1]},
+    'item.ding().dong.dizzle.zip().dang a': {type: 'function', name: 'dang', value: [{type: 'function', name: 'zip', value: [{type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]}]}, {type: 'variable', name: 'a'}]},
+    'item.ding().dong.dizzle.zip().dang 1, a': {type: 'function', name: 'dang', value: [{type: 'function', name: 'zip', value: [{type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]}]}, 1, {type: 'variable', name: 'a'}]},
+    'item.ding().dong.dizzle.zip().dang a, 1': {type: 'function', name: 'dang', value: [{type: 'function', name: 'zip', value: [{type: 'function', name: '[]', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}, "dong.dizzle"]}]}, {type: 'variable', name: 'a'}, 1]},
+    'item.ding().dong.dizzle.zip().zop.dang a, 1': 
+      {type: 'function', name: 'dang', value: [
+        {type: 'function', name: '[]', value: [
+          {type: 'function', name: 'zip', value: [
+            {type: 'function', name: '[]', value: [
+              {type: 'function', name: 'ding', value: [
+                {type: 'variable', name: 'item'}
+              ]}, 
+              "dong.dizzle"
+            ]}
+          ]},
+          "zop"
+        ]},
+      {type: 'variable', name: 'a'}, 1]},
+    'item.ding().dong.dizzle.zip(){3}["zop"].dang {a, 1}': 
+      {type: 'function', name: 'dang', value: [
+        {type: 'function', name: '[]', value: [
+          {type: 'function', name: 'zip', value: [
+            {type: 'function', name: '[]', value: [
+              {type: 'function', name: 'ding', value: [
+                {type: 'variable', name: 'item'}
+              ]}, 
+              "dong.dizzle"
+            ]},
+            {type: 'block', value: [3]}
+          ]},
+          "zop"
+        ]},
+      {type: 'block', value: [
+        {type: 'variable', name: 'a'}, 1
+      ]}]},
+    'item.ding().dong.dizzle.zip(item.ding().dong.dizzle.zip(){3}["zop"].dang {a, 1}){3}["zop"].dang {a, 1}': 
+      {type: 'function', name: 'dang', value: [
+        {type: 'function', name: '[]', value: [
+          {type: 'function', name: 'zip', value: [
+            {type: 'function', name: '[]', value: [
+              {type: 'function', name: 'ding', value: [
+                {type: 'variable', name: 'item'}
+              ]}, 
+              "dong.dizzle"
+            ]},
+            {type: 'function', name: 'dang', value: [
+              {type: 'function', name: '[]', value: [
+                {type: 'function', name: 'zip', value: [
+                  {type: 'function', name: '[]', value: [
+                    {type: 'function', name: 'ding', value: [
+                      {type: 'variable', name: 'item'}
+                    ]}, 
+                    "dong.dizzle"
+                  ]},
+                  {type: 'block', value: [3]}
+                ]},
+                "zop"
+              ]},
+            {type: 'block', value: [
+              {type: 'variable', name: 'a'}, 1
+            ]}]},
+            {type: 'block', value: [3]}
+          ]},
+          "zop"
+        ]},
+      {type: 'block', value: [
+        {type: 'variable', name: 'a'}, 1
+      ]}]},
+    'baby.item.ding()': {type: 'function', name: 'ding', value: [{type: 'variable', name: 'baby.item'}]},
     'item.ding().ding()': {type: 'function', name: 'ding', value: [{type: 'function', name: 'ding', value: [{type: 'variable', name: 'item'}]}]},
     'item.delete(2)': {type: 'function', name: 'delete', value: [{type: 'variable', name: 'item'}, 2]},
     'a[b]': {type: 'function', name: '[]', value: [{type: 'variable', name: 'a'}, {type: 'variable', name: 'b'}]},

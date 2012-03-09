@@ -81,7 +81,7 @@ describe("LSD.Fragment", function() {
             //expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
           })
           it ("should parse interpolations", function() {
-            var fragment = new LSD.Fragment('<section ${jungalo}');
+            var fragment = new LSD.Fragment('<section ${jungalo: dang}');
             expect(fragment.childNodes[0].nodeType).toEqual(1);
             expect(fragment.childNodes[0].nodeName).toEqual('b');
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
@@ -164,7 +164,6 @@ describe("LSD.Fragment", function() {
               },
               'footer': null
             });
-            console.dir(fragment)
             expect(fragment[0].nodeType).toEqual(5);
             expect(fragment[0].name).toEqual('if');
             expect(fragment[0].args[0].name).toEqual('>');
@@ -196,13 +195,15 @@ describe("LSD.Fragment", function() {
     describe('when given element', function() {
       describe('and .clone option is not given', function() {
         describe('and element is not a widget', function() {
-          var element = document.createElement('section');
-          var fragment = new LSD.Fragment;
-          fragment.render(element);
-          expect(fragment.childNodes[0].origin).toEqual(element)
-          expect(fragment.childNodes[0].tagName).toEqual('section')
-          fragment.childNodes[0].build();
-          expect(fragment.childNodes[0].element).toBe(element)
+          it ("should use that element", function() {
+            var element = document.createElement('section');
+            var fragment = new LSD.Fragment;
+            fragment.render(element);
+            expect(fragment.childNodes[0].origin).toEqual(element)
+            expect(fragment.childNodes[0].tagName).toEqual('section')
+            fragment.childNodes[0].build();
+            expect(fragment.childNodes[0].element).toBe(element)
+          })
         });
         describe('and element is a widget already', function() {
           it ("should append that widget into the fragment", function() {
@@ -236,16 +237,15 @@ describe("LSD.Fragment", function() {
         });
         describe('and element is a widget already', function() {
           it ("should clone the element and create the widget", function() {
-            var widget = new LSD.Element;
+            var widget = new LSD.Element({tagName: 'sexion', classes: {'a': true, 'b': true}});
             var element = widget.toElement();
             var fragment = new LSD.Fragment;
             fragment.render(element, null, {clone: true});
-            expect(fragment.childNodes[0].origin).toEqual(element)
-            expect(fragment.childNodes[0].tagName).toEqual('div')
+            expect(fragment.childNodes[0].tagName).toEqual('sexion')
             fragment.childNodes[0].build();
             expect(fragment.childNodes[0]).toNotBe(widget);
             expect(fragment.childNodes[0].element).toNotBe(element);
-            expect(fragment.childNodes[0].element.tagName).toEqual('DIV');
+            expect(fragment.childNodes[0].element.className).toEqual('a b');
           })
         });
       })

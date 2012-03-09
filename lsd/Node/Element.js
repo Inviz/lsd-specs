@@ -6,8 +6,6 @@ describe('LSD.Element', function() {
         expect(widget.appendChild).toEqual(LSD.Element.prototype.appendChild)
       })
     })
-    
-    
     describe("when given arguments", function() {
       it ("should instantiate without arguments", function() {
         var instance = new LSD.Element;
@@ -41,6 +39,16 @@ describe('LSD.Element', function() {
         expect(instance.honk == 'kong').toBeTruthy();
         expect(instance.origin == element).toBeTruthy();
       });
+      
+      it ('should create a clone of an widget', function() {
+        var origin = new LSD.Element({
+          attributes: {
+            title: "Jeez"
+          }
+        });
+        var instance = new LSD.Element(origin);
+        expect(instance.attributes.title).toEqual('Jeez')
+      })
     });
   })
   

@@ -17,23 +17,21 @@ describe("LSD.Properties.Matches", function() {
         matches: new LSD.Properties.Matches
       })
       matches.set('button + a', callback);
-      expect(matches['button + a']).toEqual([])
       expect(matches._callbacks[' ']['button'][0][0]).toEqual(Slick.parse('button + a').expressions[0][0])
       expect(matches._callbacks[' ']['button'][0][1].expressions).toEqual(Slick.parse('button + a').expressions[0])
       expect(matches._callbacks[' ']['button'][0][1].index).toEqual(1)
       expect(matches._callbacks[' ']['button'][0][1].callback).toEqual(callback);
       expect(matches._callbacks[' ']['button'].length).toEqual(1)
       expect(button.matches._callbacks).toBeFalsy();
-      matches.set('button', button, null, null, true);
+      matches.set('button', button);
       expect(button.matches._callbacks['+']['a'].length).toEqual(1)
       expect(button.matches._callbacks['+']['a'][0][0]).toEqual(Slick.parse('button + a').expressions[0][1])
       expect(index).toEqual(0)
-      button.matches.set('+ a', link, null, null, true);
+      button.matches.set('+ a', link);
       expect(index).toEqual(1);
       matches.unset('button + a', callback);
       expect(matches._callbacks[' ']['button'].length).toEqual(0)
       expect(button.matches._callbacks['+']['a'].length).toEqual(0)
-      expect(matches['button + a']).toEqual([]);
       expect(matches._callbacks[' ']['button']).toEqual([]);
       expect(matches._callbacks['+']).toBeFalsy();
       expect(index).toEqual(0);
@@ -41,15 +39,15 @@ describe("LSD.Properties.Matches", function() {
       expect(matches._callbacks[' ']['button'].length).toEqual(1)
       expect(button.matches._callbacks['+']['a'].length).toEqual(1)
       expect(index).toEqual(1);
-      matches.unset('button', button, null, null, true);
+      matches.unset('button', button);
       expect(index).toEqual(0);
       expect(button.matches._callbacks['+']['a'].length).toEqual(0);
       expect(matches._callbacks[' ']['button'].length).toEqual(1);
-      matches.set('button', button, null, null, true);
+      matches.set('button', button);
       expect(index).toEqual(1);
       expect(button.matches._callbacks['+']['a'].length).toEqual(1);
       expect(matches._callbacks[' ']['button'].length).toEqual(1);
-      button.matches.unset('+ a', link, null, null, true);
+      button.matches.unset('+ a', link);
       expect(index).toEqual(0);
       expect(button.matches._callbacks['+']['a'].length).toEqual(1);
       expect(matches._callbacks[' ']['button'].length).toEqual(1);
