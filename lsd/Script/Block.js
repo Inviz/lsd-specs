@@ -143,7 +143,7 @@ describe("LSD.Script.Block", function() {
       ', scope)
     $script = script
     var checks = 0, unchecks = 0;
-    scope.set('check', function(object) { 
+    scope.set('check', function(object) {
       checks++;
       return object.set('checked', true)
     });

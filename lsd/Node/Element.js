@@ -120,6 +120,21 @@ describe('LSD.Element', function() {
             expect(widget.attributes.tabindex).toBeUndefined();
           })
         })
+        describe('when two interpolations are within a single attribute', function() {
+          it ('should watch for values and update attribute', function() {
+            var widget = new LSD.Element;
+            var element = document.createElement('button');
+            element.setAttribute('tabindex', '${x + 1} & ${x - 1}')
+            widget.set('origin', element);
+            expect(widget.attributes.tabindex).toBeUndefined();
+            widget.variables.set('x', 5);
+            expect(widget.attributes.tabindex).toBe('6 & 4');
+            widget.variables.set('x', -1)
+            expect(widget.attributes.tabindex).toBe('0 & -2');
+            widget.unset('origin', element)
+            expect(widget.attributes.tabindex).toBeUndefined();
+          })
+        })
         describe('when interpolation is within a single attribute', function() {
           it ('should watch for values and update attribute', function() {
             var widget = new LSD.Element;

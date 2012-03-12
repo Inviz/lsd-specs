@@ -80,7 +80,7 @@ describe("LSD.Fragment", function() {
             //fragment.childNodes[0].variables.unset('metal', 'Silver')
             //expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
           })
-          it ("should parse interpolations", function() {
+          xit ("should parse interpolations", function() {
             var fragment = new LSD.Fragment('<section ${jungalo: dang}');
             expect(fragment.childNodes[0].nodeType).toEqual(1);
             expect(fragment.childNodes[0].nodeName).toEqual('b');
@@ -283,6 +283,26 @@ describe("LSD.Fragment", function() {
           })
         })
       });
+    })
+    describe('when operated like a node', function() {
+      it ('should be able to append nodes', function() {
+        var parent = new LSD.Element('parent');
+        var a = new LSD.Element('a');
+        var b = new LSD.Element('b');
+        var c = new LSD.Element('c');
+        var d = new LSD.Element('d');
+        var fragment = new LSD.Fragment(c, d);
+        console.log(fragment.slice(), c.parentNode, d.parentNode)
+        parent.appendChild(a);
+        parent.appendChild(fragment);
+        expect(parent.childNodes.slice()).toEqual([a, fragment, c, d])
+      })
+      it ('should be able to remove nodes', function() {
+        
+      })
+      it ('should be able to replace nodes', function() {
+        
+      })
     })
   })
 })
