@@ -7,7 +7,6 @@ describe("LSD.Interpolation", function() {
       
     var element = new Element('div', {html: html});
     var widget = new LSD.Element(element);
-    console.error(1, widget.fragment, element.childNodes)
     //expect(element.childNodes.length).toEqual(9)
     expect(element.childNodes[4].textContent.trim()).toEqual("The person is ${person_age} years old has left ${pluralize(person_comments_count, '% comment')}.")
     widget.variables.set('person_age', 123);
@@ -43,7 +42,6 @@ describe("LSD.Interpolation", function() {
     var html = "${666 - 616}~${3 * 6 / 10}";
     var element = new Element('div', {html: html});
     var widget = new LSD.Element(element);
-    console.log(widget.childNodes)
     expect(element.childNodes[0].textContent).toEqual('50~1.8');
   });
   
@@ -151,7 +149,6 @@ describe("LSD.Interpolation", function() {
     var html = "Hello there ${dog && name || 'boy'}!";
     var element = new Element('div', {html: html});
     var widget = new LSD.Element(element);
-    console.log(element.childNodes)
     expect(element.childNodes[0].textContent).toEqual('Hello there boy!');
     widget.variables.set('name', 'dog');
     expect(element.childNodes[0].textContent).toEqual('Hello there boy!');
@@ -396,15 +393,13 @@ describe("LSD.Interpolation", function() {
           widget.variables.set('Player', HTML5);
           expect(video.getAttribute('src')).toEqual('movies/${movie.type}/${movie.id}.${Player.extension}')
           widget.variables.set('movie', ad);
-          console.log(widget.childNodes[1].attributes)
           expect(video.getAttribute('src')).toEqual('movies/ad/weird.mpg')
-          window.$zzzzz = true;
           widget.variables.unset('movie', ad);
-          expect(video.getAttribute('src')).toEqual('')
+          expect(video.getAttribute('src')).toEqual(null)
           widget.variables.set('movie', action);
           expect(video.getAttribute('src')).toEqual('movies/action/brucelee.mpg')
-          //widget.variables.set('Player', Flash);
-          //expect(video.getAttribute('src')).toEqual('movies/action/brucelee.flv')
+          widget.variables.set('Player', Flash);
+          expect(video.getAttribute('src')).toEqual('movies/action/brucelee.flv')
         });
       })
     })

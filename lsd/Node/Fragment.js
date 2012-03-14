@@ -1,3 +1,4 @@
+
 describe("LSD.Fragment", function() {
   describe("constructor", function() {
     describe('when given no arguments', function() {
@@ -73,7 +74,6 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[0].nodeName).toEqual('b');
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
             fragment.childNodes[0].variables.set('metal', 'Gold')
-            console.log(fragment.childNodes[0].variables)
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Gold, lawd');
             fragment.childNodes[0].variables.reset('metal', 'Silver')
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Silver, lawd');
@@ -86,7 +86,6 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[0].nodeName).toEqual('b');
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
             fragment.childNodes[0].variables.set('metal', 'Gold')
-            console.log(fragment.childNodes[0].variables)
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Gold, lawd');
             fragment.childNodes[0].variables.reset('metal', 'Silver')
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Silver, lawd');
@@ -95,7 +94,6 @@ describe("LSD.Fragment", function() {
         describe('and html contains conditional comments', function() {
           it ("should recognize conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else-->2<!--end-->'); 
-            console.log(fragment)
             expect(fragment.childNodes[0].nodeType).toEqual(5);
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('1');
             expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
@@ -103,11 +101,9 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[2].nodeType).toEqual(5);
             expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
             expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[4]);
-            console.log(fragment.childNodes[0])
           });
           it ("should recognize nested conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--else if c -->3<!--else-->4<!--end--><!--end-->');
-            console.log(fragment)
             expect(fragment.childNodes[0].nodeType).toEqual(5);
             expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('1');
             expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
@@ -121,7 +117,6 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[5].previous).toEqual(fragment.childNodes[3]);
             expect(fragment.childNodes[5].next).toEqual(fragment.childNodes[7]);
             expect(fragment.childNodes[7].next).toEqual(fragment.childNodes[9]);
-            console.log(fragment.childNodes[0])
           });
         })
       })
@@ -291,11 +286,28 @@ describe("LSD.Fragment", function() {
         var b = new LSD.Element('b');
         var c = new LSD.Element('c');
         var d = new LSD.Element('d');
+        var e = new LSD.Element('e');
         var fragment = new LSD.Fragment(c, d);
-        console.log(fragment.slice(), c.parentNode, d.parentNode)
+        //console.log(fragment.slice(), c.parentNode, d.parentNode)
         parent.appendChild(a);
         parent.appendChild(fragment);
+        expect(a.previousSibling).toBeNull()
+        expect(a.nextSibling).toBe(fragment);
+        expect(fragment.previousSibling).toBe(a);
+        expect(fragment.nextSibling).toBe(c);
+        expect(c.previousSibling).toBe(fragment);
+        expect(c.nextSibling).toBe(d);
+        expect(d.previousSibling).toBe(c);
+        expect(d.nextSibling).toBe(null);
         expect(parent.childNodes.slice()).toEqual([a, fragment, c, d])
+        parent.appendChild(e);
+        expect(d.previousSibling).toBe(c);
+        expect(d.nextSibling).toBe(e);
+        expect(e.previousSibling).toBe(d);
+        expect(e.nextSibling).toBe(null);
+        expect(parent.childNodes.slice()).toEqual([a, fragment, c, d, e])
+        parent.removeChild(fragment);
+        expect(parent.childNodes.slice()).toEqual([a, e])
       })
       it ('should be able to remove nodes', function() {
         

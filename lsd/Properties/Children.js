@@ -73,36 +73,38 @@ describe("LSD.ChildNodes", function() {
       });
       it ("should maintain first/last links", function() {
         var children = new LSD.ChildNodes;
+        var object = new LSD.Object({children: children})
         var a = new LSD.Object({id: 'a'});
         var b = new LSD.Object({id: 'b'});;
         var c = new LSD.Object({id: 'c'});;
         var d = new LSD.Object({id: 'd'});;
-        expect(children.first).toBeNull();
-        expect(children.last).toBeNull();
+        expect(object.firstChild).toBeUndefined();
+        expect(object.lastChild).toBeUndefined();
         children.push(a); //a
-        expect(children.first).toEqual(a);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(a);
+        expect(object.lastChild).toEqual(a);
         children.unshift(b); //ba
-        expect(children.first).toEqual(b);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(b);
+        expect(object.lastChild).toEqual(a);
         children.splice(1, 0, c); //bac
-        expect(children.first).toEqual(b);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(b);
+        expect(object.lastChild).toEqual(a);
         children.push(d); //bacd
-        expect(children.first).toEqual(b);
-        expect(children.last).toEqual(d);
+        expect(object.firstChild).toEqual(b);
+        expect(object.lastChild).toEqual(d);
+        window.z = 1;
         children.shift(); //cad
-        expect(children.first).toEqual(c);
-        expect(children.last).toEqual(d);
+        expect(object.firstChild).toEqual(c);
+        expect(object.lastChild).toEqual(d);
         children.shift(); //ad
-        expect(children.first).toEqual(a);
-        expect(children.last).toEqual(d);
+        expect(object.firstChild).toEqual(a);
+        expect(object.lastChild).toEqual(d);
         children.pop(); //a
-        expect(children.first).toEqual(a);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(a);
+        expect(object.lastChild).toEqual(a);
         children.pop(); //
-        expect(children.first).toBeNull();
-        expect(children.last).toBeNull();
+        expect(object.firstChild).toBeUndefined();
+        expect(object.lastChild).toBeUndefined();
       });
       it ("should maintain parentNode link on each item of the array", function() {
         var children = new LSD.ChildNodes;
@@ -193,36 +195,37 @@ describe("LSD.ChildNodes", function() {
       
       it ("should maintain first/last links", function() {
         var children = new LSD.ChildNodes;
+        var object = new LSD.Object.Stack({children: children})
         var a = new LSD.Object.Stack({id: 'a'});
         var b = new LSD.Object.Stack({id: 'b'});;
         var c = new LSD.Object.Stack({id: 'c'});;
         var d = new LSD.Object.Stack({id: 'd'});;
-        expect(children.first).toBeNull();
-        expect(children.last).toBeNull();
+        expect(object.firstChild).toBeUndefined();
+        expect(object.lastChild).toBeUndefined();
         children.push(a); //a
-        expect(children.first).toEqual(a);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(a);
+        expect(object.lastChild).toEqual(a);
         children.unshift(b); //ba
-        expect(children.first).toEqual(b);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(b);
+        expect(object.lastChild).toEqual(a);
         children.splice(1, 0, c); //bac
-        expect(children.first).toEqual(b);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(b);
+        expect(object.lastChild).toEqual(a);
         children.push(d); //bacd
-        expect(children.first).toEqual(b);
-        expect(children.last).toEqual(d);
+        expect(object.firstChild).toEqual(b);
+        expect(object.lastChild).toEqual(d);
         children.shift(); //cad
-        expect(children.first).toEqual(c);
-        expect(children.last).toEqual(d);
+        expect(object.firstChild).toEqual(c);
+        expect(object.lastChild).toEqual(d);
         children.shift(); //ad
-        expect(children.first).toEqual(a);
-        expect(children.last).toEqual(d);
+        expect(object.firstChild).toEqual(a);
+        expect(object.lastChild).toEqual(d);
         children.pop(); //a
-        expect(children.first).toEqual(a);
-        expect(children.last).toEqual(a);
+        expect(object.firstChild).toEqual(a);
+        expect(object.lastChild).toEqual(a);
         children.pop(); //
-        expect(children.first).toBeNull();
-        expect(children.last).toBeNull();
+        expect(object.firstChild).toBeUndefined();
+        expect(object.lastChild).toBeUndefined();
       });
       
       it ("should maintain parentNode link on each item of the array", function() {
@@ -263,8 +266,8 @@ describe("LSD.ChildNodes", function() {
       var b = new LSD.Object.Stack({id: 'b'});;
       var c = new LSD.Object.Stack({id: 'c'});;
       var d = new LSD.Object.Stack({id: 'd'});;
-      expect(widget.firstChild).toBeNull();
-      expect(widget.lastChild).toBeNull();
+      expect(widget.firstChild).toBeUndefined();
+      expect(widget.lastChild).toBeUndefined();
       children.push(a); //a
       expect(widget.firstChild).toEqual(a);
       expect(widget.lastChild).toEqual(a);
@@ -287,12 +290,11 @@ describe("LSD.ChildNodes", function() {
       expect(widget.firstChild).toEqual(a);
       expect(widget.lastChild).toEqual(a);
       children.pop(); //
-      expect(widget.firstChild).toBeNull();
-      expect(widget.lastChild).toBeNull();
+      expect(widget.firstChild).toBeUndefined();
+      expect(widget.lastChild).toBeUndefined();
       widget.unset('childNodes', children);
       expect(widget.firstChild).toBeUndefined();
       expect(widget.lastChild).toBeUndefined();
-      
     })
   })
   

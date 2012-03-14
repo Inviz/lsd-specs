@@ -197,19 +197,18 @@ describe('LSD.Element', function() {
     describe('.sourceIndex', function() {
       describe('when used out of document', function() {
         it('should assign a property to element structures', function() {
-          var f = new LSD.Element
-          var a = new LSD.Element;
-          var b = new LSD.Element;
-          var c = new LSD.Element;
-          var bb = new LSD.Element;
-          var bb2 = new LSD.Element;
-          var cc = new LSD.Element;
-          var d = new LSD.Element;
+          var f = new LSD.Element({name: 'f'})
+          var a = new LSD.Element({name: 'a'})
+          var b = new LSD.Element({name: 'b'})
+          var c = new LSD.Element({name: 'c'})
+          var bb = new LSD.Element({name: 'bb'})
+          var bb2 = new LSD.Element({name: 'bb2'})
+          var cc = new LSD.Element({name: 'cc'})
+          var d = new LSD.Element({name: 'd'})
           a.childNodes.push(c); // c
           //expect(a.sourceIndex).toEqual(0);
           expect(c.sourceIndex).toEqual(1);
           a.childNodes.unshift(b); // b, c
-          expect(b._stack.previousSibling[0]).toBe(null)
           expect(b.previousSibling).toBe(null)
           expect(b._stack.nextSibling[0]).toEqual(c)
           expect(b.nextSibling).toEqual(c)
@@ -251,8 +250,8 @@ describe('LSD.Element', function() {
           expect(b._stack.nextElementSibling.length).toBe(1)
           a.childNodes.shift() // d
           expect(b.parentNode).toBeUndefined()
-          expect(b.previousSibling).toBeUndefined()
-          expect(b.nextSibling).toBeUndefined()
+          expect(b.previousSibling).toBeNull()
+          expect(b.nextSibling).toBeNull()
           expect(b.previousElementSibling).toBeUndefined()
           expect(b.nextElementSibling).toBeUndefined()
           expect(d.sourceIndex).toEqual(1);
