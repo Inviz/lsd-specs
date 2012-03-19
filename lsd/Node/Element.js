@@ -352,6 +352,101 @@ describe('LSD.Element', function() {
         })
       })
     })
+    describe('.focused', function() {
+      it('should focus parents and refocus parents when they change', function() {
+        var root = new LSD.Element('root');
+        var list = new LSD.Element('list')
+        var item = new LSD.Element('item')
+        root.appendChild(list);
+        list.appendChild(item);
+        item.set('focused', true);
+        expect(list.focused).toEqual(true);
+        expect(root.focused).toEqual(true);
+        var root2 = new LSD.Element('root')
+        var list2 = new LSD.Element('list')
+        root2.appendChild(list2);
+        list2.appendChild(item);
+        expect(list.focused).toBe(false)
+        expect(root.focused).toBe(false)
+        expect(list2.focused).toEqual(true);
+        expect(root2.focused).toEqual(true);
+      })
+      
+      describe('when elements have document', function() {
+        it('should allow only one focused element at time', function() {
+          var document = new LSD.Document;
+          var root = document.createElement('root');
+          var list = document.createElement('list');
+          var item = document.createElement('item');
+          root.appendChild(list);
+          list.appendChild(item);
+          item.set('focused', true);
+          expect(list.focused).toEqual(true);
+          expect(root.focused).toEqual(true);
+          var item2 = document.createElement('item');
+          list.appendChild(item2);
+          item2.set('focused', true);
+          expect(item.focused).toBe(false)
+          expect(item2.focused).toBeTruthy();
+          item.set('focused', true)
+          expect(item2.focused).toBe(false)
+          expect(item.focused).toBeTruthy();
+        });
+        it('should only blur parents that are not shared between the previous and the new active element', function() {
+          var document = new LSD.Document;
+          var root = document.createElement('root');
+          var list = document.createElement('list');
+          var item = document.createElement('item');
+          var list2 = document.createElement('list');
+          var item2 = document.createElement('item');
+          root.appendChild(list);
+          list.appendChild(item);
+          root.appendChild(list2);
+          list2.appendChild(item2);
+          var r = 0, l = 0, i = 0;
+          root.watch('focused', function() {
+            r++;
+          })
+          list.watch('focused', function() {
+            l++;
+          })
+          item2.watch('focused', function() {
+            i++;
+          })
+          item.set('focused', true);
+          expect(r).toBe(2);
+          expect(l).toBe(2);
+          expect(i).toBe(1);
+          item2.set('focused', true);
+          expect(r).toBe(2);
+          expect(l).toBe(3);
+          expect(i).toBe(2);
+          document.reset('activeElement', list2)
+          expect(r).toBe(2);
+          expect(l).toBe(3);
+          expect(i).toBe(3);
+          document.reset('activeElement', list)
+          expect(r).toBe(2);
+          expect(l).toBe(4);
+          expect(i).toBe(3);
+          document.reset('activeElement', root)
+          expect(r).toBe(2);
+          expect(l).toBe(5);
+          expect(i).toBe(3);
+          document.reset('activeElement', item2)
+          expect(r).toBe(2);
+          expect(l).toBe(5);
+          expect(i).toBe(4);
+          document.unset('activeElement', item2)
+          expect(r).toBe(3);
+          expect(l).toBe(5);
+          expect(i).toBe(5);
+          expect(root.focused).toBe(false);
+          expect(list.focused).toBe(false);
+          expect(item2.focused).toBe(false);
+        })
+      })
+    })
   });
   
   describe('#build', function() {
