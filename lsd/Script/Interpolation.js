@@ -177,7 +177,7 @@ describe("LSD.Interpolation", function() {
     expect(element.childNodes[0].textContent).toEqual('Hello there Hippo the hippie is back!');
     var node = widget.childNodes[0];
     node.dispose()
-    expect(element.childNodes[0].textContent).toEqual('');
+    expect(element.childNodes[0].textContent).toEqual('Hello there ${name}!');
     node.inject(widget)
     expect(element.childNodes[0].textContent).toEqual('Hello there Hippo the hippie is back!');
     widget.variables.merge(widget.attributes);
@@ -209,17 +209,18 @@ describe("LSD.Interpolation", function() {
         </details>\
       </li>\
       <p>\
-      Hey there ${person.name}-boy!. \
-      What is up for you man? How's ${person.title} business going?\
-      You may want to visit ${person.organization.name}'s website at ${person.organization.url}\
+      Hey there ${person.name || ''}-boy!. \
+      What is up for you man? How's ${person.title || ''} business going?\
+      You may want to visit ${person.organization.name || ''}'s website at ${person.organization.url || ''}\
       </p>\
     "
     var element = new Element('div', {html: html});
     var widget = new LSD.Element(element);
-    expect($(widget).getLast().childNodes[1].textContent).toEqual('Jesus')
-    expect($(widget).getLast().childNodes[3].textContent).toEqual('Teh Savior')
-    expect($(widget).getLast().childNodes[5].textContent).toEqual('Heaven')
-    expect($(widget).getLast().childNodes[7].textContent).toEqual('http://heaven.org')
+    console.log(widget.childNodes[3].childNodes[0], 555)
+    expect(widget.childNodes[1].childNodes[1].textContent).toEqual('Jesus')
+    expect(widget.childNodes[1].childNodes[3].textContent).toEqual('Teh Savior')
+    expect(widget.childNodes[1].childNodes[5].textContent.trim()).toEqual('Heaven')
+    expect(widget.childNodes[1].childNodes[7].textContent).toEqual('http://heaven.org')
     $(widget).getFirst().retrieve('microdata:scope').set('name', 'Claudius');
     expect($(widget).getLast().childNodes[1].textContent).toEqual('Claudius');
     expect($(widget).getElement('[itemprop=name]').innerHTML).toEqual('Claudius');

@@ -1,7 +1,7 @@
 describe("LSD.Script.Block", function() {
   
   it ('should evaluate blocks', function() {
-    var scope = new LSD.Object.Stack
+    var scope = new LSD.Object.Stack, count = 0;
     scope.set('Lfilter', function(array, fn, bind) {
       var results = [];
       count++;
@@ -11,7 +11,6 @@ describe("LSD.Script.Block", function() {
   		return results;
     });
     var script = $script =LSD.Script('Lfilter (items) { |item| item.active == active }', scope);
-    var count = 0;
     scope.set('active', true);
     expect(count).toEqual(0)
     scope.set('items', [{title: 'Bogus', active: false}, {title: 'Sacred', active: true}]);

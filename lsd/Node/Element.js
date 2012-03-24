@@ -124,15 +124,15 @@ describe('LSD.Element', function() {
           it ('should watch for values and update attribute', function() {
             var widget = new LSD.Element;
             var element = document.createElement('button');
-            element.setAttribute('tabindex', '${x + 1} & ${x - 1}')
+            element.setAttribute('title', '${x + 1} & ${x - 1}')
             widget.set('origin', element);
-            expect(widget.attributes.tabindex).toBeUndefined();
+            expect(widget.attributes.title).toBeUndefined();
             widget.variables.set('x', 5);
-            expect(widget.attributes.tabindex).toBe('6 & 4');
+            expect(widget.attributes.title).toBe('6 & 4');
             widget.variables.set('x', -1)
-            expect(widget.attributes.tabindex).toBe('0 & -2');
+            expect(widget.attributes.title).toBe('0 & -2');
             widget.unset('origin', element)
-            expect(widget.attributes.tabindex).toBeUndefined();
+            expect(widget.attributes.title).toBeUndefined();
           })
         })
         describe('when interpolation is within a single attribute', function() {
@@ -548,6 +548,129 @@ describe('LSD.Element', function() {
           })
         });
       });
+    })
+  });
+  
+  describe('.textContent', function() {
+    describe('with all text child nodes', function() {
+      
+      it ('should inherit the property from all nested text nodes', function() {
+        var widget = new LSD.Element;
+        widget.appendChild(new LSD.Textnode('Uncle Sam'));
+        widget.appendChild(new LSD.Textnode(' Wants'));
+        widget.appendChild(new LSD.Textnode(' You'));
+        expect(widget.textContent).toEqual('Uncle Sam Wants You');
+        widget.childNodes.pop();
+        expect(widget.textContent).toEqual('Uncle Sam Wants');
+        widget.childNodes.push(new LSD.Textnode(' Peanuts'));
+        expect(widget.textContent).toEqual('Uncle Sam Wants Peanuts');
+        widget.childNodes[2].set('textContent', ' Tasty taco')
+        expect(widget.textContent).toEqual('Uncle Sam Wants Tasty taco');
+        widget.childNodes[1].set('textContent', ' Needs')
+        expect(widget.textContent).toEqual('Uncle Sam Needs Tasty taco');
+        widget.childNodes[1].unset('textContent', ' Needs')
+        expect(widget.textContent).toEqual('Uncle Sam Wants Tasty taco');
+        widget.childNodes[1].unset('textContent', ' Wants')
+        expect(widget.textContent).toEqual('Uncle Sam Tasty taco');
+        widget.childNodes.shift()
+        expect(widget.textContent).toEqual(' Tasty taco');
+        widget.childNodes.shift()
+        expect(widget.textContent).toEqual(' Tasty taco');
+        widget.childNodes.shift()
+        expect(widget.textContent).toEqual('');
+        expect(widget._stack.textContent.length).toEqual(1)
+      })
+    })
+    describe('with mixed child nodes', function() {
+      it ('should inherit the property from all nested child nodes', function() {
+        var widget = new LSD.Element
+        var parent = new LSD.Element;
+        widget.appendChild(parent);
+        parent.appendChild(new LSD.Textnode('Bob'));
+        expect(widget._stack.textContent.length).toEqual(1)
+        expect(parent.textContent).toEqual('Bob');
+        expect(widget.textContent).toEqual('Bob');
+        console.error(123, widget.childNodes.length, widget._stack.textContent)
+        widget.childNodes.unshift(new LSD.Textnode('Laughable '));
+        expect(widget._stack.textContent.length).toEqual(1)
+        console.error(123)
+        expect(widget._stack.textContent.length).toEqual(1)
+        expect(parent.textContent).toEqual('Bob');
+        expect(widget.textContent).toEqual('Laughable Bob');
+        parent.childNodes.unshift(new LSD.Textnode('Butane '));
+        expect(widget.textContent).toEqual('Laughable Butane Bob');
+        expect(parent.textContent).toEqual('Butane Bob');
+        parent.childNodes.push(new LSD.Textnode(' by Aphex Twin'));
+        expect(widget.textContent).toEqual('Laughable Butane Bob by Aphex Twin');
+        expect(parent.textContent).toEqual('Butane Bob by Aphex Twin');
+        parent.childNodes[1].reset('textContent', 'Zob')
+        expect(widget.textContent).toEqual('Laughable Butane Zob by Aphex Twin');
+        expect(parent.textContent).toEqual('Butane Zob by Aphex Twin');
+        widget.childNodes.pop()
+        expect(widget.textContent).toEqual('Laughable ');
+        expect(parent.textContent).toEqual('Butane Zob by Aphex Twin');
+        widget.childNodes.pop()
+        expect(widget.textContent).toEqual('');
+        parent.childNodes.pop()
+        expect(widget.textContent).toEqual('');
+        expect(parent.textContent).toEqual('Butane Zob');
+        parent.childNodes.shift()
+        expect(parent.textContent).toEqual('Zob');
+        parent.childNodes.shift()
+        expect(parent.textContent).toEqual('');
+        expect(widget._stack.textContent.length).toEqual(1)
+        expect(parent._stack.textContent.length).toEqual(1)
+      })
+    })
+  })
+  
+  describe('#itemscope', function() {
+    it ('should create iheritable microdata object', function() {
+      var parent = new LSD.Element({itemscope: true});
+      var element = new LSD.Element;
+      var textnode = new LSD.Textnode;
+      var subelement = new LSD.Element
+      var subscope = new LSD.Element({itemscope: true})
+      parent.appendChild(element);
+      parent.appendChild(textnode);
+      expect(element.microdata).toBe(parent.microdata)
+      element.appendChild(subelement)
+      expect(subelement.microdata).toBe(parent.microdata)
+      element.childNodes.pop()
+      expect(subelement.microdata).toBeUndefined();
+      parent.appendChild(subscope);
+      expect(subscope.microdata).toNotBe(parent.microdata)
+    })
+    
+    it ('should define nested named item scope', function() {
+      var megaparent = new LSD.Element({itemscope: true})
+      var parent = new LSD.Element({itemscope: true, itemprop: 'parent'});
+      var child = new LSD.Element({itemscope: true, itemprop: 'child'})
+      parent.appendChild(child);
+      expect(parent.microdata.child).toBe(child.microdata)
+      megaparent.appendChild(parent)
+      expect(megaparent.microdata.parent).toBe(parent.microdata)
+    })
+  })
+  
+  describe('#itemprop', function() {
+    it ('should define properties in a microdata object', function() {
+      var parent = new LSD.Element({itemscope: true});
+      var title = new LSD.Element({itemprop: 'title'});
+      var textnode = new LSD.Textnode('Cultural exploration');
+      parent.appendChild(title)
+      console.error(parent.microdata, title.microdata)
+      expect(parent.microdata).toBe(title.microdata)
+      expect(parent.microdata.title).toBeUndefined();
+      title.appendChild(textnode)
+      expect(parent.microdata).toBe(title.microdata)
+      expect(parent.microdata.title).toEqual('Cultural exploration');
+      textnode.set('textContent', 'Oh jeez')
+      expect(parent.microdata.title).toEqual('Oh jeez');
+      title.childNodes.pop();
+      expect(parent.microdata.title).toBe('');
+      parent.childNodes.pop();
+      expect(parent.microdata.title).toBeUndefined();
     })
   })
 })

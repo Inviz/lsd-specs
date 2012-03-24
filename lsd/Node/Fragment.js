@@ -58,57 +58,57 @@ describe("LSD.Fragment", function() {
         var fragment = new LSD.Fragment;
         fragment.render('Gold Digger');
         expect(fragment.childNodes[0].nodeType).toEqual(3);
-        expect(fragment.childNodes[0].nodeValue).toEqual('Gold Digger');
+        expect(fragment.childNodes[0].textContent).toEqual('Gold Digger');
       });
       describe('and string contains html', function() {
         it ("should parse html and render widgets", function() {
           var fragment = new LSD.Fragment('<b>Gold</b> Digger');
           expect(fragment.childNodes[0].nodeType).toEqual(1);
           expect(fragment.childNodes[0].nodeName).toEqual('b');
-          expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Gold');
+          expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Gold');
         })
         describe('and html contains interpolations', function() {
           it ("should parse interpolations", function() {
             var fragment = new LSD.Fragment('<b>Oh, ${metal}, lawd</b> Digger');
             expect(fragment.childNodes[0].nodeType).toEqual(1);
             expect(fragment.childNodes[0].nodeName).toEqual('b');
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
             fragment.childNodes[0].variables.set('metal', 'Gold')
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Gold, lawd');
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Gold, lawd');
             fragment.childNodes[0].variables.reset('metal', 'Silver')
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Silver, lawd');
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Silver, lawd');
             //fragment.childNodes[0].variables.unset('metal', 'Silver')
-            //expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
+            //expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
           })
           xit ("should parse interpolations", function() {
             var fragment = new LSD.Fragment('<section ${jungalo: dang}');
             expect(fragment.childNodes[0].nodeType).toEqual(1);
             expect(fragment.childNodes[0].nodeName).toEqual('b');
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, ${metal}, lawd');
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
             fragment.childNodes[0].variables.set('metal', 'Gold')
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Gold, lawd');
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Gold, lawd');
             fragment.childNodes[0].variables.reset('metal', 'Silver')
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('Oh, Silver, lawd');
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Silver, lawd');
           })
         })
         describe('and html contains conditional comments', function() {
           it ("should recognize conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else-->2<!--end-->'); 
-            expect(fragment.childNodes[0].nodeType).toEqual(5);
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('1');
+            expect(fragment.childNodes[0].nodeType).toEqual(7);
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
             expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
             expect(fragment.childNodes[1].nodeType).toEqual(3);
-            expect(fragment.childNodes[2].nodeType).toEqual(5);
+            expect(fragment.childNodes[2].nodeType).toEqual(7);
             expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
             expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[4]);
           });
           it ("should recognize nested conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--else if c -->3<!--else-->4<!--end--><!--end-->');
-            expect(fragment.childNodes[0].nodeType).toEqual(5);
-            expect(fragment.childNodes[0].childNodes[0].nodeValue).toEqual('1');
+            expect(fragment.childNodes[0].nodeType).toEqual(7);
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
             expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
             expect(fragment.childNodes[1].nodeType).toEqual(3);
-            expect(fragment.childNodes[2].nodeType).toEqual(5);
+            expect(fragment.childNodes[2].nodeType).toEqual(7);
             expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
             expect(fragment.childNodes[2].previous).toEqual(fragment.childNodes[0]);
             expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[10]);
@@ -141,7 +141,7 @@ describe("LSD.Fragment", function() {
           expect(fragment.childNodes[1].nodeName).toEqual('a');
           expect(fragment.childNodes[1].classList.cancel).toBeTruthy();
           expect(fragment.childNodes[1].className).toEqual('cancel')
-          expect(fragment.childNodes[1].childNodes[0].nodeValue).toEqual('Cancel');
+          expect(fragment.childNodes[1].childNodes[0].textContent).toEqual('Cancel');
         })
       });
       describe('and it has a nested object', function() {
@@ -159,23 +159,23 @@ describe("LSD.Fragment", function() {
               },
               'footer': null
             });
-            expect(fragment[0].nodeType).toEqual(5);
+            expect(fragment[0].nodeType).toEqual(7);
             expect(fragment[0].name).toEqual('if');
             expect(fragment[0].args[0].name).toEqual('>');
             expect(fragment[1].nodeType).toEqual(1);
             expect(fragment[1].nodeName).toEqual('button');
             expect(fragment[1].childNodes[0].nodeType).toEqual(3);
-            expect(fragment[1].childNodes[0].nodeValue).toEqual('JEEEZ');
-            expect(fragment[2].nodeType).toEqual(5);
+            expect(fragment[1].childNodes[0].textContent).toEqual('JEEEZ');
+            expect(fragment[2].nodeType).toEqual(7);
             expect(fragment[2].name).toEqual('if');
             expect(fragment[2].args[0].name).toEqual('<');
             expect(fragment[2].next).toEqual(fragment[4]);
             expect(fragment[3].nodeType).toEqual(3);
-            expect(fragment[3].nodeValue).toEqual('Test');
+            expect(fragment[3].textContent).toEqual('Test');
             expect(fragment[4].previous).toEqual(fragment[2]);
             expect(fragment[4].name).toEqual('else');
             expect(fragment[4].childNodes[0]).toEqual(fragment[5]);
-            expect(fragment[5].nodeValue).toEqual('blarghhh');
+            expect(fragment[5].textContent).toEqual('blarghhh');
             expect(fragment[6].nodeName).toEqual('section');
             expect(fragment[7].name).toEqual('else');
             expect(fragment[7].previous).toEqual(fragment[0]);

@@ -1,3 +1,233 @@
+LSD.RegExp = function(object, handlers) {
+  this.definition = object;
+  this.names = ['all'];
+  this.groups = {};
+  this.handlers = handlers;
+  var source = '';
+  var re = this, index = 0, old;
+  var placeholder = function(all, token, start, input) {
+    var value = object[token];
+    if (typeof value == 'undefined') {
+      if (typeof (value = re[token]) == 'string') return re[token];
+      var bits = token.split('_');
+      return (re[bits[0]]) ? re[bits.shift()].apply(re, bits) : token;
+    }
+    if (re.re_left_from_group.test(input.substring(0, start)) && re.re_right_from_group.test(input.substring(start + all.length))) {
+      index = re.names.push(token) - 1;
+      re.groups[index] = name;
+    }
+    var i = index;
+    var replaced = value.replace(re.re_reference, placeholder);
+    index = i;
+    return replaced
+  };
+  for (var name in object) {
+    old = index;
+    var replaced = object[name].replace(this.re_reference, placeholder);
+    if (old !== index) source += (source ? '|' : '') + replaced;
+  }  
+    console.log(re.groups, re.names)
+  this.source = source;
+};
+LSD.RegExp.prototype = {
+  exec: function(string, handlers) {
+    if (!handlers) handlers = this.handlers;
+    var regexp = this.compiled || (this.compiled = new RegExp(this.source, "g"));
+    var lastIndex = regexp.lastIndex;
+    regexp.lastIndex = 0;
+    var old = this.stack, stack = this.stack = [];
+    for (var match, group; match = regexp.exec(string);) {
+      var args = [];
+      for (var i = 1, j = match.length; i <= j; i++) {
+        if (group) {
+          if (group !== this.groups[i]) {
+            stack.push(handlers[group].apply(this, args));
+            group = null;
+            args = [];
+          }
+        } else if (match[i] != null) {
+          group = this.groups[i];
+          for (var k = i; --k;) if (this.groups[k] == group) args.unshift(undefined);
+        }
+        if (group) args.push(match[i]);
+      }
+    }
+    regexp.lastIndex = lastIndex;
+    this.stack = old;
+    z = this
+    return stack;
+  },
+  inside: function(type, level) {
+    var key = Array.prototype.join.call(arguments, '_');
+    if (this.insiders[key]) return this.insiders[key];
+    var group = this.insides[type]
+    var l = '\\' + group[0], r = '\\' + group[1]
+    for (var i = 1, bit, j = parseInt(level) || 5, source = '[^' + '\\' + group[0] + '' + r + ']'; i < j; i++)
+      source = '(?:' + '[^' + '\\' + group[0] + '' + r + ']' + '|' + l + source +  "*" + r + ')'
+    return (this.insiders[key] = source);
+  },
+  insides: {
+    curlies: ['{', '}'],
+    squares: ['[', ']'],
+    parens:  ['(', ')']
+  },
+  insiders: {},
+  handlers: {},
+  re_reference: /\<([a-zA-Z][a-zA-Z0-9_]*)\>/g,
+  re_left_from_group: /(?:(?:\\\\|[^\\]|^)(?:\(|\|))$/,
+  re_right_from_group: /(?:(?:^\\\\|^[^\\]|^)(?:\)|\|))/,
+  unicode: "(?:[\\w\\u00a1-\\uFFFF-]|\\\\[^\\s0-9a-f])"
+}
+describe('LSD.RegExp', function() {
+  var big = {
+    'fn_tail': '\\.',
+    'fn_arguments': '<inside_parens>*',
+    'fn_name': '<unicode>',
+    'fn': '(<fn_tail>)?(<fn_name>)\\((<fn_arguments>)\\)',
+
+    'block_arguments': '\|([^|]*)\|',
+    'block_body': '<inside_curlies>*',
+    'block': '\\{(<block_arguments>)?(<block_body>)\\}',
+
+    'string_double': '"((?:[^"]|\\")*)"',
+    'string_single': "'((?:[^']|\\')*)'",
+    'string': '<double_string>|<single_string>',
+
+    'separator': '(\\s+|,|;)',
+
+    'index': '\\[\\s*(<inside_squares>)\\s*\\]',
+
+    'length_number': '[-+]?(?:\\d+\\.\\d*|\\d*\\.\\d+|\\d)',
+    'length_unit': 'em|px|pt|%|fr|deg|(?=$|[^a-zA-Z0-9.])',
+    'length': '(<length_number>)(<length_unit>)',
+
+    'token_tail': '\\.',
+    'token_name': '<unicode>',
+    'token': '(<token_tail>)?(<token_name>)',
+
+    'operator': '([-+]|[\\/%^~=><*\\^!|&$]+)'
+  };
+  describe('#constructor', function() {
+    
+    it('should find and replace subgroups', function() {
+      var re = new LSD.RegExp({
+        'length_number': '\\d',
+        'length_unit': 'em|px|pt',
+        'length': '(<length_number>)(<length_unit>)'
+      });
+      expect(re.source).toEqual("(\\d)(em|px|pt)")
+      expect(re.names).toEqual(['all', 'length_number', 'length_unit'])
+      expect(re.groups).toEqual({1: 'length', 2: 'length'})
+    })
+    it("should create around-wrappers for parenthesis", function() {
+      var source = LSD.RegExp.prototype.inside("parens")
+      expect(source).toEqual("(?:[^\\(\\)]|\\((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\([^\\(\\)]*\\))*\\))*\\))*\\))")
+      expect(new RegExp(source).source).toEqual("(?:[^\\(\\)]|\\((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\([^\\(\\)]*\\))*\\))*\\))*\\))")
+    })
+    it("should create around-wrappers for curlies", function() {
+      var source = LSD.RegExp.prototype.inside("curlies")
+      expect(source).toEqual("(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})*\\})")
+      expect(new RegExp(source).source).toEqual("(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})*\\})")
+    })
+    it("should create around-wrappers for curlies of four levels", function() {
+      var source = LSD.RegExp.prototype.inside("curlies", 4)
+      expect(source).toEqual("(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})")
+      expect(new RegExp(source).source).toEqual("(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})")
+    })
+    it("should create around-wrappers for curlies of one level", function() {
+      var source = LSD.RegExp.prototype.inside("curlies", 2)
+      expect(source).toEqual("(?:[^\\{\\}]|\\{[^\\{\\}]*\\})")
+      expect(new RegExp(source).source).toEqual("(?:[^\\{\\}]|\\{[^\\{\\}]*\\})")
+    })
+    it ("should call prototype functions when no key matches", function() {
+      var re = new LSD.RegExp({
+        'block_arguments': '[^\\|]*',
+        'block_body': '<inside_curlies>',
+        'block': '\\{(?:\\|\\s*(<block_arguments>)\\s*\\|\\s*)?(<block_body>*)\\}'
+      });
+      expect(re.names).toEqual(['all', 'block_arguments', 'block_body'])
+      expect(re.groups).toEqual({1: 'block', 2: 'block'})
+      expect(re.source).toEqual('\\{(?:\\|\\s*([^\\|]*)\\s*\\|\\s*)?((?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})*\\})*)\\}')
+    })
+    it('should support builtin groups', function() {
+      var re = new LSD.RegExp({
+        'length_number': '\\d',
+        'length_unit': '<unicode>',
+        'length': '(<length_number>)(<length_unit>)'
+      });
+      expect(re.source).toEqual("(\\d)((?:[\\w\\u00a1-\\uFFFF-]|\\\\[^\\s0-9a-f]))")
+    })
+    it ('should support alternative groups', function() {
+      var re = new LSD.RegExp({
+        string_double: '"((?:[^"]|\\")*)"',
+        string_single: "'((?:[^']|\\')*)'",
+        string: "(?:<string_double>|<string_single>)"
+      })
+      expect(re.source).toEqual("(?:\"((?:[^\"]|\\\")*)\"|'((?:[^']|\\')*)')")
+      expect(re.names).toEqual(['all', 'string_double', 'string_single'])
+    });
+    it ('should support alternative groups with primitive on the right', function() {
+      var re = new LSD.RegExp({
+        string_single: "(abc)",
+        string: "(?:<string_single>|123)"
+      })
+      expect(re.source).toEqual("(?:'((?:[^']|\\')*)'|123)")
+    });
+    it ('should NOT support alternative escaped groups with primitive on the right', function() {
+      var re = new LSD.RegExp({
+        string_single: "'((?:[^']|\\')*)'",
+        string: "(?:<string_single>\\|123)"
+      })
+      expect(re.source).toEqual("")
+    });
+    it ('should support alternative groups with primitive on the left', function() {
+      var re = new LSD.RegExp({
+        string_single: "'((?:[^']|\\')*)'",
+        string: "(?:123|<string_single>)"
+      })
+      expect(re.source).toEqual("(?:123|'((?:[^']|\\')*)')")
+    });
+    it ('should NOT support alternative escaped groups with primitive on the left', function() {
+      var re = new LSD.RegExp({
+        string_single: "'((?:[^']|\\')*)'",
+        string: "(?:123\\|<string_single>)"
+      })
+      expect(re.source).toEqual("")
+    });
+    it('should concat multiple groups', function() {
+      var re = new LSD.RegExp({
+        'length_number': '\\d',
+        'length_unit': 'em|px|pt',
+        'length': '(<length_number>)(<length_unit>)'
+      });
+      expect(re.source).toEqual("(\\d)(em|px|pt)")
+    })
+    it ('should build a big regexp', function() {
+      var re = new LSD.RegExp(big)
+      expect(re.source).toEqual('(\\.)?((?:[\\w\\u00a1-\\uFFFF-]|\\\\[^\\s0-9a-f]))\\(((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\((?:[^\\(\\)]|\\([^\\(\\)]*\\))*\\))*\\))*\\)))\\)|\\{((?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})*\\}))?((?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{(?:[^\\{\\}]|\\{[^\\{\\}]*\\})*\\})*\\})*\\}))\\}|([-+]?(?:\\d+\\.\\d*|\\d*\\.\\d+|\\d))(em|px|pt|%|fr|deg|(?=$|[^a-zA-Z0-9.]))|(\\.)?((?:[\\w\\u00a1-\\uFFFF-]|\\\\[^\\s0-9a-f]))')
+      expect(re.names).toEqual([ 'all', 'fn_tail', 'fn_name', 'fn_arguments', 'block_arguments', 'block_body', 'length_number', 'length_unit', 'token_tail', 'token_name'])
+      expect(re.groups).toEqual({ 1 : 'fn', 2 : 'fn', 3 : 'fn', 4 : 'block', 5 : 'block', 6 : 'length', 7 : 'length', 8 : 'token', 9 : 'token' })
+      console.error(re.compiled.exec('1em'))
+    })
+  })
+  describe('#exec', function() {
+    it ('should call specific handlers', function() {
+      var re = new LSD.RegExp(big, {
+        length: function(number, unit) {
+          return [number, unit]
+        },
+        fn: function(tail, name, args) {
+          return [name, re.exec(args)]
+        },
+        operator: function(name) {
+          return name
+        }
+      });
+      expect(re.exec('a(1%, 3em)')).toEqual([['a', [[1, '%'], [3, 'em']]]]);
+    });
+  })
+})
+
 describe('LSD.Script.Parser', function() {
   var Examples = { 
     'a': {type: 'variable', name: 'a'},
