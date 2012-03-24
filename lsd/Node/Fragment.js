@@ -75,7 +75,7 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
             fragment.childNodes[0].variables.set('metal', 'Gold')
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Gold, lawd');
-            fragment.childNodes[0].variables.reset('metal', 'Silver')
+            fragment.childNodes[0].variables.change('metal', 'Silver')
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Silver, lawd');
             //fragment.childNodes[0].variables.unset('metal', 'Silver')
             //expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
@@ -87,7 +87,7 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
             fragment.childNodes[0].variables.set('metal', 'Gold')
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Gold, lawd');
-            fragment.childNodes[0].variables.reset('metal', 'Silver')
+            fragment.childNodes[0].variables.change('metal', 'Silver')
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Silver, lawd');
           })
         })

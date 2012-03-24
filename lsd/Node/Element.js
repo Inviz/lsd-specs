@@ -421,19 +421,19 @@ describe('LSD.Element', function() {
           expect(r).toBe(2);
           expect(l).toBe(3);
           expect(i).toBe(2);
-          document.reset('activeElement', list2)
+          document.change('activeElement', list2)
           expect(r).toBe(2);
           expect(l).toBe(3);
           expect(i).toBe(3);
-          document.reset('activeElement', list)
+          document.change('activeElement', list)
           expect(r).toBe(2);
           expect(l).toBe(4);
           expect(i).toBe(3);
-          document.reset('activeElement', root)
+          document.change('activeElement', root)
           expect(r).toBe(2);
           expect(l).toBe(5);
           expect(i).toBe(3);
-          document.reset('activeElement', item2)
+          document.change('activeElement', item2)
           expect(r).toBe(2);
           expect(l).toBe(5);
           expect(i).toBe(4);
@@ -590,10 +590,8 @@ describe('LSD.Element', function() {
         expect(widget._stack.textContent.length).toEqual(1)
         expect(parent.textContent).toEqual('Bob');
         expect(widget.textContent).toEqual('Bob');
-        console.error(123, widget.childNodes.length, widget._stack.textContent)
         widget.childNodes.unshift(new LSD.Textnode('Laughable '));
-        expect(widget._stack.textContent.length).toEqual(1)
-        console.error(123)
+        expect(parent._stack.textContent.length).toEqual(1)
         expect(widget._stack.textContent.length).toEqual(1)
         expect(parent.textContent).toEqual('Bob');
         expect(widget.textContent).toEqual('Laughable Bob');
@@ -603,7 +601,7 @@ describe('LSD.Element', function() {
         parent.childNodes.push(new LSD.Textnode(' by Aphex Twin'));
         expect(widget.textContent).toEqual('Laughable Butane Bob by Aphex Twin');
         expect(parent.textContent).toEqual('Butane Bob by Aphex Twin');
-        parent.childNodes[1].reset('textContent', 'Zob')
+        parent.childNodes[1].change('textContent', 'Zob')
         expect(widget.textContent).toEqual('Laughable Butane Zob by Aphex Twin');
         expect(parent.textContent).toEqual('Butane Zob by Aphex Twin');
         widget.childNodes.pop()
@@ -650,11 +648,15 @@ describe('LSD.Element', function() {
       expect(parent.microdata.child).toBe(child.microdata)
       megaparent.appendChild(parent)
       expect(megaparent.microdata.parent).toBe(parent.microdata)
+      megaparent.childNodes.pop()
+      expect(megaparent.microdata.parent).toBeUndefined()
+      parent.childNodes.pop()
+      expect(parent.microdata.child).toBeUndefined()
     })
   })
   
   describe('#itemprop', function() {
-    it ('should define properties in a microdata object', function() {
+    it ('should define properties in a microdata object with text node contents', function() {
       var parent = new LSD.Element({itemscope: true});
       var title = new LSD.Element({itemprop: 'title'});
       var textnode = new LSD.Textnode('Cultural exploration');
@@ -672,5 +674,56 @@ describe('LSD.Element', function() {
       parent.childNodes.pop();
       expect(parent.microdata.title).toBeUndefined();
     })
+  })
+  
+  describe('#role', function() {
+    it ('should find a role by tag name', function() {
+      var document = new LSD.Document;
+      document.set('roles', new LSD.Roles({
+        input: {
+          title: 'This is input'
+        },
+        div: {
+          title: 'This is div'
+        }
+      }));
+      var widget = document.createElement('input');
+      expect(widget.title).toEqual('This is input');
+      widget.change('tagName', 'div')
+      expect(widget.title).toEqual('This is div');
+      widget.unset('tagName', 'div')
+      expect(widget.title).toBeUndefined()
+    });
+    it ('should find a role by combination of a tag name and type property', function() {
+      var document = new LSD.Document;
+      document.set('roles', new LSD.Roles({
+        input: {
+          title: 'This is input',
+          number: {
+            title: 'This is number input'
+          }
+        },
+        div: {
+          tit0l: 'This is div',
+          title: {
+            title: 'This is div title'
+          } 
+        }
+      }));
+      var widget = document.createElement('input');
+      expect(widget.title).toEqual('This is input');
+      widget.change('type', 'number')
+      expect(widget.title).toEqual('This is number input');
+      widget.change('type', 'title')
+      expect(widget.title).toEqual('This is input');
+      widget.change('tagName', 'div')
+      expect(widget.title).toEqual('This is div title');
+      widget.change('type', 'number')
+      expect(widget.title).toBeUndefined();
+      expect(widget.tit0l).toBe('This is div');
+      widget.unset('tagName', 'div')
+      expect(widget.tit0l).toBeUndefined()
+      expect(widget.title).toBeUndefined()
+    });
   })
 })

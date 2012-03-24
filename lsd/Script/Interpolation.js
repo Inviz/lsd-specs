@@ -209,88 +209,22 @@ describe("LSD.Interpolation", function() {
         </details>\
       </li>\
       <p>\
-      Hey there ${person.name || ''}-boy!. \
+      Hey there ${person.name || ''}-boy! \
       What is up for you man? How's ${person.title || ''} business going?\
       You may want to visit ${person.organization.name || ''}'s website at ${person.organization.url || ''}\
       </p>\
     "
     var element = new Element('div', {html: html});
     var widget = new LSD.Element(element);
-    console.log(widget.childNodes[3].childNodes[0], 555)
-    expect(widget.childNodes[1].childNodes[1].textContent).toEqual('Jesus')
-    expect(widget.childNodes[1].childNodes[3].textContent).toEqual('Teh Savior')
-    expect(widget.childNodes[1].childNodes[5].textContent.trim()).toEqual('Heaven')
-    expect(widget.childNodes[1].childNodes[7].textContent).toEqual('http://heaven.org')
-    $(widget).getFirst().retrieve('microdata:scope').set('name', 'Claudius');
-    expect($(widget).getLast().childNodes[1].textContent).toEqual('Claudius');
-    expect($(widget).getElement('[itemprop=name]').innerHTML).toEqual('Claudius');
-  });
-  
-  it ("will create a local variable scope for widgets with itemscope and will not do it for itemscope elements", function() {
-    var html = "\
-      <article itemscope='itemscope' itemtype='Article' itemprop='article'>\
-      ${article.name} - <h2 itemprop='name'>Article of the year</h2> - ${name}\
-      <li itemscope='itemscope' itemtype='Person' itemprop='person'>\
-        ${person.name} - <b itemprop='name'>Jesus</b> - ${name}\
-        <p itemprop='title'>Teh Savior</p>\
-        <details itemscope='itemscope' itemtype='Organization' itemprop='organization'>\
-          <h2>\
-            <a href='http://heaven.org' itemprop='url'>\
-              <span itemprop='name'>Heaven</span>\
-            </a>\
-          </h2>\
-        </details>\
-      </li>\
-      <p>\
-      Hey there ${person.name}-boy!. \
-      What is up for you man? How's ${person.title} business going?\
-      You may want to visit ${person.organization.name}'s website at ${person.organization.url}\
-      </p>\
-      </article>\
-      That ${article.person.name} guy from ${article.person.organization.name} is so sweet,\
-      and who is the ${person.name}?\
-    "
-    var element = new Element('div', {html: html});
-    var widget = $w = new LSD.Element(element, {mutations: {'article': true}});
-    var wrap = $(widget).getLast().getLast();
-    expect(widget.childNodes.length).toEqual(1);
-    expect(element.getElement('article').childNodes[1].textContent).toEqual('Article of the year');
-    expect(element.getElement('article').childNodes[5].textContent).toEqual('Article of the year');
-    expect(element.getElement('li').childNodes[1].textContent).toEqual('Jesus');
-    expect(element.getElement('li').childNodes[5].textContent).toEqual('Article of the year');
-    expect(wrap.childNodes[1].textContent).toEqual('Jesus')
-    expect(wrap.childNodes[3].textContent).toEqual('Teh Savior')
-    expect(wrap.childNodes[5].textContent).toEqual('Heaven')
-    expect(wrap.childNodes[7].textContent).toEqual('http://heaven.org')
-    expect(element.childNodes[element.childNodes.length - 6].textContent).toEqual('Jesus');
-    expect(element.childNodes[element.childNodes.length - 4].textContent).toEqual('Heaven');
-    expect(element.childNodes[element.childNodes.length - 2].textContent).toEqual('${person.name}');
-  });
-  
-  it ("should use the value from the closest itemscope widget and fall back to parent itemscope when the local value is not available anymore", function() {
-    var html = "\
-      <article itemscope='itemscope' itemtype='Article' itemprop='article'>\
-      ${toUpperCase(article.name)} - <h2 itemprop='name'>Article of the year</h2> - ${name}\
-      <li itemscope='itemscope' itemtype='Person' itemprop='person'>\
-        ${person.name} - <b itemprop='name'>Jesus</b> - ${name}\
-        <p itemprop='title'>Teh Savior</p>\
-        <details itemscope='itemscope' itemtype='Organization' itemprop='organization'>\
-          <h2>\
-            <a href='http://heaven.org' itemprop='url'>\
-              <span itemprop='name'>Heaven</span>\
-            </a>\
-          </h2>\
-        </details>\
-      </li>"
-    var element = new Element('div', {html: html});
-    var widget = $w = new LSD.Element(element, {mutations: {'li': true}});
-    var wrap = $(widget).getLast().getLast();
-    expect(widget.childNodes.length).toEqual(1);
-    expect(element.getElement('article').childNodes[1].textContent).toEqual('ARTICLE OF THE YEAR');
-    expect(element.getElement('article').childNodes[5].textContent).toEqual('${name}');
-    expect(element.getElement('li').childNodes[1].textContent).toEqual('Jesus');
-    expect(element.getElement('li').childNodes[5].textContent).toEqual('Jesus');
-    widget.firstChild.dispose()
+    expect(widget.childNodes[3].textContent.replace(/\s+/, ' ')).toEqual(' Hey there Jesus-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[1].change('textContent', 'Judas')
+    expect(widget.childNodes[3].textContent.replace(/\s+/, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[3].change('textContent', 'Betraya')
+    expect(widget.childNodes[3].textContent.replace(/\s+/, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[1].change('textContent', 'Hell')
+    expect(widget.childNodes[3].textContent.replace(/\s+/, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].setAttribute('href', 'http://hell.xxx')
+    expect(widget.childNodes[3].textContent.replace(/\s+/, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://hell.xxx ')  
   });
   
   it ("should parse selectors", function() {

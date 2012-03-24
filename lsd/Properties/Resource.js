@@ -25,7 +25,7 @@ describe("LSD.Type.Resource", function() {
       expect(resource.path).toBe('')
       resource.set('name', 'comments');
       expect(resource.path).toBe('comments')
-      resource.reset('name', 'publishers');
+      resource.change('name', 'publishers');
       expect(resource.path).toBe('publishers')
       resource.unset('name', 'publishers');
       expect(resource.path).toBe('')
@@ -39,10 +39,10 @@ describe("LSD.Type.Resource", function() {
         expect(resource.path).toBe('staff')
         resource.set('name', 'comments');
         expect(resource.path).toBe('staff/comments')
-        resource.reset('name', 'publishers');
+        resource.change('name', 'publishers');
         expect(resource._name).toEqual('publishers');
         expect(resource.path).toBe('staff/publishers')
-        resource.reset('prefix', 'guest');
+        resource.change('prefix', 'guest');
         expect(resource._name).toEqual('publishers');
         expect(resource.path).toBe('guest/publishers')
         resource.unset('name', 'publishers');

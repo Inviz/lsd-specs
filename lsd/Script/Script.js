@@ -80,7 +80,7 @@ describe("LSD.Script", function() {
           expect(script.value).toBeUndefined();
           scope.set('root', root)
           expect(script.value).toEqual('jehrar')
-          scope.root.reset('jeez', 'juan')
+          scope.root.change('jeez', 'juan')
           expect(script.value).toEqual('juan');
           scope.set('root', {jeez: 'john'})
           expect(script.value).toEqual('john')

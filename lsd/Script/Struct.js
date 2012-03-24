@@ -382,7 +382,7 @@ describe("LSD.Struct", function() {
             object.set('title', 'Rock');
             expect(object.name).toEqual(object.title);
             expect(object.name).toEqual('Rock');
-            object.reset('title', 'Jazz');
+            object.change('title', 'Jazz');
             expect(object.name).toEqual(object.title);
             expect(object.name).toEqual('Jazz');
             object.unset('title', 'Jazz');
@@ -403,7 +403,7 @@ describe("LSD.Struct", function() {
             post.set('title', 'Rock');
             expect(object.name).toEqual(object.post.title);
             expect(object.name).toEqual('Rock');
-            post.reset('title', 'Jazz');
+            post.change('title', 'Jazz');
             expect(object.name).toEqual(object.post.title);
             expect(object.name).toEqual('Jazz');
             post.unset('title', 'Jazz');
