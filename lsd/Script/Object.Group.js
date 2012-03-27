@@ -1,7 +1,7 @@
-describe("LSD.Object.Group", function() {
+describe("LSD.Group", function() {
   describe("when values are set", function() {
     it("should create a group of values by key", function() {
-      var object = new LSD.Object.Group;
+      var object = new LSD.Group;
       var jack = new LSD.Object, 
           josh = new LSD.Object;
       object.set('boys', jack);
@@ -16,10 +16,10 @@ describe("LSD.Object.Group", function() {
   })
 });
 
-describe("LSD.Object.Group.Array", function() {
+describe("LSD.Group.Array", function() {
   describe("when values are set", function() {
     it("should create a group of values by key", function() {
-      var object = new LSD.Object.Group.Array;
+      var object = new LSD.Group('Array');
       var jack = new LSD.Object({name: 'Jack'}), 
           josh = new LSD.Object({name: "Josh"});
       object.set('boys', jack);
@@ -34,7 +34,7 @@ describe("LSD.Object.Group.Array", function() {
   });
   describe("when values are mixed", function() {
     it ("should apply those to every value that was set in a group", function() {
-      var object = new LSD.Object.Group.Array;
+      var object = new LSD.Group('Array');
       object._construct = Function.from(null);
       var jack = new LSD.Object({name: 'Jack'}), 
           josh = new LSD.Object({name: "Josh"});
@@ -52,7 +52,7 @@ describe("LSD.Object.Group.Array", function() {
     describe("and _delegate method is defined", function() {
       it ("should call that method to delegate properties to groupped items", function() {
         var Group = function() {}
-        Group.implement(new LSD.Object.Group.Array);
+        Group.implement(new LSD.Group('Array'));
         Group.implement({
           _construct: function(name, value) {
             return null;
@@ -81,8 +81,8 @@ describe("LSD.Object.Group.Array", function() {
   describe("when values are merged", function() {
     describe("and objects in group are observable objects", function() {
       it ("should notify each value in the group to updates in the object that was merged", function() {
-        var object = new LSD.Object.Group.Array;
-        object._construct = Function.from(null);
+        var object = new LSD.Group('Array');
+        object._construct = Function.from(null);  
         var jack = new LSD.Object({name: 'Jack'}), 
             josh = new LSD.Object({name: "Josh"});
         var values = new LSD.Object({boys: {title: 'Overlord'}});
@@ -102,11 +102,11 @@ describe("LSD.Object.Group.Array", function() {
     })
     describe("and objects in group are stack based observable objects", function() {
       it ("should notify each value in the group to updates in the object that was reverse-merged", function() {
-        var object = new LSD.Object.Group.Array;
+        var object = new LSD.Group('Array');
         object._construct = Function.from(null);
-        var jack = new LSD.Object.Stack({name: 'Jack'}), 
-            josh = new LSD.Object.Stack({name: "Josh", title: 'Glorious'}), 
-            jeff = new LSD.Object.Stack({name: "Josh", title: 'Wikid'});
+        var jack = new LSD.Stack({name: 'Jack'}), 
+            josh = new LSD.Stack({name: "Josh", title: 'Glorious'}), 
+            jeff = new LSD.Stack({name: "Josh", title: 'Wikid'});
         var values = new LSD.Object({boys: {title: 'Overlord'}});
         object.merge(values, true)
         object.set('boys', jack);
@@ -129,11 +129,11 @@ describe("LSD.Object.Group.Array", function() {
       });
       
       it ("should be able to unmerge the object and remove values from all groupped objects", function() {
-        var object = new LSD.Object.Group.Array;
+        var object = new LSD.Group('Array');
         object._construct = Function.from(null);
-        var jack = new LSD.Object.Stack({name: 'Jack'}), 
-            josh = new LSD.Object.Stack({name: "Josh", title: 'Glorious'}), 
-            jeff = new LSD.Object.Stack({name: "Josh", title: 'Wikid'});
+        var jack = new LSD.Stack({name: 'Jack'}), 
+            josh = new LSD.Stack({name: "Josh", title: 'Glorious'}), 
+            jeff = new LSD.Stack({name: "Josh", title: 'Wikid'});
         var values = new LSD.Object({boys: {title: 'Overlord'}});
         object.merge(values, true)
         object.set('boys', jack);

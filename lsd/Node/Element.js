@@ -623,7 +623,7 @@ describe('LSD.Element', function() {
   })
   
   describe('#itemscope', function() {
-    it ('should create iheritable microdata object', function() {
+    it ('should create iheritable scope object', function() {
       var parent = new LSD.Element({itemscope: true});
       var element = new LSD.Element;
       var textnode = new LSD.Textnode;
@@ -643,7 +643,7 @@ describe('LSD.Element', function() {
     it ('should define nested named item scope', function() {
       var megaparent = new LSD.Element({itemscope: true})
       var parent = new LSD.Element({itemscope: true, itemprop: 'parent'});
-      var child = new LSD.Element({itemscope: true, itemprop: 'child'})
+      var child = new LSD.Element({itemscope: true, itemprop: 'child'});
       parent.appendChild(child);
       expect(parent.microdata.child).toBe(child.microdata)
       megaparent.appendChild(parent)
@@ -656,12 +656,11 @@ describe('LSD.Element', function() {
   })
   
   describe('#itemprop', function() {
-    it ('should define properties in a microdata object with text node contents', function() {
+    it ('should define properties in a scope object with text node contents', function() {
       var parent = new LSD.Element({itemscope: true});
       var title = new LSD.Element({itemprop: 'title'});
       var textnode = new LSD.Textnode('Cultural exploration');
       parent.appendChild(title)
-      console.error(parent.microdata, title.microdata)
       expect(parent.microdata).toBe(title.microdata)
       expect(parent.microdata.title).toBeUndefined();
       title.appendChild(textnode)
@@ -695,7 +694,7 @@ describe('LSD.Element', function() {
       expect(widget.title).toBeUndefined()
     });
     it ('should find a role by combination of a tag name and type property', function() {
-      var document = new LSD.Document;
+      var document =$dd =  new LSD.Document;
       document.set('roles', new LSD.Roles({
         input: {
           title: 'This is input',
@@ -711,6 +710,7 @@ describe('LSD.Element', function() {
         }
       }));
       var widget = document.createElement('input');
+      console.log(widget)
       expect(widget.title).toEqual('This is input');
       widget.change('type', 'number')
       expect(widget.title).toEqual('This is number input');

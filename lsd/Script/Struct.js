@@ -118,23 +118,23 @@ describe("LSD.Struct", function() {
         })
         
         it ("should be able to-reapply proxied values when linked object changes", function() {
-          var Person = LSD.Struct.Stack({
+          var Person = LSD.Struct({
             title: function(value) {
               return value + 123
             }
-          });
-          var Animal = LSD.Struct.Stack({
+          }, 'Stack');
+          var Animal = LSD.Struct({
             title: function(value) {
               return value + 321
             }
-          });
+          }, 'Stack');
           var Post = LSD.Struct({
             author: '.person'
           });
-          var Struct = LSD.Struct.Stack({
+          var Struct = LSD.Struct({
             post: Post,
             person: Person
-          });
+          }, 'Stack');
           var data = {post: {author: {title: 'Lord'}}};
           var instance = new Struct(data);
           expect(instance.person.title).toEqual('Lord123')
@@ -181,18 +181,18 @@ describe("LSD.Struct", function() {
       
       describe("and data is given asynchronously", function() {
         it ("should apply the data when the watched property match", function() {
-          var Person = LSD.Struct.Stack({
+          var Person = LSD.Struct({
             name: function(name) {
               return name + 123;
             }
-          })
-          var Post = LSD.Struct.Stack({
+          }, 'Stack')
+          var Post = LSD.Struct({
             author: '.person'
-          });
-          var Struct = LSD.Struct.Stack({
+          }, 'Stack');
+          var Struct = LSD.Struct({
             post: Post,
             person: Person
-          });
+          }, 'Stack');
           var post = new Post({author: {name: "George"}});
           var struct = new Struct
           struct.set('post', post);
@@ -214,20 +214,20 @@ describe("LSD.Struct", function() {
       
       describe("and a link is linked to another link", function() {
         it ("it should resolve deep links", function() {
-            var Person = LSD.Struct.Stack({
+            var Person = LSD.Struct({
               name: function(name) {
                 return name + 123;
               }
-            })
-            var Post = LSD.Struct.Stack({
+            }, 'Stack')
+            var Post = LSD.Struct({
               author: '.topic.person',
               person: '.person'
-            });
-            var Struct = LSD.Struct.Stack({
+            }, 'Stack');
+            var Struct = LSD.Struct({
               post: Post,
               topic: 'post',
               person: Person
-            });
+            }, 'Stack');
             var post = new Post({author: {name: "George"}});
             var struct = new Struct
             struct.set('post', post);
@@ -252,9 +252,9 @@ describe("LSD.Struct", function() {
       
       describe("and a struct has _delegate method defined", function() {
         it ("should call that method whenever setting linked object properties", function() {
-          var Events = LSD.Struct.Group({
+          var Events = LSD.Struct({
             'matches': '.matches'
-          });
+          }, 'Group');
           Events.implement({
             _delegate: function(object, name, value, state, memo, origin) {
               if (this._properties[name]) return;
@@ -262,7 +262,7 @@ describe("LSD.Struct", function() {
               return true;
             }
           })
-          var Matches = LSD.Struct.Group({});
+          var Matches = LSD.Struct('Group');
           Matches.implement({
             _construct: function() {
               return null;
@@ -290,22 +290,22 @@ describe("LSD.Struct", function() {
         })
         
         it ("should use that method to take back the control after a chain through other modules", function() {
-          var Matches = LSD.Struct.Group({});
+          var Matches = LSD.Struct('Group');
           Matches.implement({
             _construct: function() {
               return null;
             }
           })
-          var Relations = LSD.Struct.Group({});
+          var Relations = LSD.Struct('Group');
           Relations.implement({
             _construct: function() {
               return null;
             }
           })
-          var Events = LSD.Struct.Group({
+          var Events = LSD.Struct({
             'matches': '.matches',
             'relations': '.relations'
-          });
+          }, 'Group');
           Events.implement({
             _delegate: function(object, name, value, state, memo) {
               if (this._properties[name]) return;
