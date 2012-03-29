@@ -106,7 +106,5 @@ Object.each(LSD.Factory.Options, function(value, key) {
 
 if (typeof jasmine != "undefined")
   Factory = LSD.Factory;
-  
-Factory('document')
 
 

@@ -55,6 +55,7 @@ describe("LSD.Struct", function() {
             author: 'person'
           });
           var instance = new Struct({author: {title: 'Lord'}});
+          console.log(instance.person, instance.author)
           expect(instance.person instanceof Person).toBeTruthy()
           expect(instance.person).toEqual(instance.author)
           expect(instance.person.title).toEqual('Lord123')
@@ -149,7 +150,7 @@ describe("LSD.Struct", function() {
           instance.unset('post', post)
           expect(post.author).toBeUndefined()
           expect(post.title).toBeUndefined()
-          expect(post._parent).toBeUndefined()
+          expect(post._owner).toBeUndefined()
           expect(instance.person.title)
           expect(instance.person).toEqual(animal)
           var announcement = new Post
@@ -198,17 +199,17 @@ describe("LSD.Struct", function() {
           struct.set('post', post);
           var george = struct.person;
           expect(struct.person instanceof Person).toBeTruthy()
-          expect(struct.person).toEqual(post.author);
-          expect(struct.person.name).toEqual("George123");
+          expect(struct.person).toBe(post.author);
+          expect(struct.person.name).toBe("George123");
           struct.unset('post', post);
           expect(post.author).toBeUndefined()
           expect(struct.person instanceof Person).toBeTruthy()
           expect(struct.person.name).toBeUndefined()
           var hollie = new Person({name: 'Hollie'})
-          expect(hollie.name).toEqual("Hollie123");
+          expect(hollie.name).toBe("Hollie123");
           struct.set('person', hollie);
-          expect(struct.person).toEqual(hollie)
-          expect(struct.person.name).toEqual("Hollie123");
+          expect(struct.person).toBe(hollie)
+          expect(struct.person.name).toBe("Hollie123");
         })
       });
       

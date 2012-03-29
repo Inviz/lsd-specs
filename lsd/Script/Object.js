@@ -382,26 +382,116 @@ describe("LSD.Object", function() {
       })
     })
   })
-  describe('when object sets reference to another object', function() {
-    describe('and then mixes value into it', function() {
-      it ('should lazily reference object and make a fork of it on the fly', function() {
-        var object = new LSD.Object({title: 'object'});
-        var referenced = new LSD.Object({title: 'referenced'});
-        var other = new LSD.Object({title: 'other'});
-        object.set('property', referenced);
-        expect(referenced._parent).toEqual(object);
-        expect(object.property).toBe(referenced);
-        other.set('property', referenced);
-        expect(object.property).toEqual(referenced);
-        expect(other.property).toEqual(referenced);
-        expect(referenced._parent).toBe(object);
-        other.property.set('price', 123);
-        expect(object.property.price).toEqual(123);
-        other.set('property.rating', 666);
-        expect(other.property.rating).toEqual(666);
-        expect(other.property).toNotBe(object.property)
-        expect(object.property.rating).toBeUndefined();
+  
+  describe('#set', function() {
+    it ('should lazily reference object and make a fork of it on the fly', function() {
+      var object = new LSD.Object({title: 'object'});
+      var referenced = new LSD.Object({title: 'referenced'});
+      var other = new LSD.Object({title: 'other'});
+      object.set('property', referenced);
+      expect(referenced._owner).toEqual(object);
+      expect(object.property).toBe(referenced);
+      other.set('property', referenced);
+      expect(object.property).toBe(referenced);
+      expect(other.property).toBe(referenced);
+      expect(referenced._owner).toBe(object);
+      other.property.set('price', 123);
+      expect(referenced._owner).toBe(object);
+      expect(object.property.price).toBe(123);
+      other.set('property.rating', 666);
+      expect(other.property.rating).toBe(666);
+      expect(other.property).toNotBe(object.property)
+      expect(object.property.rating).toBeUndefined();
+    })
+  })
+
+  describe('mix', function() {
+    describe('when merging observable objects', function() {
+      it('should lazily merge objects by setting reference first and copying the object on change', function() {
+        var inside = new LSD.Object({title: 'Pop tarts'});
+        var outside = new LSD.Object({title: 'Food', inside: inside});
+        var result = new LSD.Object;
+        result.merge(outside);
+        expect(result).toNotBe(outside);
+        expect(result.title).toBe(outside.title);
+        expect(result.inside).toBe(outside.inside);
+        expect(result.inside._owner).toBe(outside);
+        result.set('inside.rating', 5);
+        expect(result.inside).toNotBe(outside.inside);
+        expect(result.inside._owner).toBe(result);
+        expect(result.inside.title).toBe(outside.inside.title);
+        expect(result.inside.rating).toBe(5);
+        expect(inside.rating).toBeUndefined();
+        expect(inside._owner).toBe(outside);
+      });
+    });
+    describe('and key was given', function() {
+      it ('should lazily merge the object', function() {
+        var inside = new LSD.Object({title: 'Pop tarts'});
+        var outside = new LSD.Object({title: 'Food', inside: inside});
+        var result = new LSD.Object;
+        expect(outside._owner).toBeUndefined();
+        result.mix('object', outside, null, true, true);
+        expect(outside._owner).toBeUndefined();
+        inside.set('outside', outside);
+        expect(outside._owner).toEqual(inside);
+        expect(result.object).toBe(outside);
+        result.set('object.inside.rating', 5);
+        expect(result.object).toNotBe(outside);
+        expect(result.object.inside).toNotBe(outside.inside);
+        expect(result.object.inside.title).toBe(outside.inside.title);
+        expect(result.object.inside.rating).toBe(5);
+        expect(outside.inside.rating).toBeUndefined();
+        expect(outside.inside._owner).toBe(outside);
+        expect(outside._owner).toBe(inside);
+        inside.unset('outside', outside)
+        expect(outside._owner).toBeUndefined()
       })
+    })
+    describe('when propagating objects recursively', function() {
+      describe ('and objects are known to be shared', function() {
+        it ('should only copy when it has to', function() {
+          var data = LSD.Struct()
+          var struct = LSD.Struct({
+            Data: data,
+            data: function(value, old, memo) {
+              if (value) this.mix('parent.data', value, memo, true, true);
+              if (old && this._stack) this.mix('parent.data', old, memo, false, true)
+            }
+          })
+          data.prototype._ownable = struct.prototype._ownable = false;
+          var a  = new struct
+          var b  = new struct({parent: a})
+          var d  = new struct({parent: b})
+          var d1 = new struct({parent: d})
+          var d2 = new struct({parent: d})
+          var c  = new struct({parent: b})
+          var c1 = new struct({parent: c})
+          var c2 = new struct({parent: c})
+          var o  = new data({title: 'abc'});
+          d2.set('data', o);
+          expect(d2.parent).toBe(d);
+          expect(d.data).toBe(o);
+          expect(b.data).toBe(o);
+          expect(a.data).toBe(o);
+          d.set('data.macaroni', true)
+          expect(d.data.macaroni).toBe(true);
+          expect(d.data.title).toBe('abc');
+          expect(d2.data).toBe(o)
+          expect(d2.data.title).toBe('abc');
+          expect(d2.data.macaroni).toBeUndefined();
+          expect(d.data).toNotBe(o);
+          expect(b.data).toBe(d.data);
+          expect(a.data).toBe(d.data);
+          c1.set('data.lasagna', true)
+          expect(d.data.lasagna).toBeUndefined();
+          expect(b.data.lasagna).toBe(true);
+          expect(c.data.lasagna).toBe(true);
+          expect(b.data).toNotBe(d.data);
+          expect(b.data).toNotBe(c.data);
+          expect(a.data).toBe(b.data);
+        })
+      });
     })
   })
 })

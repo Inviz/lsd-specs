@@ -494,7 +494,7 @@ describe("LSD.Layout", function() {
           describe("and multiple conditions linked together are used", function() {
             it ("should show conditional blocks at the place", function() {
               var element = new Element('div', {
-                html: LSD.Test.Template.greetings_parents
+                html: LSD.Test.Template.greetings_owners
               });
               var widget = $w = new LSD.Element(element, {
                 context: 'clean',
@@ -877,7 +877,7 @@ Object.append(LSD.Test.Template, {
     <!-- end -->                                          \
   <!-- end -->                                            ',
   
-  'greetings_parents':           '\
+  'greetings_owners':           '\
   <div>                           \
   <!-- if condition -->           \
     <section><div><div><form>     \
