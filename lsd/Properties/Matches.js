@@ -315,8 +315,13 @@ describe("LSD.Properties.Matches", function() {
           expect(index).toEqual(2);
           parent.removeChild(a)
           expect(index).toEqual(0);
-          parent.insertBefore(a, b1)
+          parent.insertBefore(a, c)
           expect(index).toEqual(2);
+          window.z = true;
+          parent.childNodes.splice(2, 2)
+          expect(index).toEqual(1);
+          parent.childNodes.splice(2, 2)
+          expect(index).toEqual(0);
         })
       })
       describe('!~ combinator', function() {
@@ -346,12 +351,10 @@ describe("LSD.Properties.Matches", function() {
           b2.set('tagName', 'b')
           expect(index).toEqual(1);
           c.appendChild(b1);
-          expect(c.previousElementSibling).toEqual(a)
           b1.set('tagName', 'b')
           expect(index).toEqual(1);
           parent.insertBefore(b1, d);
           expect(index).toEqual(2);
-          window.z = true;
           parent.appendChild(b1)
           expect(index).toEqual(1);
           b1.set('tagName', 'a')
@@ -361,6 +364,58 @@ describe("LSD.Properties.Matches", function() {
           b1.set('tagName', 'b')
           expect(index).toEqual(1);
           parent.insertBefore(b1, d);
+          expect(index).toEqual(2);
+        })
+      })
+      describe('~~ combinator', function() {
+        it ('should match all nodes around the node', function() {
+          var parent = new LSD.Element;
+          var a = new LSD.Element('a')
+          var b1 = new LSD.Element('b');
+          var b2 = new LSD.Element('b')
+          var c = new LSD.Element('c')
+          var d = new LSD.Element('d')
+          var index = 0, last;
+          c.matches.set('~~ b', function(value, old) {
+            if (value) last = value;
+            if (value) index ++;
+            if (old) index--;
+          })
+          parent.appendChild(a);
+          parent.appendChild(b1);
+          expect(index).toEqual(0);
+          parent.appendChild(c);
+          expect(index).toEqual(1);
+          parent.appendChild(b2);
+          expect(index).toEqual(2);
+          parent.appendChild(d);
+          b2.set('tagName', 'hr')
+          expect(index).toEqual(1);
+          b1.set('tagName', 'h1')
+          expect(index).toEqual(0);
+          b2.set('tagName', 'b')
+          expect(index).toEqual(1);
+          c.appendChild(b1);
+          expect(index).toEqual(1);
+          b1.set('tagName', 'b')
+          expect(index).toEqual(1);
+          parent.appendChild(b1);
+          expect(index).toEqual(2);
+          parent.insertBefore(b1, a)
+          expect(index).toEqual(2)
+          b1.set('tagName', 'a')
+          expect(index).toEqual(1);
+          parent.appendChild(b1);
+          expect(index).toEqual(1);
+          b1.set('tagName', 'b')
+          expect(index).toEqual(2);
+          parent.removeChild(c)
+          expect(index).toEqual(0);
+          parent.appendChild(c);
+          expect(index).toEqual(2);
+          parent.appendChild(b1);
+          expect(index).toEqual(2);
+          parent.appendChild(b2);
           expect(index).toEqual(2);
         })
       })
