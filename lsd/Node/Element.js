@@ -39,7 +39,7 @@ describe('LSD.Element', function() {
         expect(instance.honk == 'kong').toBeTruthy();
         expect(instance.origin == element).toBeTruthy();
       });
-      
+
       it ('should create a clone of an widget', function() {
         var origin = new LSD.Element({
           attributes: {
@@ -51,7 +51,7 @@ describe('LSD.Element', function() {
       })
     });
   })
-  
+
   describe('#properties', function() {
     describe('.attributes', function() {
       it ('when an attributes are given', function() {
@@ -100,7 +100,7 @@ describe('LSD.Element', function() {
             expect(widget.attributes.name).toEqual('jack');
             widget.unset('origin', element);
             expect(widget.attributes.name).toBeUndefined()
-            
+
           })
         })
       });
@@ -210,7 +210,7 @@ describe('LSD.Element', function() {
           expect(c.sourceIndex).toEqual(1);
           a.childNodes.unshift(b); // b, c
           expect(b.previousSibling).toBe(null)
-          expect(b._stack.nextSibling[0]).toEqual(c)
+          expect(b._journal.nextSibling[0]).toEqual(c)
           expect(b.nextSibling).toEqual(c)
           expect(b.sourceIndex).toEqual(1);
           expect(c.sourceIndex).toEqual(2);
@@ -222,8 +222,8 @@ describe('LSD.Element', function() {
           c.childNodes.push(cc) // b[bb], c[cc]
           expect(c.sourceLastIndex).toEqual(4);
           a.childNodes.unshift(f); // f, b[bb], c[cc]
-          expect(b._stack.previousSibling[0]).toEqual(f)
-          expect(b._stack.nextSibling[0]).toEqual(c)
+          expect(b._journal.previousSibling[0]).toEqual(f)
+          expect(b._journal.nextSibling[0]).toEqual(c)
           expect(f.sourceIndex).toEqual(1);
           expect(b.sourceIndex).toEqual(2);
           expect(b.sourceLastIndex).toEqual(3);
@@ -247,7 +247,7 @@ describe('LSD.Element', function() {
           expect(d.sourceIndex).toEqual(3);
           expect(b.previousElementSibling).toBeUndefined()
           expect(b.nextElementSibling).toBe(d)
-          expect(b._stack.nextElementSibling.length).toBe(1)
+          expect(b._journal.nextElementSibling.length).toBe(1)
           a.childNodes.shift() // d
           expect(b.parentNode).toBeUndefined()
           expect(b.previousSibling).toBeNull()
@@ -259,7 +259,7 @@ describe('LSD.Element', function() {
           expect(b.sourceIndex).toEqual(2);
           expect(bb.sourceIndex).toEqual(3);
         })
-        
+
         it ("should be kept when doing regular manipulations", function() {
             var root = new LSD.Element({tag: 'root'})
 
@@ -280,12 +280,12 @@ describe('LSD.Element', function() {
             expect(pane2.sourceLastIndex).toEqual(2);
             expect(pane3.sourceIndex).toEqual(2);
             expect(pane3.sourceLastIndex).toBeFalsy();
-            
+
             expect(pane2.sourceLastIndex).toEqual(2);
             root.appendChild(pane1);
             expect(root.sourceLastIndex).toEqual(3);
             expect(pane1.sourceIndex).toEqual(3);
-            
+
             var rooty = new LSD.Element({tag: 'root'})
             rooty.appendChild(root);
             expect(rooty.sourceLastIndex).toEqual(4);
@@ -296,7 +296,7 @@ describe('LSD.Element', function() {
             expect(pane2.sourceLastIndex).toEqual(3);
             expect(pane3.sourceIndex).toEqual(3);
             expect(pane3.sourceLastIndex).toBeFalsy();
-            
+
             var pane4 = new LSD.Element({tag: 'kane'});
             pane2.appendChild(pane4);
             expect(rooty.sourceLastIndex).toEqual(5);
@@ -371,7 +371,7 @@ describe('LSD.Element', function() {
         expect(list2.focused).toEqual(true);
         expect(root2.focused).toEqual(true);
       })
-      
+
       describe('when elements have document', function() {
         it('should allow only one focused element at time', function() {
           var document = new LSD.Document;
@@ -448,7 +448,7 @@ describe('LSD.Element', function() {
       })
     })
   });
-  
+
   describe('#build', function() {
     describe('when no tags was given', function() {
       it ('should create a div', function() {
@@ -497,7 +497,7 @@ describe('LSD.Element', function() {
       });
     });
   });
-  
+
   describe('#test', function() {
     describe('when specific tag is used in selector', function() {
       describe('and tag is not defined', function() {
@@ -550,10 +550,10 @@ describe('LSD.Element', function() {
       });
     })
   });
-  
+
   describe('.textContent', function() {
     describe('with all text child nodes', function() {
-      
+
       it ('should inherit the property from all nested text nodes', function() {
         var widget = new LSD.Element;
         widget.appendChild(new LSD.Textnode('Uncle Sam'));
@@ -578,7 +578,7 @@ describe('LSD.Element', function() {
         expect(widget.textContent).toEqual(' Tasty taco');
         widget.childNodes.shift()
         expect(widget.textContent).toEqual('');
-        expect(widget._stack.textContent.length).toEqual(1)
+        expect(widget._journal.textContent.length).toEqual(1)
       })
     })
     describe('with mixed child nodes', function() {
@@ -587,12 +587,12 @@ describe('LSD.Element', function() {
         var parent = new LSD.Element;
         widget.appendChild(parent);
         parent.appendChild(new LSD.Textnode('Bob'));
-        expect(widget._stack.textContent.length).toEqual(1)
+        expect(widget._journal.textContent.length).toEqual(1)
         expect(parent.textContent).toEqual('Bob');
         expect(widget.textContent).toEqual('Bob');
         widget.childNodes.unshift(new LSD.Textnode('Laughable '));
-        expect(parent._stack.textContent.length).toEqual(1)
-        expect(widget._stack.textContent.length).toEqual(1)
+        expect(parent._journal.textContent.length).toEqual(1)
+        expect(widget._journal.textContent.length).toEqual(1)
         expect(parent.textContent).toEqual('Bob');
         expect(widget.textContent).toEqual('Laughable Bob');
         parent.childNodes.unshift(new LSD.Textnode('Butane '));
@@ -616,12 +616,12 @@ describe('LSD.Element', function() {
         expect(parent.textContent).toEqual('Zob');
         parent.childNodes.shift()
         expect(parent.textContent).toEqual('');
-        expect(widget._stack.textContent.length).toEqual(1)
-        expect(parent._stack.textContent.length).toEqual(1)
+        expect(widget._journal.textContent.length).toEqual(1)
+        expect(parent._journal.textContent.length).toEqual(1)
       })
     })
   })
-  
+
   describe('#itemscope', function() {
     it ('should create iheritable scope object', function() {
       var parent = new LSD.Element({itemscope: true});
@@ -639,7 +639,7 @@ describe('LSD.Element', function() {
       parent.appendChild(subscope);
       expect(subscope.microdata).toNotBe(parent.microdata)
     })
-    
+
     it ('should define nested named item scope', function() {
       var megaparent = new LSD.Element({itemscope: true})
       var parent = new LSD.Element({itemscope: true, itemprop: 'parent'});
@@ -654,7 +654,7 @@ describe('LSD.Element', function() {
       expect(parent.microdata.child).toBeUndefined()
     })
   })
-  
+
   describe('#itemprop', function() {
     it ('should define properties in a scope object with text node contents', function() {
       var parent = new LSD.Element({itemscope: true});
@@ -664,12 +664,15 @@ describe('LSD.Element', function() {
       expect(parent.microdata).toBe(title.microdata)
       expect(parent.microdata.title).toBeUndefined();
       title.appendChild(textnode)
+      console.log(title, title.textContent, title.nodeValue, 555)
       expect(parent.microdata).toBe(title.microdata)
       expect(parent.microdata.title).toEqual('Cultural exploration');
       textnode.set('textContent', 'Oh jeez')
       expect(parent.microdata.title).toEqual('Oh jeez');
       title.childNodes.pop();
       expect(parent.microdata.title).toBe('');
+      parent.microdata.set('title', 'Thug Life');
+      expect(title.textContent).toBe('Thug life');
       parent.childNodes.pop();
       expect(parent.microdata.title).toBeUndefined();
     })
@@ -694,7 +697,7 @@ describe('LSD.Element', function() {
       expect(widget.title).toBeUndefined()
     });
     it ('should find a role by combination of a tag name and type property', function() {
-      var document =$dd =  new LSD.Document;
+      var document = new LSD.Document;
       document.set('roles', new LSD.Roles({
         input: {
           title: 'This is input',
@@ -706,11 +709,10 @@ describe('LSD.Element', function() {
           tit0l: 'This is div',
           title: {
             title: 'This is div title'
-          } 
+          }
         }
       }));
       var widget = document.createElement('input');
-      console.log(widget)
       expect(widget.title).toEqual('This is input');
       widget.change('type', 'number')
       expect(widget.title).toEqual('This is number input');

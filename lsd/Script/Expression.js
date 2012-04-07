@@ -1,7 +1,7 @@
 describe('LSD.Script.Expression', function() {
   describe('when give multiple comma separated expressions', function() {
     it ('should evaluate expressions sequentially', function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var result
       var callback = function(value) {
         result = value;
@@ -28,7 +28,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ('should evaluate function calls sequentially', function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var result, state
       var callback = function(value) {
         result = value;
@@ -59,7 +59,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should lazily evaluate expressions with deep variables", function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var script = LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || 1', scope)
       expect(script.value).toEqual(1);
       scope.set('time_range.recurrence_rule.interval', 2);
@@ -71,7 +71,7 @@ describe('LSD.Script.Expression', function() {
     })
     
     it ("should lazily evaluate expression with deep variables and falsy fallbacks", function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var script = LSD.Script('time_range.starts_at && time_range.recurrence_rule.interval || ""', scope)
       expect(script.value).toEqual("");
       scope.set('time_range.recurrence_rule.interval', 2);
@@ -83,7 +83,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should be able to wait for asynchronous results returned from function calls", function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var read = new Chain;
       var write = new Chain;
       scope.set('read', function() {
@@ -112,7 +112,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should be able to handle failures and execute alternative actions", function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var invent = Object.append(new Chain, new Events);
       invent.onFailure = function(){ 
         return invent.fireEvent('failure', arguments); 
@@ -152,7 +152,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should be able to handle failures and execute alternative actions in methods without parentheses", function() {
-      var scope = new LSD.Stack({methods: {}});
+      var scope = new LSD.Journal({methods: {}});
       var invent = Object.append(new Chain, new Events);
       invent.onFailure = function(){ 
         return invent.fireEvent('failure', arguments); 
@@ -192,7 +192,7 @@ describe('LSD.Script.Expression', function() {
     });
     
     it ("should be able to stack multiple scripts together (kind of coroutines and aspects)", function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var submit = Object.append(new Chain, new Events);
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
@@ -230,7 +230,7 @@ describe('LSD.Script.Expression', function() {
     })
     
     it ("should be able to stack multiple scripts together and make one handle failures in another", function() {
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       var submit = Object.append(new Chain, new Events);
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
@@ -287,7 +287,7 @@ describe('LSD.Script.Expression', function() {
     })
     
     it ("should be able to stack multiple scripts together and make one handle failures in another", function() {
-      var scope = new LSD.Stack({methods: {}});
+      var scope = new LSD.Journal({methods: {}});
       var submit = Object.append(new Chain, new Events);
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 

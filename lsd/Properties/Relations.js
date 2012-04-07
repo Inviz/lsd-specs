@@ -129,7 +129,7 @@ describe('LSD.Properties.Relations', function() {
             expect(button2.weedget).toEqual(widget);
             widget.relations.set('buttons', button);
             expect(button.weedget).toEqual(widget);
-            widget.relations.mix({buttons: as}, null, null, false);
+            widget.relations.unmix({buttons: as});
             expect(button.weedget).toBeUndefined()
             expect(button2.weedget).toBeUndefined()
             widget.relations.unset('buttons', button2);
@@ -139,7 +139,7 @@ describe('LSD.Properties.Relations', function() {
             widget.relations.mix({buttons: as});
             expect(button2.weedget).toEqual(widget)
             expect(button.weedget).toEqual(widget)
-            widget.relations.mix({buttons: as}, null, null, false);
+            widget.relations.unmix({buttons: as});
             expect(button.weedget).toBeUndefined()
             expect(button2.weedget).toBeUndefined()
           })

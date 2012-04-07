@@ -455,8 +455,7 @@ describe("LSD.Object", function() {
           var struct = LSD.Struct({
             Data: data,
             data: function(value, old, memo) {
-              if (value) this.mix('parent.data', value, memo, true, true);
-              if (old && this._stack) this.mix('parent.data', old, memo, false, true)
+              this.mix('parent.data', value, memo, old, true);
             }
           })
           data.prototype._ownable = struct.prototype._ownable = false;

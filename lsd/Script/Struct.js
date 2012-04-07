@@ -55,7 +55,6 @@ describe("LSD.Struct", function() {
             author: 'person'
           });
           var instance = new Struct({author: {title: 'Lord'}});
-          console.log(instance.person, instance.author)
           expect(instance.person instanceof Person).toBeTruthy()
           expect(instance.person).toEqual(instance.author)
           expect(instance.person.title).toEqual('Lord123')
@@ -123,19 +122,19 @@ describe("LSD.Struct", function() {
             title: function(value) {
               return value + 123
             }
-          }, 'Stack');
+          }, 'Journal');
           var Animal = LSD.Struct({
             title: function(value) {
               return value + 321
             }
-          }, 'Stack');
+          }, 'Journal');
           var Post = LSD.Struct({
             author: '.person'
           });
           var Struct = LSD.Struct({
             post: Post,
             person: Person
-          }, 'Stack');
+          }, 'Journal');
           var data = {post: {author: {title: 'Lord'}}};
           var instance = new Struct(data);
           expect(instance.person.title).toEqual('Lord123')
@@ -157,7 +156,7 @@ describe("LSD.Struct", function() {
           instance.set('post', announcement)
           expect(announcement.author).toEqual(instance.person)
           expect(instance.person.title).toEqual('Lord321');
-          instance.mix(data, null, null, false)
+          instance.unmix(data)
           expect(instance.person.title).toBeUndefined()
           instance.set('person', new Person)
           expect(instance.person.title).toBeUndefined()
@@ -186,14 +185,14 @@ describe("LSD.Struct", function() {
             name: function(name) {
               return name + 123;
             }
-          }, 'Stack')
+          }, 'Journal')
           var Post = LSD.Struct({
             author: '.person'
-          }, 'Stack');
+          }, 'Journal');
           var Struct = LSD.Struct({
             post: Post,
             person: Person
-          }, 'Stack');
+          }, 'Journal');
           var post = new Post({author: {name: "George"}});
           var struct = new Struct
           struct.set('post', post);
@@ -219,16 +218,16 @@ describe("LSD.Struct", function() {
               name: function(name) {
                 return name + 123;
               }
-            }, 'Stack')
+            }, 'Journal')
             var Post = LSD.Struct({
               author: '.topic.person',
               person: '.person'
-            }, 'Stack');
+            }, 'Journal');
             var Struct = LSD.Struct({
               post: Post,
               topic: 'post',
               person: Person
-            }, 'Stack');
+            }, 'Journal');
             var post = new Post({author: {name: "George"}});
             var struct = new Struct
             struct.set('post', post);
@@ -257,9 +256,9 @@ describe("LSD.Struct", function() {
             'matches': '.matches'
           }, 'Group');
           Events.implement({
-            _delegate: function(object, name, value, state, memo, origin) {
+            _delegate: function(object, name, value, memo, old, origin) {
               if (this._properties[name]) return;
-              if (object.mix) object.mix('events', value, memo, state)
+              if (object.mix) object.mix('events', value, memo, old);
               return true;
             }
           })
@@ -308,9 +307,9 @@ describe("LSD.Struct", function() {
             'relations': '.relations'
           }, 'Group');
           Events.implement({
-            _delegate: function(object, name, value, state, memo) {
+            _delegate: function(object, name, value, memo, old) {
               if (this._properties[name]) return;
-              object.mix('events', value, memo, state)
+              object.mix('events', value, memo, old)
               return true;
             }
           })

@@ -540,7 +540,7 @@ describe('LSD.Array', function() {
     
     describe('when non-local variables are used in the block', function() {
       it ("should re-filter values as filter criteria change", function() {
-        var scope = new LSD.Stack;
+        var scope = new LSD.Journal;
         scope.set('divisor', 2);
         scope.set('result', 0);
         var array = new LSD.Array(4, 2, 8, 5, 1, 7, 6, 3, 10, 9);
@@ -595,7 +595,7 @@ describe('LSD.Array', function() {
 
     describe('when given a block using index', function() {
       it ("should filter array based on index of the values", function() {
-        var scope = new LSD.Stack;
+        var scope = new LSD.Journal;
         scope.set('divisor', 2)
         scope.set('result', 0)
         var array = new LSD.Array('George', 'Harry', 'Bill', 'Jeff', 'Claus');
@@ -674,7 +674,7 @@ describe('LSD.Array', function() {
   describe('#every', function() {
     it ('should update value asynchronously', function() {
       var array = new LSD.Array;
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       scope.set('array', array);
       var script = LSD.Script('every (array) { |item| item.selected }', scope);
       expect(script.value).toEqual(true);
@@ -711,7 +711,7 @@ describe('LSD.Array', function() {
   describe('#some', function() {
     it ("should calculate value asynchronously", function() {
       var array = new LSD.Array;
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       scope.set('array', array);
       var script = LSD.Script('array.some() { |item| item.shquared }', scope);
       expect(script.value).toEqual(false);
@@ -744,7 +744,7 @@ describe('LSD.Array', function() {
   describe('#map', function() {
     it ("should invoke an iterator on each value and return an array with results", function() {
       var array = new LSD.Array;
-      var scope = new LSD.Stack;
+      var scope = new LSD.Journal;
       scope.set('array', array);
       var script = LSD.Script('array.map() { |item| organization || item.organization || fallback }', scope);
       var first = new LSD.Object({organization: 'ICP'});

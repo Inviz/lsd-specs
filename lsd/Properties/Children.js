@@ -136,10 +136,10 @@ describe("LSD.ChildNodes", function() {
     describe("when objects are stack based observable objects", function() {
       it ("should make the inserted objects link to previous and next object", function() {
         var children = new LSD.ChildNodes;
-        var a = new LSD.Stack;
-        var b = new LSD.Stack;
-        var c = new LSD.Stack;
-        var d = new LSD.Stack;
+        var a = new LSD.Journal;
+        var b = new LSD.Journal;
+        var c = new LSD.Journal;
+        var d = new LSD.Journal;
         expect(children.length).toEqual(0);
         expect(a.nextSibling).toBeUndefined();
         expect(a.previousSibling).toBeUndefined();
@@ -195,11 +195,11 @@ describe("LSD.ChildNodes", function() {
       
       it ("should maintain first/last links", function() {
         var children = new LSD.ChildNodes;
-        var object = new LSD.Stack({children: children})
-        var a = new LSD.Stack({id: 'a'});
-        var b = new LSD.Stack({id: 'b'});;
-        var c = new LSD.Stack({id: 'c'});;
-        var d = new LSD.Stack({id: 'd'});;
+        var object = new LSD.Journal({children: children})
+        var a = new LSD.Journal({id: 'a'});
+        var b = new LSD.Journal({id: 'b'});;
+        var c = new LSD.Journal({id: 'c'});;
+        var d = new LSD.Journal({id: 'd'});;
         expect(object.firstChild).toBeUndefined();
         expect(object.lastChild).toBeUndefined();
         children.push(a); //a
@@ -233,9 +233,9 @@ describe("LSD.ChildNodes", function() {
         var widget = new LSD.Object({
           childNodes: children
         });
-        var a = new LSD.Stack({id: 'a'});
-        var b = new LSD.Stack({id: 'b'});
-        var c = new LSD.Stack({id: 'c'});
+        var a = new LSD.Journal({id: 'a'});
+        var b = new LSD.Journal({id: 'b'});
+        var c = new LSD.Journal({id: 'c'});
         expect(a.parentNode).toBeUndefined()
         children.push(a);
         expect(a.parentNode).toEqual(widget)
@@ -259,13 +259,13 @@ describe("LSD.ChildNodes", function() {
   describe("when attached to an object", function() {
     it ("should export firstChild/lastChild properties", function() {
       var children = new LSD.ChildNodes;
-      var widget = new LSD.Stack({
+      var widget = new LSD.Journal({
         childNodes: children
       });
-      var a = new LSD.Stack({id: 'a'});
-      var b = new LSD.Stack({id: 'b'});;
-      var c = new LSD.Stack({id: 'c'});;
-      var d = new LSD.Stack({id: 'd'});;
+      var a = new LSD.Journal({id: 'a'});
+      var b = new LSD.Journal({id: 'b'});;
+      var c = new LSD.Journal({id: 'c'});;
+      var d = new LSD.Journal({id: 'd'});;
       expect(widget.firstChild).toBeUndefined();
       expect(widget.lastChild).toBeUndefined();
       children.push(a); //a

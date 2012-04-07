@@ -572,7 +572,7 @@ describe("LSD.Layout", function() {
               });
               $w = widget;
               var range = new LSD.Object;
-              var params = new LSD.Stack;
+              var params = new LSD.Journal;
               widget.variables.merge({params: params})
               expect(element.getElements('fieldset').length).toEqual(0);
               params.merge({'time_range': range});

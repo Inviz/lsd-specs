@@ -57,9 +57,11 @@ describe("LSD.Group.Array", function() {
           _construct: function(name, value) {
             return null;
           },
-          _delegate: function(object, name, value, state, memo) {
-            for (var property in value)
-              object.mix(property, value[property] + 123, memo, state);
+          _delegate: function(object, name, value, memo, old) {
+            if (value) for (var property in value)
+              object.mix(property, value[property] + 123, memo);
+            if (old && (!value || object._journal)) for (var property in old)
+              object.unmix(property, old[property] + 123, memo);
             return true;
           }
         });
@@ -104,9 +106,9 @@ describe("LSD.Group.Array", function() {
       it ("should notify each value in the group to updates in the object that was reverse-merged", function() {
         var object = new LSD.Group('Array');
         object._construct = Function.from(null);
-        var jack = new LSD.Stack({name: 'Jack'}), 
-            josh = new LSD.Stack({name: "Josh", title: 'Glorious'}), 
-            jeff = new LSD.Stack({name: "Josh", title: 'Wikid'});
+        var jack = new LSD.Journal({name: 'Jack'}), 
+            josh = new LSD.Journal({name: "Josh", title: 'Glorious'}), 
+            jeff = new LSD.Journal({name: "Josh", title: 'Wikid'});
         var values = new LSD.Object({boys: {title: 'Overlord'}});
         object.merge(values, true)
         object.set('boys', jack);
@@ -131,9 +133,9 @@ describe("LSD.Group.Array", function() {
       it ("should be able to unmerge the object and remove values from all groupped objects", function() {
         var object = new LSD.Group('Array');
         object._construct = Function.from(null);
-        var jack = new LSD.Stack({name: 'Jack'}), 
-            josh = new LSD.Stack({name: "Josh", title: 'Glorious'}), 
-            jeff = new LSD.Stack({name: "Josh", title: 'Wikid'});
+        var jack = new LSD.Journal({name: 'Jack'}), 
+            josh = new LSD.Journal({name: "Josh", title: 'Glorious'}), 
+            jeff = new LSD.Journal({name: "Josh", title: 'Wikid'});
         var values = new LSD.Object({boys: {title: 'Overlord'}});
         object.merge(values, true)
         object.set('boys', jack);

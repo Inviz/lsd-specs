@@ -1,7 +1,7 @@
 describe("LSD.Script.Block", function() {
   
   it ('should evaluate blocks', function() {
-    var scope = new LSD.Stack, count = 0;
+    var scope = new LSD.Journal, count = 0;
     scope.set('Lfilter', function(array, fn, bind) {
       var results = [];
       count++;
@@ -25,7 +25,7 @@ describe("LSD.Script.Block", function() {
   })
   
   it ('should run a block against an observable array', function() {
-    var scope = new LSD.Stack;
+    var scope = new LSD.Journal;
     scope.set('Lmap', function(array, fn, bind) {
       if (fn.results == null) {
         var results = fn.results = [];
@@ -79,7 +79,7 @@ describe("LSD.Script.Block", function() {
   });
   
   it ("should reuse global variables in block across iterations", function() {
-    var scope = new LSD.Stack;
+    var scope = new LSD.Journal;
     scope.set('Lmap', function(array, fn, bind) {
       if (fn.results == null) {
         var results = fn.results = [];
@@ -119,7 +119,7 @@ describe("LSD.Script.Block", function() {
   
   
   it ("should execute and unroll conditional blocks", function() {
-    var scope = new LSD.Stack;
+    var scope = new LSD.Journal;
     var script = LSD.Script('if (a > 1) { zig = 1 }', scope);
     expect(scope.zig).toBeFalsy()
     scope.set('a', 2)
@@ -131,7 +131,7 @@ describe("LSD.Script.Block", function() {
   })
   
   it ("should execute scenarios", function() {
-    var scope = new LSD.Stack;
+    var scope = new LSD.Journal;
     var script = LSD.Script('                  \n\
       each (masters) |input|                       \n\
         if (input.checked)                         \n\
@@ -150,8 +150,8 @@ describe("LSD.Script.Block", function() {
       unchecks++;
       return object.set('checked', false)
     });
-    var masters = new LSD.Array(new LSD.Stack({title: 'A'}), new LSD.Stack({title: 'B'}))
-    var slaves = new LSD.Array(new LSD.Stack({title: 'a'}), new LSD.Stack({title: 'b'}), new LSD.Stack({title: 'c'}), new LSD.Stack({title: 'd'}));
+    var masters = new LSD.Array(new LSD.Journal({title: 'A'}), new LSD.Journal({title: 'B'}))
+    var slaves = new LSD.Array(new LSD.Journal({title: 'a'}), new LSD.Journal({title: 'b'}), new LSD.Journal({title: 'c'}), new LSD.Journal({title: 'd'}));
     scope.merge({'masters': masters, slaves: slaves});
     expect(checks).toEqual(0);
     expect(unchecks).toEqual(0);
