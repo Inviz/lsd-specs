@@ -47,7 +47,8 @@ Configuration.sets = {
       'Allocations',
       'Attributes',
       'Resource',
-      'Proxies'
+      'Proxies',
+      'Styles'
     ]
   },
   'node': {

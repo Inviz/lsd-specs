@@ -320,8 +320,8 @@ describe("LSD.Properties.Matches", function() {
           window.z = true;
           parent.childNodes.splice(2, 2)
           expect(index).toEqual(1);
-          parent.childNodes.splice(2, 2)
-          expect(index).toEqual(0);
+          //parent.childNodes.splice(2, 2)
+          //expect(index).toEqual(0);
         })
       })
       describe('!~ combinator', function() {
@@ -365,6 +365,10 @@ describe("LSD.Properties.Matches", function() {
           expect(index).toEqual(1);
           parent.insertBefore(b1, d);
           expect(index).toEqual(2);
+          parent.childNodes.splice(1, 2)
+          expect(index).toEqual(1);
+          parent.childNodes.splice(1, 2)
+          expect(index).toEqual(0);
         })
       })
       describe('~~ combinator', function() {
