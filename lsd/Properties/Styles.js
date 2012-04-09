@@ -180,10 +180,10 @@ describe('LSD.RegExp', function() {
           return [name, this.exec(args)]
         }
       });
-      expect(re.exec('3em')).toEqual([['3', 'em']])
-      expect(re.exec('a(1%, 3em)')).toEqual([['a', [['1', '%'], ['3', 'em']]]]);
-      expect(re.exec('a(b(1%, 3em))')).toEqual([['a', [['b', [['1', '%'], ['3', 'em']]]]]]);
-      expect(re.exec('a(b(1%, 3em))')).toEqual([['a', [['b', [['1', '%'], ['3', 'em']]]]]]);
+      expect(re.exec('3em')).toEqual(['3', 'em'])
+      expect(re.exec('a(1%, 3em)')).toEqual(['a', [['1', '%'], ['3', 'em']]]);
+      expect(re.exec('a(b(1%, 3em))')).toEqual(['a', ['b', [['1', '%'], ['3', 'em']]]]);
+      expect(re.exec('a(b(1%, 3em))')).toEqual(['a', ['b', [['1', '%'], ['3', 'em']]]]);
       expect(re.exec('a(1%, 3em), a(1%, 3em)')).toEqual([['a', [['1', '%'], ['3', 'em']]], ['a', [['1', '%'], ['3', 'em']]]]);
     });
     it ('should be able to parse blocks', function() {
@@ -204,15 +204,17 @@ describe('LSD.RegExp', function() {
           return this.exec(args)
         }
       });
-      expect(re.exec('"a"')).toEqual(["a"])
+      expect(re.exec('"a"')).toEqual("a")
       expect(re.exec(' "a",   "b"')).toEqual(["a", 'b'])
       expect(re.exec('\'a\',  "b"')).toEqual(["a", 'b'])
       expect(re.exec('\'a\', \'b\'')).toEqual(["a", 'b'])
       expect(re.exec(' "a",  \'b\'')).toEqual(["a", 'b'])
-      expect(re.exec('{|a| b(c)}')).toEqual([[['a'], [['b', ['c']]]]])
-      expect(re.exec('o(){|a| b(c)}')).toEqual([['o', undefined], [['a'], [['b', ['c']]]]])
-      expect(re.exec('o(){|a, b| b("c", \'d\', o(){|a, b| b(c, d)})}')).toEqual([['o', undefined], [['a', 'b'], [['b', ['c', 'd', ['o', undefined], [['a', 'b'], [['b', ['c', 'd']]]]]]]]])
-      expect(re.exec('o([a]){|a| b(c)}')).toEqual([['o', [['a']]], [['a'], [['b', ['c']]]]])
+      expect(re.exec('{|a| b(c)}')).toEqual(['a', ['b', 'c']])
+      expect(re.exec('{|a, c| b(c)}')).toEqual([['a', 'c'], ['b', 'c']])
+      expect(re.exec('{|a| b(c, "a")}')).toEqual(['a', ['b', ['c', 'a']]])
+      expect(re.exec('o(){|a| b(c)}')).toEqual([['o', undefined], ['a', ['b', 'c']]])
+      expect(re.exec('o(){|a, b| b("c", \'d\', o(){|a, b| b(c, d)})}')).toEqual([['o', undefined], [['a', 'b'], ['b', ['c', 'd', ['o', undefined], [['a', 'b'], ['b', ['c', 'd']]]]]]])
+      expect(re.exec('o([a]){|a| b(c)}')).toEqual([['o', 'a'], ['a', ['b', 'c']]])
     });
   })
 })
