@@ -553,7 +553,6 @@ describe('LSD.Element', function() {
 
   describe('.textContent', function() {
     describe('with all text child nodes', function() {
-
       it ('should inherit the property from all nested text nodes', function() {
         var widget = new LSD.Element;
         widget.appendChild(new LSD.Textnode('Uncle Sam'));
@@ -620,6 +619,34 @@ describe('LSD.Element', function() {
         expect(parent._journal.textContent.length).toEqual(1)
       })
     })
+    describe('when setter is used', function() {
+      describe('when element is empty', function() {
+        it ('should create a text node', function() {
+          var element = new LSD.Element;
+          element.set('textContent', 'Hey boy');
+          expect(element.childNodes[0].textContent).toEqual('Hey boy');
+        });
+      })
+      describe('when element already has a text node inside', function() {
+        it ('should reuse a text node', function() {
+          var element = new LSD.Element;
+          element.set('textContent', 'Hey boy');
+          var textnode = element.childNodes[0];
+          element.set('textContent', 'Hey girl');
+          expect(element.childNodes[0]).toEqual(textnode);
+        });
+      })
+      describe('when element already has elements', function() {
+        it ('should overwrite children', function() {
+          var element = new LSD.Element;
+          var child = new LSD.Element
+          element.appendChild(child);
+          element.set('textContent', 'Hey boy')
+          expect(element.childNodes[0].textContent).toEqual('Hey boy');
+          expect(child.parentNode).toEqual(null)
+        });
+      })
+    })
   })
 
   describe('#itemscope', function() {
@@ -664,17 +691,19 @@ describe('LSD.Element', function() {
       expect(parent.microdata).toBe(title.microdata)
       expect(parent.microdata.title).toBeUndefined();
       title.appendChild(textnode)
-      console.log(title, title.textContent, title.nodeValue, 555)
       expect(parent.microdata).toBe(title.microdata)
       expect(parent.microdata.title).toEqual('Cultural exploration');
       textnode.set('textContent', 'Oh jeez')
       expect(parent.microdata.title).toEqual('Oh jeez');
       title.childNodes.pop();
       expect(parent.microdata.title).toBe('');
-      parent.microdata.set('title', 'Thug Life');
+      parent.microdata.set('title', 'Thug life');
       expect(title.textContent).toBe('Thug life');
       parent.childNodes.pop();
-      expect(parent.microdata.title).toBeUndefined();
+      expect(parent.microdata.title).toBeUndefined(); //CONTROVERSIAL!!1
+      expect(title.nodeValue).toBe('')
+      parent.childNodes.push(title)
+      expect(parent.microdata.title).toBe('');
     })
   })
   

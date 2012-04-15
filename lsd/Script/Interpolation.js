@@ -217,21 +217,21 @@ describe("LSD.Interpolation", function() {
     var element = new Element('div', {html: html});
     var widget = new LSD.Element(element);
     expect(widget.childNodes[3].textContent.replace(/[\s\t]+/g, ' ')).toEqual(' Hey there Jesus-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
-    console.log(widget)
-    //widget.childNodes[1].childNodes[1].childNodes[0].change('textContent', 'Judas')
-    //expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
-    //widget.childNodes[1].childNodes[3].change('textContent', 'Betraya')
-    //expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Heaven\'s website at http://heaven.org ')
-    //widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[1].change('textContent', 'Hell')
-    //expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://heaven.org ')
-    //widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].setAttribute('href', 'http://hell.xxx')
-    //expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://hell.xxx ')
-    // widget.childNodes[1].microdata.organization.mix({
-    //  name: 'Traitors, Inc',
-    //  url: 'file://c://traitors.text'
-    //});
-    //expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Traitors, Inc\'s website at file://c://traitors.text ')
-    //expect(element.childNodes[1].childNodes[5].childNodes[1].childNodes[1].href).toEqual('file://c://traitors.text')
+    widget.childNodes[1].childNodes[1].childNodes[0].change('textContent', 'Judas')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[3].change('textContent', 'Betraya')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[1].change('textContent', 'Hell')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://heaven.org ')
+    widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].setAttribute('href', 'http://hell.xxx')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://hell.xxx ')
+    widget.childNodes[1].microdata.organization.mix({
+     name: 'Traitors, Inc',
+     url: 'file://c://traitors.text'
+    });
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Traitors, Inc\'s website at file://c://traitors.text ')
+    expect(widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].href).toEqual('file://c://traitors.text')
+    expect(widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].href).toEqual('file://c://traitors.text')
   });
 
   it ("should parse selectors", function() {
@@ -254,40 +254,33 @@ describe("LSD.Interpolation", function() {
         <button>\
         </button>\
       </menu>\
-      Menus count: ${count(&& menu)}\
-      Toolbars count: ${count(&& menu[type=toolbar])}\
-      Buttons in menus count: ${count(&& menu button)}\
+      ${count(> menu)} ${count(> menu[type=toolbar])} ${count(> menu button)}\
     ";
-    var element = new Element('div', {html: html});
-    var widget = $w = Factory('root', {mutations: {'menu': true, 'button': true}}, element);
-    var interpolation = Element.retrieve(element.childNodes[5], 'interpolation');
-    expect(interpolation.name).toEqual('count');
-    expect(interpolation.args[0].parents[0]).toEqual(interpolation);
-    expect(element.childNodes[5].textContent).toEqual('2');
-    expect(element.childNodes[7].textContent).toEqual('1');
-    expect(element.childNodes[9].textContent).toEqual('4');
-    widget.getElement('menu[type=toolbar] button').dispose();
-    expect(element.childNodes[5].textContent).toEqual('2');
-    expect(element.childNodes[7].textContent).toEqual('1');
-    expect(element.childNodes[9].textContent).toEqual('3');
-    widget.getElement('menu[type=toolbar]').dispose();
-    expect(element.childNodes[4].textContent).toEqual('1');
-    expect(element.childNodes[6].textContent).toEqual('0');
-    expect(element.childNodes[8].textContent).toEqual('2');
-    widget.getElement('menu').dispose();
-    expect(element.childNodes[3].textContent).toEqual('0');
-    expect(element.childNodes[5].textContent).toEqual('0');
-    expect(element.childNodes[7].textContent).toEqual('0');
+    var element = document.createElement('div');
+    element.innerHTML = html;
+    var widget = new LSD.Element(element);
+    var textnode = widget.childNodes[4];
+    expect(textnode.textContent.trim()).toEqual('2 1 4')
+    widget.childNodes[1].childNodes[1].dispose();
+    expect(textnode.textContent.trim()).toEqual('2 1 3')
+    widget.childNodes[1].dispose();
+    expect(textnode.textContent.trim()).toEqual('1 0 2')
+    widget.childNodes[2].dispose();
+    expect(textnode.textContent.trim()).toEqual('0 0 0')
   });
 
   it ("should watch selectors from the start", function() {
-    var html = "${count(&& item)}";
-    var element = new Element('div', {html: html});
-    var widget = $w = Factory('root', {}, element);
-    expect(element.get('text')).toEqual('0');
-    var item = new LSD.Element({tag: 'item'});
+    var html = "${count(> item)}";
+    var element = document.createElement('div');
+    element.innerHTML = html;
+    var widget = new LSD.Element(element);
+    console.dir(widget.childNodes[0], element.childNodes[0])
+    expect(widget.childNodes[0].textContent).toBeUndefined()
+    var item = new LSD.Element('item');
     widget.appendChild(item);
-    expect(element.get('text')).toEqual('1');
+    expect(widget.childNodes[0].textContent).toEqual('1');
+    item.dispose();
+    expect(widget.childNodes[0].textContent).toEqual('0');
   });
 
   describe("when interpolation is found in attribute", function() {

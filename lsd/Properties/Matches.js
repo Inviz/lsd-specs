@@ -317,11 +317,10 @@ describe("LSD.Properties.Matches", function() {
           expect(index).toEqual(0);
           parent.insertBefore(a, c)
           expect(index).toEqual(2);
-          window.z = true;
           parent.childNodes.splice(2, 2)
           expect(index).toEqual(1);
-          //parent.childNodes.splice(2, 2)
-          //expect(index).toEqual(0);
+          parent.childNodes.splice(2, 2)
+          expect(index).toEqual(0);
         })
       })
       describe('!~ combinator', function() {
@@ -365,10 +364,16 @@ describe("LSD.Properties.Matches", function() {
           expect(index).toEqual(1);
           parent.insertBefore(b1, d);
           expect(index).toEqual(2);
+          console.error(a.matches._results['~']['b'].slice())
+          expect(d.matches._results['!~']['b'].length).toEqual(2);
+          console.log(parent.childNodes.slice(), 55555)
           parent.childNodes.splice(1, 2)
+          expect(d.matches._results['!~']['b'].length).toEqual(1);
+          console.log(parent.childNodes.slice(), 55)
           expect(index).toEqual(1);
-          parent.childNodes.splice(1, 2)
-          expect(index).toEqual(0);
+          //parent.childNodes.splice(1, 2)
+          //expect(index).toEqual(0);
+          //expect(d.matches._results['!~']['b'].length).toEqual(0);
         })
       })
       describe('~~ combinator', function() {
@@ -421,6 +426,172 @@ describe("LSD.Properties.Matches", function() {
           expect(index).toEqual(2);
           parent.appendChild(b2);
           expect(index).toEqual(2);
+        })
+      })
+    })
+    describe('and selector contains pieces of state', function() {
+      describe('and observes class names', function() {
+        it ('should observe change in class name', function() {
+          var parent = new LSD.Element;
+          var a = new LSD.Element('a.saint')
+          var b = new LSD.Element('b')
+          parent.appendChild(a);
+          parent.appendChild(b);
+          var index = 0, last;
+          parent.matches.set('.saint', function(value, old) {
+            if (value) last = value;
+            if (value) index ++;
+            if (old) index--;
+          })
+          expect(last).toBe(a)
+          expect(index).toBe(1)
+          b.classList.add('saint');
+          expect(last).toBe(b)
+          expect(index).toBe(2)
+          b.classList.remove('saint');
+          expect(last).toBe(b)
+          expect(index).toBe(1)
+          a.classes.remove('saint')
+          expect(index).toBe(0)
+          a.classes.add('saint')
+          expect(index).toBe(1)
+          a.dispose()
+          expect(index).toBe(0)
+        })
+      })
+      describe('and observes attributes', function() {
+        it ('should fire up callback when match element gets the required attribute', function() {
+          var parent = new LSD.Element;
+          var a = new LSD.Element('a[title="Hey"]')
+          var b = new LSD.Element('b')
+          parent.appendChild(a);
+          parent.appendChild(b);
+          var index = 0, last;
+          parent.matches.set('*[title]', function(value, old) {
+            if (value) last = value;
+            if (value) index ++;
+            if (old) index--;
+          })
+          expect(last).toBe(a)
+          expect(index).toBe(1)
+          b.attributes.set('title', 'Hi')
+          expect(last).toBe(b)
+          expect(index).toBe(2)
+          b.attributes.unset('title', 'Hi')
+          expect(last).toBe(b)
+          expect(index).toBe(1)
+          a.attributes.change('title', 'Ahoy')
+          expect(index).toBe(1)
+          a.attributes.unset('title', 'Ahoy')
+          expect(index).toBe(0)
+          a.attributes.set('title', 'Ahoy')
+          expect(index).toBe(1)
+          a.dispose()
+          expect(index).toBe(0)
+        })
+      })
+      describe('and observes values of attributes', function() {
+        it ('should fire up callback when match element gets the right value of an attribute', function() {
+          var parent = new LSD.Element;
+          var a = new LSD.Element('a[title="Hey"]')
+          var b = new LSD.Element('b')
+          parent.appendChild(a);
+          parent.appendChild(b);
+          var index = 0, last;
+          parent.matches.set('*[title="Hey"]', function(value, old) {
+            if (value) last = value;
+            if (value) index ++;
+            if (old) index--;
+          })
+          expect(last).toBe(a)
+          expect(index).toBe(1)
+          b.attributes.set('title', 'Hi')
+          expect(last).toBe(a)
+          expect(index).toBe(1)
+          b.attributes.set('title', 'Hey')
+          expect(last).toBe(b)
+          expect(index).toBe(2)
+          a.attributes.change('title', 'Ahoy')
+          expect(index).toBe(1)
+          a.attributes.unset('title', 'Ahoy')
+          expect(index).toBe(1)
+          a.attributes.set('title', 'Hey')
+          expect(index).toBe(2)
+          b.dispose()
+          expect(index).toBe(1)
+          a.attributes.unset('title', 'Hey')
+          expect(index).toBe(0)
+          b.dispose()
+          expect(index).toBe(0)
+        })
+      })
+    })
+    describe('and selector mentions multiple elements', function() {
+      it ('should match and observe all parts of an expression', function() {
+        var parent = new LSD.Element;
+        var a = new LSD.Element('a');
+        var b = new LSD.Element('b');
+        var index = 0, last;
+        parent.matches.set('a + b', function(value, old) {
+          if (value) last = value;
+          if (value) index ++;
+          if (old) index--;
+        })
+        parent.appendChild(a)
+        parent.appendChild(b)
+        expect(last).toBe(b)
+        expect(index).toEqual(1);
+        parent.appendChild(a);
+        expect(index).toEqual(0);
+        parent.appendChild(b);
+        expect(index).toEqual(1);
+        b.set('tagName', 'a')
+        expect(index).toEqual(0);
+        a.set('tagName', 'b')
+        expect(index).toEqual(0);
+        parent.appendChild(a);
+        expect(index).toEqual(1);
+      })
+      describe('and expressions contain pieces of state', function() {
+        it ('should match and observe all parts of an expression', function() {
+          var parent = new LSD.Element;
+          var index = 0, last;
+          var child = new LSD.Element('a.black');
+          var subchild = new LSD.Element('b.justice');
+          parent.matches.set('.black .justice', function(value, old) {
+            if (value) last = value;
+            if (value) index ++;
+            if (old) index--;
+          })
+          parent.appendChild(child)
+          child.appendChild(subchild)
+          expect(last).toBe(subchild)
+          expect(index).toEqual(1);
+          var another = new LSD.Element('c.justice');
+          parent.appendChild(another)
+          expect(index).toEqual(1);
+          child.appendChild(another)
+          expect(index).toEqual(2);
+          another.classList.remove('justice');
+          expect(index).toEqual(1);
+          child.classList.remove('black')
+          expect(index).toEqual(0);
+          another.classList.add('justice');
+          expect(index).toEqual(0);
+          child.classList.add('black')
+          expect(index).toEqual(2);
+          var container = new LSD.Element('b');
+          parent.appendChild(container);
+          container.appendChild(another);
+          expect(index).toEqual(1);
+          container.classList.add('black')
+          expect(index).toEqual(2);
+          child.appendChild(another)
+          expect(index).toEqual(2);
+          container.appendChild(child)
+          expect(index).toEqual(2);
+          another.classList.remove('justice');
+          expect(index).toEqual(1);
         })
       })
     })

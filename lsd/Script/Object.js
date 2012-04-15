@@ -20,7 +20,6 @@ describe("LSD.Object", function() {
       it("should store value for that key and apply to objects", function() {
         var object = new LSD.Object;
         object.set('attributes.hidden', true);
-        console.log(object.attributes.hidden, 555)
         var attributes = object.attributes;
         expect(attributes).toBeDefined();
         expect(attributes.hidden).toBeTruthy();

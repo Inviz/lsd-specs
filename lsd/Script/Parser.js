@@ -481,9 +481,9 @@ describe('LSD.Script.Parser', function() {
   };
   var clean = function(object) {
     if (object.push) return Array.each(object, clean);
-    if (object.stack) delete object.stack;
-    if (object.precedence) delete object.precedence;
-    if (object.index) delete object.index;
+    delete object.stack;
+    delete object.precedence;
+    delete object.index;
     if (object.value && object.value.length) Array.each(object.value, clean);
     return object;
   }

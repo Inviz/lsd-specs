@@ -132,6 +132,39 @@ describe("LSD.ChildNodes", function() {
         children.shift();
         expect(c.parentNode).toBeUndefined();
       })
+      it ("should maintain links when splicing long fragments", function() {
+        var children = new LSD.ChildNodes;
+        var widget = new LSD.Object({
+          childNodes: children
+        });
+        var a = new LSD.Object({id: 'a'});
+        var b = new LSD.Object({id: 'b'});
+        var c = new LSD.Object({id: 'c'});
+        var d = new LSD.Object({id: 'd'});
+        var e = new LSD.Object({id: 'e'});
+        children.push(a, e);
+        expect(a.nextSibling).toBe(e);
+        expect(e.previousSibling).toBe(a);
+        expect(a.nextSibling).toBe(e);
+        expect(e.previousSibling).toBe(a);
+        children.splice(1, 0, b, c, d)
+        expect(a.nextSibling).toBe(b);
+        expect(b.previousSibling).toBe(a);
+        expect(d.nextSibling).toBe(e);
+        expect(e.previousSibling).toBe(d);
+        console.error(123123)
+        children.splice(1, 3)
+        expect(b.nextSibling).toBeUndefined();
+        expect(b.previousSibling).toBeUndefined();
+        expect(c.nextSibling).toBeUndefined();
+        expect(c.previousSibling).toBeUndefined();
+        expect(d.nextSibling).toBeUndefined();
+        expect(d.previousSibling).toBeUndefined();
+        expect(a.nextSibling).toBe(e);
+        expect(e.previousSibling).toBe(a);
+        expect(a.nextSibling).toBe(e);
+        expect(e.previousSibling).toBe(a);
+      })
     })
     describe("when objects are stack based observable objects", function() {
       it ("should make the inserted objects link to previous and next object", function() {

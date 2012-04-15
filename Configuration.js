@@ -34,7 +34,8 @@ Configuration.sets = {
       'Block',
       'Interpolation',
       'Parser',
-      'Script'
+      'Script',
+      'Data'
     ]
   },
   'type': {

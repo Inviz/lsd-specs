@@ -20,7 +20,7 @@ LSD.Factory.Document = function(fresh) {
 };
 
 LSD.Factory.Type = function() {
-  var type = new LSD.Properties;
+  var type = LSD;
   for (var i = 0, j = arguments.length; i < j; i++) {
     var arg = arguments[i];
     if (typeof arg == 'string') {
@@ -106,5 +106,4 @@ Object.each(LSD.Factory.Options, function(value, key) {
 
 if (typeof jasmine != "undefined")
   Factory = LSD.Factory;
-
 
