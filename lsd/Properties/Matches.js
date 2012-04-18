@@ -342,19 +342,32 @@ describe("LSD.Properties.Matches", function() {
           parent.appendChild(c);
           parent.appendChild(b2);
           parent.appendChild(d);
+          expect(d.matches._results['!~']['b'][0]).toBe(b2);
+          expect(d.matches._results['!~']['b'][1]).toBe(b1);
           expect(index).toEqual(2);
           b2.set('tagName', 'hr')
+          expect(d.matches._results['!~']['b'][0]).toBe(b1);
+          expect(d.matches._results['!~']['b'].length).toEqual(1);
           expect(index).toEqual(1);
           b1.set('tagName', 'h1')
+          expect(d.matches._results['!~']['b'].length).toEqual(0);
           expect(index).toEqual(0);
           b2.set('tagName', 'b')
           expect(index).toEqual(1);
+          expect(d.matches._results['!~']['b'][0]).toBe(b2);
+          expect(d.matches._results['!~']['b'].length).toEqual(1);
           c.appendChild(b1);
           b1.set('tagName', 'b')
           expect(index).toEqual(1);
+          expect(d.matches._results['!~']['b'][0]).toBe(b2);
+          expect(d.matches._results['!~']['b'].length).toEqual(1);
           parent.insertBefore(b1, d);
+          expect(d.matches._results['!~']['b'][0]).toBe(b2);
+          expect(d.matches._results['!~']['b'][1]).toBe(b1);
+          expect(d.matches._results['!~']['b'].length).toEqual(2);
           expect(index).toEqual(2);
           parent.appendChild(b1)
+          expect(d.matches._results['!~']['b'][0]).toBe(b2);
           expect(index).toEqual(1);
           b1.set('tagName', 'a')
           expect(index).toEqual(1);
@@ -363,17 +376,16 @@ describe("LSD.Properties.Matches", function() {
           b1.set('tagName', 'b')
           expect(index).toEqual(1);
           parent.insertBefore(b1, d);
+          expect(d.matches._results['!~']['b'][0]).toBe(b2);
+          expect(d.matches._results['!~']['b'][1]).toBe(b1);
           expect(index).toEqual(2);
-          console.error(a.matches._results['~']['b'].slice())
-          expect(d.matches._results['!~']['b'].length).toEqual(2);
-          console.log(parent.childNodes.slice(), 55555)
           parent.childNodes.splice(1, 2)
+          expect(d.matches._results['!~']['b'][0]).toBe(b1);
           expect(d.matches._results['!~']['b'].length).toEqual(1);
-          console.log(parent.childNodes.slice(), 55)
           expect(index).toEqual(1);
-          //parent.childNodes.splice(1, 2)
-          //expect(index).toEqual(0);
-          //expect(d.matches._results['!~']['b'].length).toEqual(0);
+          parent.childNodes.splice(1, 2)
+          expect(index).toEqual(0);
+          expect(d.matches._results['!~']['b'].length).toEqual(0);
         })
       })
       describe('~~ combinator', function() {

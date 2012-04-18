@@ -274,7 +274,6 @@ describe("LSD.Interpolation", function() {
     var element = document.createElement('div');
     element.innerHTML = html;
     var widget = new LSD.Element(element);
-    console.dir(widget.childNodes[0], element.childNodes[0])
     expect(widget.childNodes[0].textContent).toBeUndefined()
     var item = new LSD.Element('item');
     widget.appendChild(item);

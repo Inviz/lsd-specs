@@ -26,34 +26,34 @@ describe("LSD.ChildNodes", function() {
         expect(a.nextSibling).toBeNull();
         expect(a.previousSibling).toBeNull();
         children.push(b); //ab
-        expect(a.nextSibling).toEqual(b);
+        expect(a.nextSibling).toBe(b);
         expect(a.previousSibling).toBeNull();
         expect(b.nextSibling).toBeNull();
-        expect(b.previousSibling).toEqual(a);
+        expect(b.previousSibling).toBe(a);
         children.push(c); //abc
-        expect(a.nextSibling).toEqual(b);
+        expect(a.nextSibling).toBe(b);
         expect(a.previousSibling).toBeNull();
-        expect(b.nextSibling).toEqual(c);
-        expect(b.previousSibling).toEqual(a);
+        expect(b.nextSibling).toBe(c);
+        expect(b.previousSibling).toBe(a);
         expect(c.nextSibling).toBeNull();
         expect(c.previousSibling).toEqual(b);
         children.unshift(d); //dabc
-        expect(a.nextSibling).toEqual(b);
+        expect(a.nextSibling).toBe(b);
         expect(a.previousSibling).toEqual(d);
-        expect(b.nextSibling).toEqual(c);
+        expect(b.nextSibling).toBe(c);
         expect(b.previousSibling).toEqual(a);
         expect(c.nextSibling).toBeNull();
         expect(c.previousSibling).toEqual(b);
-        expect(d.nextSibling).toEqual(a);
+        expect(d.nextSibling).toBe(a);
         expect(d.previousSibling).toBeNull();
         children.erase(b); //dac
-        expect(a.nextSibling).toEqual(c);
-        expect(a.previousSibling).toEqual(d);
+        expect(a.nextSibling).toBe(c);
+        expect(a.previousSibling).toBe(d);
         expect(b.nextSibling).toBeUndefined();
         expect(b.previousSibling).toBeUndefined();
         expect(c.nextSibling).toBeNull();
-        expect(c.previousSibling).toEqual(a);
-        expect(d.nextSibling).toEqual(a);
+        expect(c.previousSibling).toBe(a);
+        expect(d.nextSibling).toBe(a);
         expect(d.previousSibling).toBeNull();
         children.pop(); //da
         expect(a.nextSibling).toBeNull()
@@ -142,6 +142,8 @@ describe("LSD.ChildNodes", function() {
         var c = new LSD.Object({id: 'c'});
         var d = new LSD.Object({id: 'd'});
         var e = new LSD.Object({id: 'e'});
+        var ap = 0, an = 0;
+        a.watch('previousSibling', function(value, old) { ap += value ? 1 : -1; })
         children.push(a, e);
         expect(a.nextSibling).toBe(e);
         expect(e.previousSibling).toBe(a);
@@ -152,7 +154,6 @@ describe("LSD.ChildNodes", function() {
         expect(b.previousSibling).toBe(a);
         expect(d.nextSibling).toBe(e);
         expect(e.previousSibling).toBe(d);
-        console.error(123123)
         children.splice(1, 3)
         expect(b.nextSibling).toBeUndefined();
         expect(b.previousSibling).toBeUndefined();
@@ -225,6 +226,92 @@ describe("LSD.ChildNodes", function() {
         expect(a.nextSibling).toBeUndefined()
         expect(a.previousSibling).toBeUndefined();
       });
+      
+      it ('should maintain nextElementSibling/previousElementSibling links', function() {
+        var children = new LSD.ChildNodes;
+        var a = new LSD.Journal({id: 'a', nodeType: 1});
+        var b = new LSD.Journal({id: 'b', nodeType: 1});;
+        var c = new LSD.Journal({id: 'c', nodeType: 1});;
+        var d = new LSD.Journal({id: 'd', nodeType: 1});;
+        var x = new LSD.Journal({id: 'x'});
+        var y = new LSD.Journal({id: 'y'});
+        var z = new LSD.Journal({id: 'z'});
+        var index = 0, count = 0
+        for (var nodes = [a,b,c,d], node, i = 0; node = nodes[i++];) {
+          node.watch('nextElementSibling', function(value, old, memo) {
+            if (value != null) index++;
+            if (old != null) index --;
+            count++;
+          });
+          node.watch('previousElementSibling', function(value, old, memo) {
+            if (value != null) index++;
+            if (old != null) index --;
+            count++;
+          });
+        }
+        children.push(a);
+        expect(a.nextElementSibling).toBeUndefined();
+        children.push(x);
+        expect(a.nextElementSibling).toBeUndefined();
+        expect(count).toEqual(0)
+        expect(index).toEqual(0);
+        children.push(b);
+        expect(a.nextElementSibling).toBe(b);
+        expect(b.previousElementSibling).toBe(a);
+        expect(b.nextElementSibling).toBeUndefined();
+        expect(index).toEqual(2);
+        expect(count).toEqual(2)
+        children.push(c);
+        expect(c.previousElementSibling).toBe(b);
+        expect(b.nextElementSibling).toBe(c)
+        expect(c.nextElementSibling).toBeUndefined();
+        expect(index).toEqual(4);
+        expect(count).toEqual(4)
+        children.push(y);
+        expect(c.nextElementSibling).toBeUndefined();
+        children.push(z);
+        expect(c.nextElementSibling).toBeUndefined();
+        children.push(d);
+        expect(index).toEqual(6);
+        expect(count).toEqual(6)
+        expect(c.nextElementSibling).toBe(d);
+        children.splice(0, 1);
+        expect(index).toEqual(4);
+        expect(count).toEqual(8)
+        expect(a.nextElementSibling).toBeUndefined();
+        expect(b.previousElementSibling).toBeUndefined();
+        children.unshift(a);
+        expect(a.nextElementSibling).toBe(b);
+        expect(b.previousElementSibling).toBe(a);
+        expect(index).toEqual(6);
+        expect(count).toEqual(10)
+        children.splice(0, 3);
+        expect(index).toEqual(2);
+        expect(count).toEqual(14)
+        expect(a.nextElementSibling).toBeUndefined();
+        expect(a.previousElementSibling).toBeUndefined();
+        expect(b.nextElementSibling).toBeUndefined();
+        expect(b.previousElementSibling).toBeUndefined();
+        expect(c.previousElementSibling).toBeUndefined();
+        expect(c.nextElementSibling).toBe(d);
+        children.splice(2, 0, a, b)
+        expect(c.nextElementSibling).toEqual(a);
+        expect(a.previousElementSibling).toEqual(c);
+        expect(a.nextElementSibling).toEqual(b);
+        expect(b.previousElementSibling).toEqual(a);
+        expect(b.nextElementSibling).toEqual(d);
+        expect(d.previousElementSibling).toEqual(b);
+        expect(d.nextElementSibling).toBeUndefined()
+        expect(index).toEqual(6);
+        expect(count).toEqual(20)
+        children.shift();
+        expect(index).toEqual(4);
+        expect(count).toEqual(22)
+        window.ololo = true;
+        children.splice(0, 1, c)
+        expect(index).toEqual(6);
+        expect(count).toEqual(24)
+      })
       
       it ("should maintain first/last links", function() {
         var children = new LSD.ChildNodes;
