@@ -450,20 +450,20 @@ describe("LSD.ChildNodes", function() {
         expect(parent.childNodes.slice()).toEqual([e, fragment, a, b, d])
         subfragment.childNodes.push(c);
         fragment.childNodes.push(subfragment)
-        expect(parent.childNodes[0]).toEqual(e);
-        expect(parent.childNodes[1]).toEqual(fragment);
-        expect(parent.childNodes[2]).toEqual(a);
-        expect(parent.childNodes[3]).toEqual(b);
-        expect(parent.childNodes[4]).toEqual(subfragment);
-        expect(parent.childNodes[5]).toEqual(c);
-        expect(parent.childNodes[6]).toEqual(d);
+        expect(parent.childNodes[0]).toBe(e);
+        expect(parent.childNodes[1]).toBe(fragment);
+        expect(parent.childNodes[2]).toBe(a);
+        expect(parent.childNodes[3]).toBe(b);
+        expect(parent.childNodes[4]).toBe(subfragment);
+        expect(parent.childNodes[5]).toBe(c);
+        expect(parent.childNodes[6]).toBe(d);
         subfragment.childNodes.pop();
-        expect(parent.childNodes[0]).toEqual(e);
-        expect(parent.childNodes[1]).toEqual(fragment);
-        expect(parent.childNodes[2]).toEqual(a);
-        expect(parent.childNodes[3]).toEqual(b);
-        expect(parent.childNodes[4]).toEqual(subfragment);
-        expect(parent.childNodes[6]).toEqual(d);
+        expect(parent.childNodes[0]).toBe(e);
+        expect(parent.childNodes[1]).toBe(fragment);
+        expect(parent.childNodes[2]).toBe(a);
+        expect(parent.childNodes[3]).toBe(b);
+        expect(parent.childNodes[4]).toBe(subfragment);
+        expect(parent.childNodes[5]).toBe(d);
       })
     })
   })

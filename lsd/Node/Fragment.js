@@ -280,7 +280,7 @@ describe("LSD.Fragment", function() {
       });
     })
     describe('when operated like a node', function() {
-      it ('should be able to append nodes', function() {
+      it ('should be able to append and remove nodes', function() {
         var parent = new LSD.Element('parent');
         var a = new LSD.Element('a');
         var b = new LSD.Element('b');
@@ -288,9 +288,10 @@ describe("LSD.Fragment", function() {
         var d = new LSD.Element('d');
         var e = new LSD.Element('e');
         var fragment = new LSD.Fragment(c, d);
-        //console.log(fragment.slice(), c.parentNode, d.parentNode)
         parent.appendChild(a);
+        expect(parent.childNodes.length).toBe(1);
         parent.appendChild(fragment);
+        expect(parent.childNodes.length).toBe(4);
         expect(a.previousSibling).toBeNull()
         expect(a.nextSibling).toBe(fragment);
         expect(fragment.previousSibling).toBe(a);
@@ -308,6 +309,19 @@ describe("LSD.Fragment", function() {
         expect(parent.childNodes.slice()).toEqual([a, fragment, c, d, e])
         parent.removeChild(fragment);
         expect(parent.childNodes.slice()).toEqual([a, e])
+        expect(a.previousElementSibling).toBeUndefined();
+        expect(e.previousElementSibling).toBe(a);
+        expect(a.nextElementSibling).toBe(e);
+        expect(e.nextElementSibling).toBeUndefined();
+        expect(parent.childNodes.length).toEqual(2);
+        parent.insertBefore(fragment, e);
+        expect(parent.childNodes.length).toEqual(5);
+        expect(a.nextElementSibling).toBe(c);
+        expect(c.previousElementSibling).toBe(a);
+        expect(e.previousElementSibling).toBe(d)
+        fragment.removeChild(d)
+        expect(c.previousElementSibling).toBe(a);
+        expect(e.previousElementSibling).toBe(c)
       })
       it ('should be able to remove nodes', function() {
         
