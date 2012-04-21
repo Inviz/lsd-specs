@@ -68,7 +68,6 @@ describe("LSD.Script.Block", function() {
     scope.set('organization', 'Overmind');
     expect(count).toEqual(13);
     expect(script.value).toEqual(['MICHAEL Overmind', 'YAROSLAFF OrceoUI'])
-    window.$spliced = true;
     ary.splice(0, 0, spliced[0]);
     expect(count).toEqual(16);
     expect(ary.length).toEqual(3)

@@ -310,9 +310,13 @@ describe("LSD.Script.Function", function() {
         });
         describe("that iterates over element collection", function() {
           it ("should not change context", function() {
-            var local = new LSD.Element({attributes: {title: 'LSD'}});
+            var local = new LSD.Journal;
             local.set('items', ['L', 'S', 'D'])
-            var script = LSD.Script('items.map { getAttribute("title") }', local)
+            var script = LSD.Script('items.map { |a| a.toLowerCase() }', local)
+            expect(script.value).toEqual(['l', 's', 'd'])
+            local.set('items', ['D', 'S', 'L'])
+            expect(script.value).toEqual(['d', 's', 'l'])
+            
           })
         });
       })
@@ -327,10 +331,15 @@ describe("LSD.Script.Function", function() {
             new LSD.Element({attributes: {title: 'D'}})
           ];
           local.set('items', items)
-          var script = LSD.Script('items.each { |item| item.attributes.set("food", "borscht")}', local)
+          local.set('name', 'borscht')
+          var script = LSD.Script('items.each { |item| item.attributes.set("food", name)}', local)
           expect(items.every(function(item) { 
             return item.attributes.food == 'borscht'
           })).toBeTruthy()
+          //local.set('name', 'mashed potato');
+          //expect(items.every(function(item) { 
+          //  return item.attributes.food == 'mashed potato'
+          //})).toBeTruthy()
         })
       })
     })

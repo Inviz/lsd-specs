@@ -92,7 +92,6 @@ describe("LSD.ChildNodes", function() {
         children.push(d); //bacd
         expect(object.firstChild).toEqual(b);
         expect(object.lastChild).toEqual(d);
-        window.z = 1;
         children.shift(); //cad
         expect(object.firstChild).toEqual(c);
         expect(object.lastChild).toEqual(d);
