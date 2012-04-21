@@ -309,10 +309,10 @@ describe("LSD.Fragment", function() {
         expect(parent.childNodes.slice()).toEqual([a, fragment, c, d, e])
         parent.removeChild(fragment);
         expect(parent.childNodes.slice()).toEqual([a, e])
-        expect(a.previousElementSibling).toBeUndefined();
+        expect(a.previousElementSibling).toBeNull();
         expect(e.previousElementSibling).toBe(a);
         expect(a.nextElementSibling).toBe(e);
-        expect(e.nextElementSibling).toBeUndefined();
+        expect(e.nextElementSibling).toBeNull();
         expect(parent.childNodes.length).toEqual(2);
         parent.insertBefore(fragment, e);
         expect(parent.childNodes.length).toEqual(5);
@@ -322,6 +322,17 @@ describe("LSD.Fragment", function() {
         fragment.removeChild(d)
         expect(c.previousElementSibling).toBe(a);
         expect(e.previousElementSibling).toBe(c)
+        parent.childNodes.splice(1, 1)
+        expect(a.previousElementSibling).toBeNull();
+        expect(e.previousElementSibling).toBe(a);
+        expect(a.nextElementSibling).toBe(e);
+        expect(e.nextElementSibling).toBeNull();
+        parent.childNodes.splice(1, 0, fragment)
+        expect(c.previousElementSibling).toBe(a);
+        expect(e.previousElementSibling).toBe(c)
+        parent.childNodes.splice(1, 2)
+        expect(e.previousElementSibling).toBe(a);
+        expect(a.nextElementSibling).toBe(e);
       })
       it ('should be able to remove nodes', function() {
         

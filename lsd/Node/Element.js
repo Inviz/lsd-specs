@@ -185,7 +185,7 @@ describe('LSD.Element', function() {
               expect(widget.attributes.title).toBeUndefined();
               widget.variables.set('condition', true)
               expect(widget.attributes.title).toBe('Jeeezos chr0ss');
-              widget.variables.set('object', {title: 'Jeeezos chr0sZ'})
+              widget.variables.set('object', {title: 'Jeeezos chr0ssZ'})
               expect(widget.attributes.title).toBe('Jeeezos chr0ssZ');
               widget.unset('origin', element);
               expect(widget.attributes.title).toBeUndefined();
@@ -245,15 +245,15 @@ describe('LSD.Element', function() {
           expect(b.sourceIndex).toEqual(1);
           expect(bb.sourceIndex).toEqual(2);
           expect(d.sourceIndex).toEqual(3);
-          expect(b.previousElementSibling).toBeUndefined()
+          expect(b.previousElementSibling).toBeNull()
           expect(b.nextElementSibling).toBe(d)
           expect(b._journal.nextElementSibling.length).toBe(1)
           a.childNodes.shift() // d
           expect(b.parentNode).toBeUndefined()
           expect(b.previousSibling).toBeNull()
           expect(b.nextSibling).toBeNull()
-          expect(b.previousElementSibling).toBeUndefined()
-          expect(b.nextElementSibling).toBeUndefined()
+          expect(b.previousElementSibling).toBeNull()
+          expect(b.nextElementSibling).toBeNull()
           expect(d.sourceIndex).toEqual(1);
           a.childNodes.push(b) // d, b[bb]
           expect(b.sourceIndex).toEqual(2);
