@@ -37,9 +37,16 @@ describe('LSD.Relation', function() {
       expect(relation.slice()).toEqual([b])
       a.set('tagName', 'a');
       expect(relation.slice()).toEqual([a, b])
-      parent.unset('related', parent.related);
+      parent.unset('related', relation);
       expect(relation._owner).toBeUndefined()
       expect(relation.slice()).toEqual([])
+      parent.set('related', relation)
+      expect(relation._owner).toBe(parent)
+      expect(relation.slice()).toEqual([a, b])
+      b.set('tagName', 'b')
+      expect(relation.slice()).toEqual([a])
+      relation.change('match', 'b')
+      expect(relation.slice()).toEqual([b])
     });
   })
 });
