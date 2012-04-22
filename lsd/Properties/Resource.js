@@ -404,10 +404,10 @@ describe("LSD.Type.Resource", function() {
                           }
                         }
                       });
-                      var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                      var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                       expect(result.url).toEqual('/jeebles.cgi')
-                      expect(result.id).toEqual('destroy_of_the_worlds');
-                      expect(result.screen_name).toEqual('destroy_of_the_worlds');
+                      expect(result.id).toEqual('destroyer_of_the_worlds');
+                      expect(result.screen_name).toEqual('destroyer_of_the_worlds');
                       expect(result.key).toEqual('123');
                       expect(result.yek).toEqual('321');
                       expect(result.uid).toBeUndefined()
