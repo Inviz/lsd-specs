@@ -77,11 +77,11 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Gold, lawd');
             fragment.childNodes[0].variables.change('metal', 'Silver')
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, Silver, lawd');
-            //fragment.childNodes[0].variables.unset('metal', 'Silver')
-            //expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
+            fragment.childNodes[0].variables.unset('metal', 'Silver')
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
           })
           xit ("should parse interpolations", function() {
-            var fragment = new LSD.Fragment('<section ${jungalo: dang}');
+            var fragment = new LSD.Fragment('<section ${jungalo: dang}></section>');
             expect(fragment.childNodes[0].nodeType).toEqual(1);
             expect(fragment.childNodes[0].nodeName).toEqual('b');
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('Oh, ${metal}, lawd');
@@ -101,9 +101,42 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[2].nodeType).toEqual(7);
             expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
             expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[4]);
+            expect(fragment.variables).toBeUndefined()
+            var parent = new LSD.Element;
+            parent.appendChild(fragment);
+            expect(parent.childNodes[2].nodeType).toEqual(7);
+            expect(parent.childNodes[3].nodeType).toEqual(3);
+            expect(parent.childNodes[4].nodeType).toEqual(7);
+            expect(parent.textContent).toBe('2')
+            parent.variables.set('a', 2)
+            expect(parent.textContent).toBe('1')
+            expect(fragment.variables).toBe(parent.variables);
+            expect(fragment.parentNode).toBe(parent);
+            expect(fragment.childNodes[0].variables).toBe(parent.variables);
+            expect(fragment.childNodes[1].variables).toBe(parent.variables);
+            expect(parent.childNodes[2].fragment).toBe(parent.childNodes[1])
+            expect(parent.childNodes[2].fragment.parentCollection).toBe(fragment)
+            expect(parent.childNodes[2].nodeType).toEqual(3);
+            expect(parent.childNodes[3].nodeType).toEqual(7);
+            expect(parent.childNodes[4].nodeType).toEqual(7);
+            parent.variables.set('a', 0)
+            expect(parent.textContent).toBe('2')
+            expect(parent.childNodes[2].nodeType).toEqual(7);
+            expect(parent.childNodes[3].nodeType).toEqual(3);
+            expect(parent.childNodes[4].nodeType).toEqual(7);
+            parent.variables.set('a', 2)
+            expect(parent.textContent).toBe('1')
+            expect(parent.childNodes[2].nodeType).toEqual(3);
+            expect(parent.childNodes[3].nodeType).toEqual(7);
+            expect(parent.childNodes[4].nodeType).toEqual(7);
+            parent.variables.set('a', 0)
+            expect(parent.textContent).toBe('2')
+            expect(parent.childNodes[2].nodeType).toEqual(7);
+            expect(parent.childNodes[3].nodeType).toEqual(3);
+            expect(parent.childNodes[4].nodeType).toEqual(7);
           });
           it ("should recognize nested conditional branches in HTML and render widgets accordingly", function() {
-            var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--else if c -->3<!--else-->4<!--end--><!--end-->');
+            var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--elsif c -->3<!--else-->4<!--end--><!--end-->');
             expect(fragment.childNodes[0].nodeType).toEqual(7);
             expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
             expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
@@ -117,7 +150,96 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[5].previous).toEqual(fragment.childNodes[3]);
             expect(fragment.childNodes[5].next).toEqual(fragment.childNodes[7]);
             expect(fragment.childNodes[7].next).toEqual(fragment.childNodes[9]);
+            var parent = new LSD.Element;
+            parent.appendChild(fragment);
+            expect(parent.childNodes[0].nodeType).toBe(11)
+            expect(parent.childNodes[1].nodeType).toBe(7)
+            expect(parent.childNodes[2].nodeType).toBe(7)
+            expect(parent.childNodes[3].nodeType).toBe(7)
+            expect(parent.childNodes[4].nodeType).toBe(7)
+            expect(parent.textContent).toBe('4')
+            parent.variables.set('b', true)
+            expect(parent.textContent).toBe('2')
+            parent.variables.set('c', true)
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('b', true)
+            expect(parent.textContent).toBe('3')
+            parent.variables.set('a', true)
+            expect(parent.textContent).toBe('1')
+            parent.variables.unset('a', true);
+            expect(parent.textContent).toBe('3')
+            parent.variables.unset('c', true)
+            expect(parent.textContent).toBe('4')
+            parent.variables.set('a', true)
+            expect(parent.textContent).toBe('1')
+            parent.variables.set('b', true)
+            expect(parent.textContent).toBe('1')
+            parent.variables.unset('a', true);
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('b', true);
+            expect(parent.textContent).toBe('4')
+            parent.variables.set('c', true);
+            expect(parent.textContent).toBe('3')
+            parent.variables.set('b', true);
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('c', true);
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('b', true);
+            expect(parent.textContent).toBe('4')
           });
+          it ("should recognize nested conditional branches in HTML and render widgets accordingly", function() {
+            var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--elsif c -->3<!--else-->4<!--end--><!--end--><!--if a-->1<!--else--><!--if b -->2<!--elsif c -->3<!--else-->4<!--end--><!--end-->');
+            expect(fragment.childNodes[0].nodeType).toEqual(7);
+            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
+            expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
+            expect(fragment.childNodes[1].nodeType).toEqual(3);
+            expect(fragment.childNodes[2].nodeType).toEqual(7);
+            expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
+            expect(fragment.childNodes[2].previous).toEqual(fragment.childNodes[0]);
+            expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[10]);
+            expect(fragment.childNodes[10].previous).toEqual(fragment.childNodes[2]);
+            expect(fragment.childNodes[3].next).toEqual(fragment.childNodes[5]);
+            expect(fragment.childNodes[5].previous).toEqual(fragment.childNodes[3]);
+            expect(fragment.childNodes[5].next).toEqual(fragment.childNodes[7]);
+            expect(fragment.childNodes[7].next).toEqual(fragment.childNodes[9]);
+            var parent = new LSD.Element;
+            parent.appendChild(fragment);
+            expect(parent.childNodes[0].nodeType).toBe(11)
+            expect(parent.childNodes[1].nodeType).toBe(7)
+            expect(parent.childNodes[2].nodeType).toBe(7)
+            expect(parent.childNodes[3].nodeType).toBe(7)
+            expect(parent.childNodes[4].nodeType).toBe(7)
+            expect(parent.textContent).toBe('44')
+            parent.variables.set('b', true)
+            expect(parent.textContent).toBe('22')
+            parent.variables.set('c', true)
+            expect(parent.textContent).toBe('22')
+            parent.variables.unset('b', true)
+            expect(parent.textContent).toBe('33')
+            parent.variables.set('a', true)
+            expect(parent.textContent).toBe('11')
+            parent.variables.unset('a', true);
+            expect(parent.textContent).toBe('33')
+            parent.variables.unset('c', true)
+            expect(parent.textContent).toBe('44')
+            parent.variables.set('a', true)
+            expect(parent.textContent).toBe('11')
+            parent.variables.set('b', true)
+            expect(parent.textContent).toBe('11')
+            parent.variables.unset('a', true);
+            expect(parent.textContent).toBe('22')
+            parent.variables.unset('b', true);
+            expect(parent.textContent).toBe('44')
+            parent.variables.set('c', true);
+            expect(parent.textContent).toBe('33')
+            parent.variables.set('b', true);
+            expect(parent.textContent).toBe('22')
+            parent.variables.unset('c', true);
+            expect(parent.textContent).toBe('22')
+            parent.variables.unset('b', true);
+            expect(parent.textContent).toBe('44')
+          });
+          
         })
       })
     })
@@ -335,10 +457,51 @@ describe("LSD.Fragment", function() {
         expect(a.nextElementSibling).toBe(e);
       })
       it ('should be able to remove nodes', function() {
-        
+        var parent = new LSD.Element;
+        var a = new LSD.Element;
+        var b = new LSD.Element;
+        var x = new LSD.Element;
+        var z = new LSD.Element;
+        var f1 = new LSD.Fragment(a, b);
+        parent.appendChild(x);
+        parent.appendChild(f1);
+        parent.appendChild(z);
+        f1.removeChild(a);
+        expect(x.nextSibling).toBe(f1);
+        expect(f1.previousSibling).toBe(x);
+        expect(f1.nextSibling).toBe(b);
+        expect(b.previousSibling).toBe(f1);
+        expect(x.nextElementSibling).toBe(b);
+        expect(b.previousElementSibling).toBe(x);
+        expect(b.nextElementSibling).toBe(z);
+        expect(z.previousElementSibling).toBe(b);
       })
       it ('should be able to replace nodes', function() {
-        
+        var parent = new LSD.Element;
+        var a = new LSD.Element;
+        var b = new LSD.Element;
+        var c = new LSD.Element;
+        var d = new LSD.Element;
+        var e = new LSD.Element;
+        var x = new LSD.Element;
+        var z = new LSD.Element;
+        var f1 = new LSD.Fragment(a, b);
+        var f2 = new LSD.Fragment(c, d);
+        parent.appendChild(x);
+        parent.appendChild(f1);
+        parent.appendChild(z);
+        expect(x.nextElementSibling).toBe(a);
+        expect(a.previousElementSibling).toBe(x);
+        expect(b.nextElementSibling).toBe(z);
+        expect(z.previousElementSibling).toBe(b);
+        f1.replaceChild(e, a)
+        expect(f1.childNodes[0]).toBe(e)
+        expect(x.nextElementSibling).toBe(e);
+        expect(e.previousElementSibling).toBe(x);
+        expect(e.nextElementSibling).toBe(b);
+        expect(b.previousElementSibling).toBe(e);
+        expect(a.nextElementSibling).toBeNull();
+        expect(a.previousElementSibling).toBeNull();
       })
     })
   })

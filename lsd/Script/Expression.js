@@ -138,14 +138,12 @@ describe('LSD.Script.Expression', function() {
       invent.onFailure('I was drunk')
       expect(script.value).toEqual('$$$ Stole invention because I was drunk');
       script.prepiped = 1;
-      delete script.executed;
-      script.set('executed', true);
+      script.execute(true)
       expect(script.value).toBeNull()
       invent.onSuccess('Fair invention')
       expect(script.value).toEqual('$$$ Fair invention');
       script.prepiped = 2;
-      delete script.executed;
-      script.set('executed', true);
+      script.execute(true);
       expect(script.value).toBeNull()
       invent.onFailure('Dog ate my homework')
       expect(script.value).toEqual('$$$ Stole invention because Dog ate my homework');
@@ -178,14 +176,12 @@ describe('LSD.Script.Expression', function() {
       invent.onFailure('I was drunk')
       expect(script.value).toEqual('$$$ Stole invention because I was drunk');
       script.prepiped = 1;
-      delete script.executed;
-      script.set('executed', true);
+      script.execute(true)
       expect(script.value).toBeNull()
       invent.onSuccess('Fair invention')
       expect(script.value).toEqual('$$$ Fair invention');
       script.prepiped = 2;
-      delete script.executed;
-      script.set('executed', true);
+      script.execute(true)
       expect(script.value).toBeNull()
       invent.onFailure('Dog ate my homework')
       expect(script.value).toEqual('$$$ Stole invention because Dog ate my homework');
@@ -277,16 +273,14 @@ describe('LSD.Script.Expression', function() {
       expect(advice.value).toEqual('Error: HiJack... Boom');
       expect(errors).toEqual(1);
       advice.piped = advice.prepiped = 'Oh! ';
-      delete advice.executed;
-      delete advice.evaluated;
-      advice.set('executed', true);
+      script.execute(true)
       expect(advice.value).toBeNull()
       submit.onSuccess(submit.data + 'Jackie');
       expect(advice.value).toEqual('Oh! HiJackie... Boom');
       expect(errors).toEqual(0);
     })
     
-    it ("should be able to stack multiple scripts together and make one handle failures in another", function() {
+    it ("should be able to stack multiple scripts together and make one handle failures in another with parenthesis-free syntax", function() {
       var scope = new LSD.Journal({methods: {}});
       var submit = Object.append(new Chain, new Events);
       submit.onFailure = function(){ 
@@ -333,12 +327,10 @@ describe('LSD.Script.Expression', function() {
       expect(advice.value).toEqual('Error: HiJack... Boom');
       expect(errors).toEqual(1);
       advice.piped = advice.prepiped = 'Oh! ';
-      delete advice.executed;
-      advice.set('executed', true);
+      advice.execute(true)
       expect(advice.value).toBeNull()
       submit.onSuccess(submit.data + 'Jackie');
       expect(advice.value).toEqual('Oh! HiJackie... Boom');
-      expect(errors).toEqual(0);
     })
   })
 })

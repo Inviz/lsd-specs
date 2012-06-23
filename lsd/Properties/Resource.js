@@ -395,7 +395,7 @@ describe("LSD.Type.Resource", function() {
                       expect(result.uid).toBeUndefined()
                     });
                   })
-                  describe('and some params are given around', function() {
+                  describe('and some params are given', function() {
                     it ("should include param that matches the type and include additional params", function() {
                       var resource = new LSD.Resource({
                         customers: {

@@ -2,7 +2,7 @@ describe('LSD.RegExp', function() {
   var big = {
     'block_arguments': '[^|]*',
     'block_body': '<inside_curlies>*',
-    'block': '\\{(?:\\s*\\|\\s*(<block_arguments>)\\s*\\|\\s*)?(<block_body>)\\}',
+    'block': '\\{(?:\\s*\\|\\s*(<block_arguments>)\\s*\\|\\s*)(<block_body>)\\}',
     
     'fn_tail': '\\.',
     'fn_arguments': '<inside_parens>*',
@@ -189,7 +189,7 @@ describe('LSD.RegExp', function() {
     it ('should be able to parse blocks', function() {
       var re = new LSD.RegExp(big, {
         block: function(args, body) {
-          return [this.exec(args), body && this.exec(body)]
+          return [args && this.exec(args), body && this.exec(body)]
         },
         token: function(tail, name) {
           return name;
@@ -292,11 +292,11 @@ describe('LSD.Styles.Parser', function() {
     //two arrays instead of one
     'normal normal 3px/5pt Georgia, "Times New Roman"': [['normal', 'normal', {number: 3, unit: 'px'}, '/', {number: 5, unit: 'pt'}, 'Georgia'], ['Times New Roman']]
   };
-  Object.each(Examples, function(value, key) {
+  for (var key in Examples) !function(value, key) {
     it ('should parse ' + key, function() {
       expect(LSD.Styles.Parser.exec(key)).toEqual(value)
     })
-  });
+  }.call(this, Examples[key], key)
 });
 
 describe('LSD.Styles.Property', function() {
@@ -362,7 +362,7 @@ describe('LSD.Styles.Property', function() {
     
       '1.3% solid hsb(0, 0, 30, 30)': false,    
       '1em soled rgba(1,1,1, 0.5)': false,    
-      '1em solid #cccccz': false,   
+      '1em solid #cccccz': false
       //'1 solid #ccc': false,    //unitless length is valid now
   //    '3px solid black': {borderTopWidth: Type.length(3, 'px'), borderTopStyle: 'solid', borderTopColor: 'black'},
     },
@@ -389,7 +389,7 @@ describe('LSD.Styles.Property', function() {
       '4px': {marginTop: Type.length(4, 'px'), marginRight: Type.length(4, 'px'), marginBottom: Type.length(4, 'px'), marginLeft: Type.length(4, 'px')},
       '50% 4px': {marginTop: Type.length(50, '%'), marginRight: Type.length(4, 'px'), marginBottom: Type.length(50, '%'), marginLeft: Type.length(4, 'px')},
       '4px 4px 4px': {marginTop: Type.length(4, 'px'), marginRight: Type.length(4, 'px'), marginBottom: Type.length(4, 'px'), marginLeft: Type.length(4, 'px')},
-      '4px -4fr 4px 4px': {marginTop: Type.length(4, 'px'), marginRight: Type.length(-4, 'fr'), marginBottom: Type.length(4, 'px'), marginLeft: Type.length(4, 'px')},
+      '4px -4fr 4px 4px': {marginTop: Type.length(4, 'px'), marginRight: Type.length(-4, 'fr'), marginBottom: Type.length(4, 'px'), marginLeft: Type.length(4, 'px')}
     },
     
     border: {
@@ -434,7 +434,7 @@ describe('LSD.Styles.Property', function() {
         borderLeftWidth: Type.length(2, 'px'), 
         borderLeftStyle: 'solid', 
         borderLeftColor: Type.color("#ccc")
-      },
+      }
     },
     
     background: {
@@ -537,17 +537,16 @@ describe('LSD.Styles.Property', function() {
       '4pz': false
     }
   }
-  Object.each(Examples, function(examples, property) {
+  for (var key in Examples) !function(examples, property) {
     describe ('#' + property, function() {
-      Object.each(examples, function(output, input) {
+      for (var k in examples) !function(output, input) {
         it('should parse ' + input, function() {
           var value = LSD.Styles.Parser.exec(input);
           expect(LSD.Styles[property][value && value.push ? 'apply' : 'call'](null, value)).toEqual(output);
         })
-      })
+      }.call(this, examples[k], k);
     })
-  });
-  
+  }.call(this, Examples[key], key);
   
   
   describe("#setStyle", function() {
@@ -806,7 +805,7 @@ describe('LSD.Styles.Property', function() {
             borderLeftWidth: '2px',
             borderLeftStyle: 'solid', 
             borderLeftColor: "#cccccc"
-          },
+          }
         },
         "and four sets of values are given": {
           property: 'border',
@@ -825,7 +824,7 @@ describe('LSD.Styles.Property', function() {
             borderLeftWidth: '4em', 
             borderLeftStyle: 'dashed', 
             borderLeftColor: "#000000"
-          },
+          }
         }
       },
       "when given property is a shortcut of non-ambiguous properties": {

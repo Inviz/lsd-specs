@@ -306,7 +306,6 @@ describe("LSD.ChildNodes", function() {
         children.shift();
         expect(index).toEqual(4);
         expect(count).toEqual(22)
-        window.ololo = true;
         children.splice(0, 1, c)
         expect(index).toEqual(6);
         expect(count).toEqual(24)

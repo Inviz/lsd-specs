@@ -172,7 +172,6 @@ describe("LSD.Properties.Attributes", function() {
     expect(instance.select).toBeFalsy();
     expect(instance._journal.checked.length).toEqual(0);
     expect(instance._journal.selected.length).toEqual(0);
-    window.$lol = true
     instance.set('checked', true);
     expect(instance.checked).toBeTruthy();
     expect(instance.selected).toBeTruthy();

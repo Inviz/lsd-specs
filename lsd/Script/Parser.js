@@ -487,7 +487,7 @@ describe('LSD.Script.Parser', function() {
     if (object.value && object.value.length) Array.each(object.value, clean);
     return object;
   }
-  Object.each(Examples, function(value, example) {
+  for (var prop in Examples) !function(value, example) {
     describe("when given expression is " + example, function() {
       it ("should parse it correctly", function() {
         if (value === false || value.exception) {
@@ -500,7 +500,7 @@ describe('LSD.Script.Parser', function() {
         }
       })
     })
-  });
+  }.call(this, Examples[prop], prop)
 });
 
 describe("LSD.Script.toJS", function() {
