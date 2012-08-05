@@ -46,7 +46,7 @@ describe("LSD.ChildNodes", function() {
         expect(c.previousSibling).toEqual(b);
         expect(d.nextSibling).toBe(a);
         expect(d.previousSibling).toBeNull();
-        children.erase(b); //dac
+        children.splice(children.indexOf(b), 1); //dac
         expect(a.nextSibling).toBe(c);
         expect(a.previousSibling).toBe(d);
         expect(b.nextSibling).toBeUndefined();
@@ -200,7 +200,7 @@ describe("LSD.ChildNodes", function() {
         expect(c.previousSibling).toEqual(b);
         expect(d.nextSibling).toEqual(a);
         expect(d.previousSibling).toBeNull();
-        children.erase(b); //dac
+        children.splice(children.indexOf(b), 1); //dac
         expect(a.nextSibling).toEqual(c);
         expect(a.previousSibling).toEqual(d);
         expect(b.nextSibling).toBeUndefined();
@@ -440,7 +440,7 @@ describe("LSD.ChildNodes", function() {
         expect(parent.childNodes.slice()).toEqual([fragment, a, e]);
         fragment.childNodes.push(b);
         expect(parent.childNodes.slice()).toEqual([fragment, a, b, e])
-        parent.childNodes.erase(fragment);
+        parent.childNodes.splice(parent.childNodes.indexOf(fragment), 1);
         expect(parent.childNodes.slice()).toEqual([e])
         parent.childNodes.push(fragment);
         expect(parent.childNodes.slice()).toEqual([e, fragment, a, b])

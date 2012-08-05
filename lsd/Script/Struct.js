@@ -419,6 +419,7 @@ describe("LSD.Struct", function() {
               }
             });
             var object = new Struct();
+            console.log(object)
             object.set('cash', 500);
             expect(object.total).toBeUndefined()
             object.set('ratio', 0.5);
@@ -430,23 +431,23 @@ describe("LSD.Struct", function() {
           })
         })
       });
-      describe('and the property is defined in exports object', function() {
-        describe('and the property is a link to another property', function() {
-          it ('should update the dynamic property when the linked property is updated', function() {
-            
-          })
-        });
-        describe('and the property is a link to a property in another object', function() {
-          it ('should update the dynamic property when the linked property is updated', function() {
-            
-          })
-        });
-        describe('and the property is a script', function() {
-          it ('should compile script, watch all variables, and update result on changes', function() {
-            
-          })
-        })
-      })
+      //describe('and the property is defined in exports object', function() {
+      //  describe('and the property is a link to another property', function() {
+      //    it ('should update the dynamic property when the linked property is updated', function() {
+      //      
+      //    })
+      //  });
+      //  describe('and the property is a link to a property in another object', function() {
+      //    it ('should update the dynamic property when the linked property is updated', function() {
+      //      
+      //    })
+      //  });
+      //  describe('and the property is a script', function() {
+      //    it ('should compile script, watch all variables, and update result on changes', function() {
+      //      
+      //    })
+      //  })
+      //})
     })
   });
   describe('Extends', function() {

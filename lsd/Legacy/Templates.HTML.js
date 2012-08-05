@@ -246,7 +246,7 @@ describe("LSD.Layout", function() {
               expect(section.childNodes.map(function(e) { return e.tagName })).toEqual(['li']);
               section.variables.set('condition', 'YES');
               expect(section.childNodes.map(function(e) { return e.tagName })).toEqual([]);
-              var nodes = Array.from(section.element.childNodes)
+              var nodes = Array.prototype.slice.call(section.element.childNodes)
               expect(section.element.childNodes.length).toEqual(4)
               section.removeLayout(null, nodes)
               expect(section.element.childNodes.length).toEqual(0)

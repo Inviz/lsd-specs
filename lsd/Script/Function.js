@@ -37,9 +37,9 @@ describe("LSD.Script.Function", function() {
       describe("and the method is set in number prototype", function() {
         it("should execute that number method", function() {
           var scope = new LSD.Journal;
-          var script = LSD.Script('round(object)', scope);
-          scope.set('object', 2.51);
-          expect(script.value).toEqual(3);
+          var script = LSD.Script('ordinalize(object)', scope);
+          scope.set('object', 2);
+          expect(script.value).toEqual('2nd');
         });
       });
       describe("and method is not set in number prototype", function() {
@@ -107,7 +107,9 @@ describe("LSD.Script.Function", function() {
         it("should execute that element method", function() {
           var scope = new LSD.Journal;
           var script = LSD.Script('getAttribute(object, "title")', scope);
-          scope.set('object', new Element('div', {title: 'Loleo'}));
+          var div = document.createElement('div');
+          div.title = 'Loleo'
+          scope.set('object', div);
           expect(script.value).toEqual('Loleo');
         });
       });
@@ -119,7 +121,9 @@ describe("LSD.Script.Function", function() {
             scope.set('getSomething', function(object, name) {
               return object.getAttribute(name)
             })
-            scope.set('object', new Element('div', {title: 'Loleo'}));
+              var div = document.createElement('div');
+              div.title = 'Loleo'
+              scope.set('object', div);
             expect(script.value).toEqual('Loleo');
           });
         });
@@ -127,7 +131,9 @@ describe("LSD.Script.Function", function() {
           it ("should not execute any method", function() {
             var scope = new LSD.Journal;
             var script = LSD.Script('void(object)', scope);
-            scope.set('object', new Element('div', {title: 'Loleo'}));
+            var div = document.createElement('div');
+            div.title = 'Loleo'
+            scope.set('object', div);
             expect(script.value).toEqual(null);
           })
         })
@@ -186,7 +192,7 @@ describe("LSD.Script.Function", function() {
       return new LSD.Element({attributes: {title: value}})
     });
     scope.set('return', function(value) {
-      return Array.from(arguments)
+      return Array.prototype.slice.call(arguments)
     });
     describe("when the pipee function doesnt have any arguments", function() {
       it("should pipe arguments from one function call to another", function() {
@@ -299,11 +305,14 @@ describe("LSD.Script.Function", function() {
         describe("that iterates over element collection", function() {
           it ("should use element as a context", function() {
             var local = new LSD.Journal(scope);
-            local.set('items', [
-              new Element('div[title=L]'),
-              new Element('div[title=S]'),
-              new Element('div[title=D]'),
-            ])
+            var l = document.createElement('div');
+            l.title = 'L'
+            var s = document.createElement('div');
+            s.title = 'S'
+            var d = document.createElement('div');
+            d.title = 'D'
+            var cruft = document.createElement('cruft');
+            local.set('items', [l,s,d])
             var script = LSD.Script('items.map { getAttribute("title") }', local)
             expect(script.value).toEqual(['L', 'S', 'D'])
           })
@@ -332,7 +341,7 @@ describe("LSD.Script.Function", function() {
           ];
           local.set('items', items)
           local.set('name', 'borscht')
-          var script = LSD.Script('items.each { |item| item.attributes.set("food", name)}', local)
+          var script = LSD.Script('items.forEach { |item| item.attributes.set("food", name)}', local)
           expect(items.every(function(item) { 
             return item.attributes.food == 'borscht'
           })).toBeTruthy()

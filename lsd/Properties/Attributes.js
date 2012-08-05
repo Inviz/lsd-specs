@@ -37,7 +37,7 @@ describe("LSD.Properties.Attributes", function() {
   });
 
   it ("should set state when state was already defined and class with the name of the state was added", function() {
-    var element = new Element('div');
+    var element = document.createElement('div');
     var instance = new LSD.Element(element);
     instance.set('selected');
     instance.classList.add('selected');
@@ -45,7 +45,7 @@ describe("LSD.Properties.Attributes", function() {
   });
 
   it ("should set state when class with the name of the state was added and state was already defined", function() {
-    var element = new Element('div');
+    var element = document.createElement('div');
     var instance = new LSD.Element(element);
     instance.classList.add('selected');
     instance.set('selected', true); //FIXME
@@ -53,14 +53,14 @@ describe("LSD.Properties.Attributes", function() {
   });
   
   it ("should be able to set state through a class without state defined", function() {
-    var element = new Element('div');
+    var element = document.createElement('div');
     var instance = new LSD.Element(element);
     instance.classList.add('selected');
     expect(instance.selected).toBeTruthy();
   });
   
   it ("should be able to pick up the state from element", function() {
-    var element = new Element('div');
+    var element = document.createElement('div');
     element.setAttribute('checked', 'checked');
     var instance = new LSD.Element(element);
     expect(instance.checked).toBeTruthy();
@@ -73,7 +73,7 @@ describe("LSD.Properties.Attributes", function() {
   })
   
   it ("should remove the state after the attribute that gave it is removed", function() {
-    var element = new Element('div');
+    var element = document.createElement('div');
     element.setAttribute('checked', 'checked');
     var instance = new LSD.Element(element);
     expect(instance.checked).toBeTruthy();
@@ -92,7 +92,7 @@ describe("LSD.Properties.Attributes", function() {
   })
   
   it ("should not remove the state from widget, if the state was given by an attribute AND explicitly", function() {
-    var element = new Element('div');
+    var element = document.createElement('div');
     element.setAttribute('checked', 'checked');
     var instance = new LSD.Element({checked: false});
     instance.set('origin', element);
@@ -203,7 +203,8 @@ describe("LSD.Properties.Attributes", function() {
   })
   
   it ("should make attributes type='checkbox' and checked='checked'", function() {
-    var element = new Element('input', {type: 'checkbox'});
+    var element = document.createElement('input');
+    element.type = 'checkbox';
     element.setAttribute('checked', 'checked');
     var instance = new LSD.Element(element);
     expect(instance.tagName).toEqual('input');

@@ -1,4 +1,37 @@
 describe('LSD.Script.Expression', function() {
+  // following are mootools-compatible Event & Chain APIs
+  // as different ways to set up callbacks
+  var Chain = function() {
+    this.items = [];
+  }
+  Chain.prototype.chain = function(fn){
+    this.items.push(fn)
+  }
+  Chain.prototype.callChain = function(){
+    var fn = this.items.shift();
+    if (fn) return fn.apply(this, arguments)
+  }
+  var Events = function() {
+    
+  };
+  Events.prototype.addEvent = function(name, fn) {
+    if (!this[name]) this[name] = [];
+    this[name].push(fn);
+  };
+  Events.prototype.addEvents = function(events) {
+    for (var event in events) this.addEvent(event, events[event])
+  };
+  Events.prototype.removeEvents = function(events) {
+    for (var event in events) this.removeEvent(event, events[event])
+  };
+  Events.prototype.removeEvent = function(name, fn) {
+    this[name].splice(this[name].indexOf(fn), 1);
+  };
+  Events.prototype.fireEvent = function(name, args) {
+    if (this[name]) this[name].forEach(function(fn) {
+      fn.apply(this, args)
+    })
+  };
   describe('when give multiple comma separated expressions', function() {
     it ('should evaluate expressions sequentially', function() {
       var scope = new LSD.Journal;
@@ -113,7 +146,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should be able to handle failures and execute alternative actions", function() {
       var scope = new LSD.Journal;
-      var invent = Object.append(new Chain, new Events);
+      var invent = new Events;
       invent.onFailure = function(){ 
         return invent.fireEvent('failure', arguments); 
       };
@@ -132,7 +165,6 @@ describe('LSD.Script.Expression', function() {
       scope.set('profit', function(biz) {
         return '$$$ ' + biz
       });
-      var write = new Chain;
       var script = $script = LSD.Script('invent() || steal(), profit()', scope);
       expect(script.value).toBeNull()
       invent.onFailure('I was drunk')
@@ -151,7 +183,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should be able to handle failures and execute alternative actions in methods without parentheses", function() {
       var scope = new LSD.Journal({methods: {}});
-      var invent = Object.append(new Chain, new Events);
+      var invent = new Events;
       invent.onFailure = function(){ 
         return invent.fireEvent('failure', arguments); 
       };
@@ -170,7 +202,6 @@ describe('LSD.Script.Expression', function() {
       scope.methods.set('profit', function(biz) {
         return '$$$ ' + biz
       });
-      var write = new Chain;
       var script = $script = LSD.Script('invent || steal, profit', scope);
       expect(script.value).toBeNull()
       invent.onFailure('I was drunk')
@@ -189,7 +220,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should be able to stack multiple scripts together (kind of coroutines and aspects)", function() {
       var scope = new LSD.Journal;
-      var submit = Object.append(new Chain, new Events);
+      var submit = new Events;
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
       };
@@ -227,7 +258,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should be able to stack multiple scripts together and make one handle failures in another", function() {
       var scope = new LSD.Journal;
-      var submit = Object.append(new Chain, new Events);
+      var submit = new Events;
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
       };
@@ -282,7 +313,7 @@ describe('LSD.Script.Expression', function() {
     
     it ("should be able to stack multiple scripts together and make one handle failures in another with parenthesis-free syntax", function() {
       var scope = new LSD.Journal({methods: {}});
-      var submit = Object.append(new Chain, new Events);
+      var submit = new Events;
       submit.onFailure = function(){ 
         return submit.fireEvent('failure', arguments); 
       };

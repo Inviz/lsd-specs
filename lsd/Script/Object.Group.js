@@ -35,7 +35,7 @@ describe("LSD.Group.Array", function() {
   describe("when values are mixed", function() {
     it ("should apply those to every value that was set in a group", function() {
       var object = new LSD.Group('Array');
-      object._construct = Function.from(null);
+      object._construct = function() { return null };
       var jack = new LSD.Object({name: 'Jack'}), 
           josh = new LSD.Object({name: "Josh"});
       object.mix('boys', {title: 'Overlord'})
@@ -52,8 +52,8 @@ describe("LSD.Group.Array", function() {
     describe("and _delegate method is defined", function() {
       it ("should call that method to delegate properties to groupped items", function() {
         var Group = function() {}
-        Group.implement(new LSD.Group('Array'));
-        Group.implement({
+        LSD.Struct.implement.call(Group, new LSD.Group('Array'));
+        LSD.Struct.implement.call(Group, {
           _construct: function(name, value) {
             return null;
           },
@@ -84,7 +84,7 @@ describe("LSD.Group.Array", function() {
     describe("and objects in group are observable objects", function() {
       it ("should notify each value in the group to updates in the object that was merged", function() {
         var object = new LSD.Group('Array');
-        object._construct = Function.from(null);  
+        object._construct = function() { return null };  
         var jack = new LSD.Object({name: 'Jack'}), 
             josh = new LSD.Object({name: "Josh"});
         var values = new LSD.Object({boys: {title: 'Overlord'}});
@@ -105,7 +105,7 @@ describe("LSD.Group.Array", function() {
     describe("and objects in group are stack based observable objects", function() {
       it ("should notify each value in the group to updates in the object that was reverse-merged", function() {
         var object = new LSD.Group('Array');
-        object._construct = Function.from(null);
+        object._construct = function() { return null };
         var jack = new LSD.Journal({name: 'Jack'}), 
             josh = new LSD.Journal({name: "Josh", title: 'Glorious'}), 
             jeff = new LSD.Journal({name: "Josh", title: 'Wikid'});
@@ -132,7 +132,7 @@ describe("LSD.Group.Array", function() {
       
       it ("should be able to unmerge the object and remove values from all groupped objects", function() {
         var object = new LSD.Group('Array');
-        object._construct = Function.from(null);
+        object._construct = function() { return null };
         var jack = new LSD.Journal({name: 'Jack'}), 
             josh = new LSD.Journal({name: "Josh", title: 'Glorious'}), 
             jeff = new LSD.Journal({name: "Josh", title: 'Wikid'});

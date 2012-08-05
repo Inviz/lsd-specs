@@ -672,10 +672,10 @@ describe('LSD.Array', function() {
   
   describe('#map', function() {
     it ("should apply a results of calling callback upon each element of array", function() {
-      var array = new LSD.Array({name: 'Jack'}, {name: 'George'}, {id: 'Jack'});
+      var array = new LSD.Array({name: 'Jack'}, {id: 'Jack'}, {name: 'George'});
       expect(array.map(function(value) {
         return value.name;
-      })).toEqual(['Jack', 'George', window.z0z0z0undefined])
+      })).toEqual(['Jack', undefined, 'George'])
     })
   });
   

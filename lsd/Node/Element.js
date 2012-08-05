@@ -13,7 +13,7 @@ describe('LSD.Element', function() {
       });
 
       it ('should instantiate with element as argument', function() {
-        var element = new Element('div');
+        var element = document.createElement('div');
         var instance = new LSD.Element(element);
         expect(instance.origin == element).toBeTruthy();
       });
@@ -26,7 +26,7 @@ describe('LSD.Element', function() {
 
       it ('should instantiate with options and element as arguments', function() {
         var options = {'honk': 'kong'};
-        var element = new Element('div');
+        var element = document.createElement('div');
         var instance = new LSD.Element(options, element);
         expect(instance.honk == 'kong').toBeTruthy();
         expect(instance.origin == element).toBeTruthy();
@@ -34,7 +34,7 @@ describe('LSD.Element', function() {
 
       it ('should instantiate with element and options as arguments', function() {
         var options = {'honk': 'kong'};
-        var element = new Element('div');
+        var element = document.createElement('div');
         var instance = new LSD.Element(element, options);
         expect(instance.honk == 'kong').toBeTruthy();
         expect(instance.origin == element).toBeTruthy();

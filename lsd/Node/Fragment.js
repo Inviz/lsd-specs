@@ -94,19 +94,9 @@ describe("LSD.Fragment", function() {
         describe('and html contains conditional comments', function() {
           it ("should recognize conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else-->2<!--end-->'); 
-            expect(fragment.childNodes[0].nodeType).toEqual(7);
-            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
-            expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
-            expect(fragment.childNodes[1].nodeType).toEqual(3);
-            expect(fragment.childNodes[2].nodeType).toEqual(7);
-            expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
-            expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[4]);
             expect(fragment.variables).toBeUndefined()
             var parent = new LSD.Element;
             parent.appendChild(fragment);
-            expect(parent.childNodes[2].nodeType).toEqual(7);
-            expect(parent.childNodes[3].nodeType).toEqual(3);
-            expect(parent.childNodes[4].nodeType).toEqual(7);
             expect(parent.textContent).toBe('2')
             parent.variables.set('a', 2)
             expect(parent.textContent).toBe('1')
@@ -115,7 +105,7 @@ describe("LSD.Fragment", function() {
             expect(fragment.childNodes[0].variables).toBe(parent.variables);
             expect(fragment.childNodes[1].variables).toBe(parent.variables);
             expect(parent.childNodes[2].fragment).toBe(parent.childNodes[1])
-            expect(parent.childNodes[2].fragment.parentCollection).toBe(fragment)
+            expect(parent.childNodes[2].fragment.fragment).toBe(fragment)
             expect(parent.childNodes[2].nodeType).toEqual(3);
             expect(parent.childNodes[3].nodeType).toEqual(7);
             expect(parent.childNodes[4].nodeType).toEqual(7);
@@ -135,28 +125,56 @@ describe("LSD.Fragment", function() {
             expect(parent.childNodes[3].nodeType).toEqual(3);
             expect(parent.childNodes[4].nodeType).toEqual(7);
           });
-          it ("should recognize nested conditional branches in HTML and render widgets accordingly", function() {
+          it ("should recognize nested conditional branches in HTML and render widgets accordingly 3", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--elsif c -->3<!--else-->4<!--end--><!--end-->');
-            expect(fragment.childNodes[0].nodeType).toEqual(7);
-            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
-            expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
-            expect(fragment.childNodes[1].nodeType).toEqual(3);
-            expect(fragment.childNodes[2].nodeType).toEqual(7);
-            expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
-            expect(fragment.childNodes[2].previous).toEqual(fragment.childNodes[0]);
-            expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[10]);
-            expect(fragment.childNodes[10].previous).toEqual(fragment.childNodes[2]);
-            expect(fragment.childNodes[3].next).toEqual(fragment.childNodes[5]);
-            expect(fragment.childNodes[5].previous).toEqual(fragment.childNodes[3]);
-            expect(fragment.childNodes[5].next).toEqual(fragment.childNodes[7]);
-            expect(fragment.childNodes[7].next).toEqual(fragment.childNodes[9]);
             var parent = new LSD.Element;
             parent.appendChild(fragment);
-            expect(parent.childNodes[0].nodeType).toBe(11)
-            expect(parent.childNodes[1].nodeType).toBe(7)
-            expect(parent.childNodes[2].nodeType).toBe(7)
-            expect(parent.childNodes[3].nodeType).toBe(7)
-            expect(parent.childNodes[4].nodeType).toBe(7)
+            expect(parent.textContent).toBe('4')
+            parent.variables.set('b', true)
+            expect(parent.textContent).toBe('2')
+            parent.variables.set('c', true)
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('b', true)
+            expect(parent.textContent).toBe('3')
+            parent.variables.set('a', true)
+            expect(parent.textContent).toBe('1')
+            parent.variables.unset('a', true);
+            expect(parent.textContent).toBe('3')
+            parent.variables.unset('c', true)
+            expect(parent.textContent).toBe('4')
+            parent.variables.set('a', true)
+            expect(parent.textContent).toBe('1')
+            parent.variables.set('b', true)
+            expect(parent.textContent).toBe('1')
+            parent.variables.unset('a', true);
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('b', true);
+            expect(parent.textContent).toBe('4')
+            parent.variables.set('c', true);
+            expect(parent.textContent).toBe('3')
+            parent.variables.set('b', true);
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('c', true);
+            expect(parent.textContent).toBe('2')
+            parent.variables.unset('b', true);
+            expect(parent.textContent).toBe('4')
+          });
+          it ("should recognize nested conditional branches in HTML and render widgets accordingly 1", function() {
+            var fragment =new LSD.Fragment('<!--if a-->'           +
+                                              '1'                  +
+                                           '<!--else-->'           +
+                                              '<div>'              +
+                                                '<!--if b -->'     +
+                                                  '2'              +
+                                                '<!--elsif c -->'  +
+                                                  '3'              +
+                                                '<!--else-->'      +
+                                                  '4'              +
+                                                '<!--end-->'       +
+                                              '</div>'             +
+                                            '<!--end-->');
+            var parent = new LSD.Element;
+            parent.appendChild(fragment);
             expect(parent.textContent).toBe('4')
             parent.variables.set('b', true)
             expect(parent.textContent).toBe('2')
@@ -189,19 +207,6 @@ describe("LSD.Fragment", function() {
           });
           it ("should recognize nested conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else--><!--if b -->2<!--elsif c -->3<!--else-->4<!--end--><!--end--><!--if a-->1<!--else--><!--if b -->2<!--elsif c -->3<!--else-->4<!--end--><!--end-->');
-            expect(fragment.childNodes[0].nodeType).toEqual(7);
-            expect(fragment.childNodes[0].childNodes[0].textContent).toEqual('1');
-            expect(fragment.childNodes[0].childNodes[0]).toEqual(fragment.childNodes[1]);
-            expect(fragment.childNodes[1].nodeType).toEqual(3);
-            expect(fragment.childNodes[2].nodeType).toEqual(7);
-            expect(fragment.childNodes[0].next).toEqual(fragment.childNodes[2]);
-            expect(fragment.childNodes[2].previous).toEqual(fragment.childNodes[0]);
-            expect(fragment.childNodes[2].next).toEqual(fragment.childNodes[10]);
-            expect(fragment.childNodes[10].previous).toEqual(fragment.childNodes[2]);
-            expect(fragment.childNodes[3].next).toEqual(fragment.childNodes[5]);
-            expect(fragment.childNodes[5].previous).toEqual(fragment.childNodes[3]);
-            expect(fragment.childNodes[5].next).toEqual(fragment.childNodes[7]);
-            expect(fragment.childNodes[7].next).toEqual(fragment.childNodes[9]);
             var parent = new LSD.Element;
             parent.appendChild(fragment);
             expect(parent.childNodes[0].nodeType).toBe(11)
@@ -216,6 +221,7 @@ describe("LSD.Fragment", function() {
             expect(parent.textContent).toBe('22')
             parent.variables.unset('b', true)
             expect(parent.textContent).toBe('33')
+            window.z = true;
             parent.variables.set('a', true)
             expect(parent.textContent).toBe('11')
             parent.variables.unset('a', true);
@@ -239,7 +245,55 @@ describe("LSD.Fragment", function() {
             parent.variables.unset('b', true);
             expect(parent.textContent).toBe('44')
           });
-          
+          it ('should handle deeply nested conditionals', function() {
+            var fragment = new LSD.Fragment( '\
+            <div>                           \
+            <!-- if condition -->           \
+              <section><div><div><form>     \
+                <!-- if a -->               \
+                <section><div>              \
+                ${a}                        \
+                <!-- if b -->               \
+                <section><div>              \
+                ${b}                        \
+                <!-- if c -->               \
+                <section><div>              \
+                ${c}                        \
+                <!-- if d -->               \
+                <section><div>              \
+                ${d}                        \
+                </div></section>            \
+                <!-- end -->                \
+                </div></section>            \
+                <!-- end -->                \
+                </div></section>            \
+                <!-- end -->                \
+                </div></section>            \
+                <!-- end -->                \
+              </div></div></form></section> \
+            <!-- end -->                    \
+            </div>                          ')
+            var parent = new LSD.Element
+            parent.appendChild(fragment);
+            var getText = function() {
+              return parent.textContent.replace(/[\s\n]+|\s*$|^\s*/gm, '');
+            }
+            expect(getText()).toBe('');
+            parent.variables.set('condition', true);
+            expect(getText()).toBe('');
+            parent.variables.set('a', 'A');
+            expect(getText()).toBe('A');
+            parent.variables.set('b', 'B');
+            expect(getText()).toBe('AB');
+            parent.variables.set('c', 'C');
+            expect(getText()).toBe('ABC');
+            parent.variables.set('d', 'D');
+            expect(getText()).toBe('ABCD');
+            window.z = true;
+            debugger
+            parent.variables.unset('c', 'C');
+            expect(getText()).toBe('AB');
+          })
         })
       })
     })
@@ -281,32 +335,108 @@ describe("LSD.Fragment", function() {
               },
               'footer': null
             });
-            expect(fragment[0].nodeType).toEqual(7);
-            expect(fragment[0].name).toEqual('if');
-            expect(fragment[0].args[0].name).toEqual('>');
-            expect(fragment[1].nodeType).toEqual(1);
-            expect(fragment[1].nodeName).toEqual('button');
-            expect(fragment[1].childNodes[0].nodeType).toEqual(3);
-            expect(fragment[1].childNodes[0].textContent).toEqual('JEEEZ');
-            expect(fragment[2].nodeType).toEqual(7);
-            expect(fragment[2].name).toEqual('if');
-            expect(fragment[2].args[0].name).toEqual('<');
-            expect(fragment[2].next).toEqual(fragment[4]);
-            expect(fragment[3].nodeType).toEqual(3);
-            expect(fragment[3].textContent).toEqual('Test');
-            expect(fragment[4].previous).toEqual(fragment[2]);
-            expect(fragment[4].name).toEqual('else');
-            expect(fragment[4].childNodes[0]).toEqual(fragment[5]);
-            expect(fragment[5].textContent).toEqual('blarghhh');
-            expect(fragment[6].nodeName).toEqual('section');
-            expect(fragment[7].name).toEqual('else');
-            expect(fragment[7].previous).toEqual(fragment[0]);
-            expect(fragment[0].next).toEqual(fragment[7]);
-            expect(fragment[7].childNodes[0]).toEqual(fragment[8]);
-            expect(fragment[8].nodeName).toEqual('button');
-            expect(fragment[9].nodeName).toEqual('footer');
+            var el = new LSD.Element;
+            el.appendChild(fragment);
+            expect(el.textContent).toBe('Jeebz')
+            el.variables.set('a', 2)
+            expect(el.textContent).toBe('JEEEZblarghhh')
+            el.variables.set('b', 0)
+            expect(el.textContent).toBe('JEEEZTest')
+            el.variables.set('a', 1)
+            expect(el.textContent).toBe('Jeebz')
+            el.variables.set('a', 2)
+            expect(el.textContent).toBe('JEEEZTest')
           })
         })
+      })
+      describe('and there are conditional blocks in object', function() {
+        it ("should recognize conditional branches in objects and render widgets accordingly 3", function() {
+          debugger
+          var fragment = new LSD.Fragment({'if a': '1', 'else': '2'}); 
+          expect(fragment.variables).toBeUndefined()
+          var parent = new LSD.Element;
+          parent.appendChild(fragment);
+          console.log(555, fragment, parent.childNodes)
+          expect(parent.childNodes[2].nodeType).toEqual(7);
+          expect(parent.childNodes[3].nodeType).toEqual(3);
+          expect(parent.textContent).toBe('2')
+          parent.variables.set('a', 2)
+          expect(parent.textContent).toBe('1')
+          expect(fragment.variables).toBe(parent.variables);
+          expect(fragment.parentNode).toBe(parent);
+          expect(fragment.childNodes[0].variables).toBe(parent.variables);
+          expect(fragment.childNodes[1].variables).toBe(parent.variables);
+          expect(parent.childNodes[2].fragment).toBe(parent.childNodes[1])
+          expect(parent.childNodes[2].fragment.fragment).toBe(fragment)
+          expect(parent.childNodes[2].nodeType).toEqual(3);
+          expect(parent.childNodes[3].nodeType).toEqual(7);
+          parent.variables.set('a', 0)
+          expect(parent.textContent).toBe('2')
+          expect(parent.childNodes[2].nodeType).toEqual(7);
+          expect(parent.childNodes[3].nodeType).toEqual(3);
+          parent.variables.set('a', 2)
+          expect(parent.textContent).toBe('1')
+          expect(parent.childNodes[2].nodeType).toEqual(3);
+          expect(parent.childNodes[3].nodeType).toEqual(7);
+          parent.variables.set('a', 0)
+          expect(parent.textContent).toBe('2')
+          expect(parent.childNodes[2].nodeType).toEqual(7);
+          expect(parent.childNodes[3].nodeType).toEqual(3);
+        });
+        it ("should recognize nested conditional branches in objects and render widgets accordingly", function() {
+          var fragment = new LSD.Fragment({
+            'if a':       '1',
+            'else': {
+              'if b':     '2',
+              'elsif c':  '3',
+              'else':     '4'
+            }
+          });
+          debugger
+          expect(fragment.length).toEqual(2)
+          var parent = new LSD.Element;
+          parent.appendChild(fragment);
+          expect(parent.childNodes[0].nodeType).toBe(11)
+          expect(parent.childNodes[1].nodeType).toBe(7)
+          expect(parent.childNodes[2].nodeType).toBe(7)
+          expect(parent.childNodes[3].nodeType).toBe(7)
+          expect(parent.childNodes[4].nodeType).toBe(7)
+          expect(parent.textContent).toBe('4')
+          parent.variables.set('b', true)
+          expect(parent.textContent).toBe('2')
+          parent.variables.set('c', true)
+          expect(parent.textContent).toBe('2')
+          parent.variables.unset('b', true)
+          expect(parent.textContent).toBe('3')
+          parent.variables.set('a', true);
+          expect(parent.textContent).toBe('1')
+          parent.variables.unset('a', true);
+          expect(parent.textContent).toBe('3')
+          parent.variables.unset('c', true)
+          expect(parent.textContent).toBe('4')
+          window.z = true;
+          console.error(123)
+          debugger
+          parent.variables.set('a', true)
+          expect(parent.textContent).toBe('1')
+          parent.variables.set('b', true)
+          expect(parent.textContent).toBe('1')
+          parent.variables.unset('a', true);
+          expect(parent.textContent).toBe('2')
+          parent.variables.unset('b', true);
+          expect(parent.textContent).toBe('4')
+          parent.variables.set('c', true);
+          expect(parent.textContent).toBe('3')
+          parent.variables.set('b', true);
+          expect(parent.textContent).toBe('2')
+          parent.variables.unset('c', true);
+          expect(parent.textContent).toBe('2')
+          parent.variables.unset('b', true);
+          expect(parent.textContent).toBe('4')
+          parent.variables.set('c', true);
+          expect(parent.textContent).toBe('3')
+          console.log(fragment)
+        });
       })
     });
     describe('when given element', function() {

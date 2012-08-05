@@ -11,7 +11,7 @@ describe("LSD.Type.Resource", function() {
     });
   });
   describe("when used as constructor", function() {
-    it ("should provide fair constructor", function() {
+    it ("should act as a true constructor", function() {
       var resource = new LSD.Resource;
       var model = new resource;
       expect(model instanceof resource).toEqual(true)
@@ -20,47 +20,47 @@ describe("LSD.Type.Resource", function() {
     })
   })
   describe("when .name property is given", function() {
-    it ("should affect path", function() {
+    it ("should affect directory", function() {
       var resource = new LSD.Resource
-      expect(resource.path).toBe('')
+      expect(resource.directory).toBe('')
       resource.set('name', 'comments');
-      expect(resource.path).toBe('comments')
+      expect(resource.directory).toBe('comments')
       resource.change('name', 'publishers');
-      expect(resource.path).toBe('publishers')
+      expect(resource.directory).toBe('publishers')
       resource.unset('name', 'publishers');
-      expect(resource.path).toBe('')
+      expect(resource.directory).toBe('')
     })
     describe("and .prefix is given", function() {
-      it ("should build path from name and prefix", function() {
+      it ("should build directory from name and prefix", function() {
         var resource = new LSD.Resource
-        expect(resource.path).toBe('')
+        expect(resource.directory).toBe('')
         expect(resource.prefix).toBe('')
         resource.set('prefix', 'staff');
-        expect(resource.path).toBe('staff')
+        expect(resource.directory).toBe('staff')
         resource.set('name', 'comments');
-        expect(resource.path).toBe('staff/comments')
+        expect(resource.directory).toBe('staff/comments')
         resource.change('name', 'publishers');
         expect(resource._name).toEqual('publishers');
-        expect(resource.path).toBe('staff/publishers')
+        expect(resource.directory).toBe('staff/publishers')
         resource.change('prefix', 'guest');
         expect(resource._name).toEqual('publishers');
-        expect(resource.path).toBe('guest/publishers')
+        expect(resource.directory).toBe('guest/publishers')
         resource.unset('name', 'publishers');
-        expect(resource.path).toBe('guest')
+        expect(resource.directory).toBe('guest')
         resource.unset('prefix', 'guest');
-        expect(resource.path).toBe('')
+        expect(resource.directory).toBe('')
       })
     })
   });
-  describe("when .domain is property is given", function() {
+  describe("when .host is property is given", function() {
     it ("should affect url", function() {
       var resource = new LSD.Resource;
       expect(resource.url).toBe('');
-      resource.set('domain', 'twitter.com');
+      resource.set('host', 'twitter.com');
       expect(resource.url).toBe('twitter.com');
       resource.set('name', 'events');
       expect(resource.url).toBe('twitter.com/events');
-      resource.set('domain', 'login.twitter.com');
+      resource.set('host', 'login.twitter.com');
       expect(resource.url).toBe('login.twitter.com/events');
       resource.set('prefix', 'sessions');
       expect(resource.url).toBe('login.twitter.com/sessions/events');

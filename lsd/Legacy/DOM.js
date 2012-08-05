@@ -388,7 +388,7 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
+                var target = document.createElement('target');
 
                 parent.appendChild(before);
                 parent.appendChild(target);
@@ -406,8 +406,8 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
-                var cruft = new Element('cruft');
+                var target = document.createElement('target');
+                var cruft = document.createElement('cruft');
 
                 parent.appendChild(before);
                 parent.appendChild(target);
@@ -429,8 +429,8 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
-                var cruft = new Element('cruft');
+                var target = document.createElement('target');
+                var cruft = document.createElement('cruft');
 
                 parent.appendChild(before);
                 parent.appendChild(target);
@@ -494,7 +494,7 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
+                var target = document.createElement('target');
 
                 parent.appendChild(before);
                 parent.appendChild(target);
@@ -512,8 +512,8 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
-                var cruft = new Element('cruft');
+                var target = document.createElement('target');
+                var cruft = document.createElement('cruft');
 
                 parent.appendChild(before);
                 parent.appendChild(child);
@@ -535,8 +535,8 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
-                var cruft = new Element('cruft');
+                var target = document.createElement('target');
+                var cruft = document.createElement('cruft');
                 
                 parent.appendChild(cruft);
                 parent.appendChild(before, cruft);
@@ -555,9 +555,9 @@ describe("LSD.Module.Ambient.DOM", function() {
                 var after = new LSD.Element({tag: 'after'});
                 var parent = new LSD.Element({tag: 'parent'});
                 var child = new LSD.Element({tag: 'child'});
-                var target = new Element('target');
-                var cruft = new Element('cruft');
-                var thing = new Element('thing');
+                var target = document.createElement('target');
+                var cruft = document.createElement('cruft');
+                var thing = document.createElement('thing');
 
                 parent.appendChild(cruft);
                 parent.appendChild(before, cruft);
