@@ -92,6 +92,172 @@ describe("LSD.Fragment", function() {
           })
         })
         describe('and html contains conditional comments', function() {
+          xit ("should parse comments and interpolate them", function() {
+            var fragment = new LSD.Fragment('\
+              <!-- if a > 1 -->\
+                  <!-- if urgency -->\
+                    <h2>This is so urgent..</h2>\
+                  <!-- else -->\
+                    <h2>This is not urgent, but hell, we need this today</h2>\
+                  <!-- end -->\
+              <!-- else -->\
+                <!-- unless urgency -->\
+                  <h3>That only takes 5 minutes to do! Come on, copy and paste what we have already</h3>\
+                <!-- else -->\
+                    <h3>I want it right now</h3>\
+                <!-- end -->\
+              <!-- end -->\
+            ')
+            var parent = new LSD.Element;
+            parent.appendChild(fragment)
+            var getText = function() {
+              return parent.textContent.replace(/^\s+|\s+$/g, '')
+            }
+            expect(getText()).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+            parent.variables.set('urgency', true);
+            expect(getText()).toEqual('I want it right now');
+            parent.variables.unset('urgency')
+            expect(getText()).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+            parent.variables.set('urgency', true);
+            expect(getText()).toEqual('I want it right now');
+            parent.variables.unset('urgency')
+            expect(getText()).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
+            parent.variables.set('a', 2);
+            expect(getText()).toEqual('This is not urgent, but hell, we need this today');
+            parent.variables.set('urgency', true);
+            expect(getText()).toEqual('This is so urgent..');
+            parent.variables.set('a', 1);
+            expect(getText()).toEqual('I want it right now');
+            parent.variables.set('a', 2);
+            expect(getText()).toEqual('This is so urgent..');
+            parent.variables.unset('urgency')
+            expect(getText()).toEqual('This is not urgent, but hell, we need this today');
+          })
+          describe("and multiple conditions linked together are used", function() {
+            xit ("should show conditional blocks at the place", function() {
+              var fragment = new LSD.Fragment('\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <!-- unless chill -->       \
+                  Very                        \
+                  <!-- end -->                \
+                  <!-- if good -->            \
+                    Good                      \
+                    <!-- if time < 6 -->      \
+                      Night                   \
+                    <!-- elsif time < 12 -->  \
+                      Morning                 \
+                    <!-- elsif time < 18 -->  \
+                      Day                     \
+                    <!-- else -->             \
+                      Evening                 \
+                    <!-- end -->              \
+                    <!-- if mom -->           \
+                      <!-- if respect -->     \
+                        Mother                \
+                      <!-- else -->           \
+                        Mom                   \
+                      <!-- end -->            \
+                    <!-- else -->             \
+                      <!-- if respect -->     \
+                        Father                \
+                      <!-- else -->           \
+                        Dad                   \
+                      <!-- end -->            \
+                    <!-- end -->              \
+                  <!-- else -->               \
+                    Bad                       \
+                    <!-- if time < 6 -->      \
+                      Night                   \
+                    <!-- elsif time < 12 -->  \
+                      Morning                 \
+                    <!-- elsif time < 18 -->  \
+                      Day                     \
+                    <!-- else -->             \
+                      Evening                 \
+                    <!-- end -->              \
+                    <!-- if mom -->           \
+                      <!-- if respect -->     \
+                        Mother                \
+                      <!-- else -->           \
+                        Mom                   \
+                      <!-- end -->            \
+                    <!-- else -->             \
+                      <!-- if respect -->     \
+                        Father                \
+                      <!-- else -->           \
+                        Dad                   \
+                      <!-- end -->            \
+                    <!-- end -->              \
+                  <!-- end -->                \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          ')
+              
+              var parent = new LSD.Element;
+              parent.appendChild(fragment)
+              var getText = function() {
+                return parent.textContent.replace(/^\s+|\s+$/g, '')
+              }
+              expect(getText()).toEqual('');
+              parent.variables.set('condition', true);
+              expect(getText()).toEqual('Very Bad Evening Dad');
+              parent.variables.set('time', 11);
+              expect(getText()).toEqual('Very Bad Morning Dad');
+              parent.variables.set('good', true);
+              expect(getText()).toEqual('Very Good Morning Dad');
+              parent.variables.set('good', false);
+              expect(getText()).toEqual('Very Bad Morning Dad');
+              parent.variables.set('time', 13);
+              expect(getText()).toEqual('Very Bad Day Dad');
+              parent.variables.set('mom', true);
+              expect(getText()).toEqual('Very Bad Day Mom');
+              parent.variables.set('good', true);
+              expect(getText()).toEqual('Very Good Day Mom');
+              parent.variables.set('good', false);
+              expect(getText()).toEqual('Very Bad Day Mom');
+              parent.variables.set('respect', false);
+              expect(getText()).toEqual('Very Bad Day Mom');
+              parent.variables.set('respect', true);
+              expect(getText()).toEqual('Very Bad Day Mother');
+              parent.variables.set('good', true);
+              expect(getText()).toEqual('Very Good Day Mother');
+              parent.variables.set('good', false);
+              expect(getText()).toEqual('Very Bad Day Mother');
+              parent.variables.set('mom', false);
+              expect(getText()).toEqual('Very Bad Day Father');
+              parent.variables.set('condition', false);
+              expect(getText()).toEqual('');
+              parent.variables.set('condition', true);
+              expect(getText()).toEqual('Very Bad Day Father');
+              parent.variables.set('respect', false);
+              expect(getText()).toEqual('Very Bad Day Dad');
+              parent.variables.set('mom', true);
+              expect(getText()).toEqual('Very Bad Day Mom');
+              parent.variables.set('good', true);
+              expect(getText()).toEqual('Very Good Day Mom');
+              parent.variables.set('time', 4);
+              expect(getText()).toEqual('Very Good Night Mom');
+              parent.variables.set('chill', true);
+              expect(getText()).toEqual('Good Night Mom');
+              parent.variables.set('time', 23);
+              expect(getText()).toEqual('Good Evening Mom');
+              parent.variables.set('good', false);
+              expect(getText()).toEqual('Bad Evening Mom');
+              parent.variables.set('respect', true);
+              expect(getText()).toEqual('Bad Evening Mother');
+              parent.variables.set('mom', false);
+              expect(getText()).toEqual('Bad Evening Father');
+              parent.variables.set('chill', false);
+              expect(getText()).toEqual('Very Bad Evening Father');
+              parent.variables.set('respect', false);
+              expect(getText()).toEqual('Very Bad Evening Dad');
+              parent.variables.set('time', 13);
+              expect(getText()).toEqual('Very Bad Day Dad');
+            })
+          })
+          
           it ("should recognize conditional branches in HTML and render widgets accordingly", function() {
             var fragment = new LSD.Fragment('<!--if a-->1<!--else-->2<!--end-->'); 
             expect(fragment.variables).toBeUndefined()
@@ -221,7 +387,6 @@ describe("LSD.Fragment", function() {
             expect(parent.textContent).toBe('22')
             parent.variables.unset('b', true)
             expect(parent.textContent).toBe('33')
-            window.z = true;
             parent.variables.set('a', true)
             expect(parent.textContent).toBe('11')
             parent.variables.unset('a', true);
@@ -289,10 +454,85 @@ describe("LSD.Fragment", function() {
             expect(getText()).toBe('ABC');
             parent.variables.set('d', 'D');
             expect(getText()).toBe('ABCD');
-            window.z = true;
-            debugger
             parent.variables.unset('c', 'C');
             expect(getText()).toBe('AB');
+            parent.variables.unset('a', 'A');
+            expect(getText()).toBe('');
+            parent.variables.set('c', 'C');
+            expect(getText()).toBe('');
+            parent.variables.set('a', 'A');
+            expect(getText()).toBe('ABCD');
+            parent.variables.unset('a', 'A');
+            expect(getText()).toBe('');
+            parent.variables.unset('d', 'D');
+            expect(getText()).toBe('');
+            parent.variables.set('a', 'A');
+            expect(getText()).toBe('ABC');
+          })
+          xit ("should handle nested conditions with else blocks", function() {
+            var fragment = new LSD.Fragment( '\
+              <div>                           \
+              <!-- if condition -->           \
+                <section><div><div><form>     \
+                  <!-- if a -->               \
+                  <section><div>              \
+                  ${a}                        \
+                  <!-- if b -->               \
+                  <section><div>              \
+                  ${b}                        \
+                  <!-- if c -->               \
+                  <section><div>              \
+                  ${c}                        \
+                  <!-- if d -->               \
+                  <section><div>              \
+                  ${d}                        \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                  </div></section>            \
+                  <!-- else -->               \
+                  X                           \
+                  <!-- end -->                \
+                </div></div></form></section> \
+              <!-- end -->                    \
+              </div>                          ');
+            var parent = new LSD.Element
+            parent.appendChild(fragment);
+            var getText = function() {
+              return parent.textContent.replace(/[\s\n]+|\s*$|^\s*/gm, '');
+            }
+            expect(getText()).toBe('');
+            parent.variables.set('condition', true);
+            expect(getText()).toEqual('X')
+            parent.variables.set('b', 2);
+            expect(getText()).toEqual('X')
+            parent.variables.set('a', 1);
+            expect(getText()).toEqual('12X')
+            parent.variables.set('c', 3);
+            expect(getText()).toEqual('123X')
+            parent.variables.set('b', 0);
+            expect(getText()).toEqual('1X')
+            parent.variables.set('d', 4);
+            parent.variables.set('b', -2);
+            expect(getText()).toEqual('1-234')
+            parent.variables.set('condition', false)
+            expect(getText()).toEqual('')
+            parent.variables.set('b', 22);
+            parent.variables.set('condition', true)
+            expect(getText()).toEqual('12234')
+            parent.variables.set('c', 4);
+            expect(getText()).toEqual('12244')
+            parent.variables.set('c', 0);
+            expect(getText()).toEqual('122X')
           })
         })
       })
@@ -351,12 +591,10 @@ describe("LSD.Fragment", function() {
       })
       describe('and there are conditional blocks in object', function() {
         it ("should recognize conditional branches in objects and render widgets accordingly 3", function() {
-          debugger
           var fragment = new LSD.Fragment({'if a': '1', 'else': '2'}); 
           expect(fragment.variables).toBeUndefined()
           var parent = new LSD.Element;
           parent.appendChild(fragment);
-          console.log(555, fragment, parent.childNodes)
           expect(parent.childNodes[2].nodeType).toEqual(7);
           expect(parent.childNodes[3].nodeType).toEqual(3);
           expect(parent.textContent).toBe('2')
@@ -392,7 +630,6 @@ describe("LSD.Fragment", function() {
               'else':     '4'
             }
           });
-          debugger
           expect(fragment.length).toEqual(2)
           var parent = new LSD.Element;
           parent.appendChild(fragment);
@@ -414,9 +651,6 @@ describe("LSD.Fragment", function() {
           expect(parent.textContent).toBe('3')
           parent.variables.unset('c', true)
           expect(parent.textContent).toBe('4')
-          window.z = true;
-          console.error(123)
-          debugger
           parent.variables.set('a', true)
           expect(parent.textContent).toBe('1')
           parent.variables.set('b', true)
@@ -435,7 +669,6 @@ describe("LSD.Fragment", function() {
           expect(parent.textContent).toBe('4')
           parent.variables.set('c', true);
           expect(parent.textContent).toBe('3')
-          console.log(fragment)
         });
       })
     });

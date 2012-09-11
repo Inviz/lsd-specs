@@ -22,19 +22,19 @@ describe("LSD.Type.Resource", function() {
   describe("when .name property is given", function() {
     it ("should affect directory", function() {
       var resource = new LSD.Resource
-      expect(resource.directory).toBe('')
+      expect(resource.directory).toBeFalsy()
       resource.set('name', 'comments');
       expect(resource.directory).toBe('comments')
       resource.change('name', 'publishers');
       expect(resource.directory).toBe('publishers')
       resource.unset('name', 'publishers');
-      expect(resource.directory).toBe('')
+      expect(resource.directory).toBeFalsy()
     })
     describe("and .prefix is given", function() {
       it ("should build directory from name and prefix", function() {
         var resource = new LSD.Resource
-        expect(resource.directory).toBe('')
-        expect(resource.prefix).toBe('')
+        expect(resource.directory).toBeFalsy()
+        expect(resource.prefix).toBeFalsy()
         resource.set('prefix', 'staff');
         expect(resource.directory).toBe('staff')
         resource.set('name', 'comments');
@@ -48,14 +48,14 @@ describe("LSD.Type.Resource", function() {
         resource.unset('name', 'publishers');
         expect(resource.directory).toBe('guest')
         resource.unset('prefix', 'guest');
-        expect(resource.directory).toBe('')
+        expect(resource.directory).toBeFalsy()
       })
     })
   });
   describe("when .host is property is given", function() {
     it ("should affect url", function() {
       var resource = new LSD.Resource;
-      expect(resource.url).toBe('');
+      expect(resource.url).toBeFalsy()
       resource.set('host', 'twitter.com');
       expect(resource.url).toBe('twitter.com');
       resource.set('name', 'events');
@@ -216,6 +216,14 @@ describe("LSD.Type.Resource", function() {
       })
     })
     describe('when given urls option', function() {
+      it ('should not instantiate a resource named urls', function() {
+        var resource = new LSD.Resource({
+          urls: {
+            index: '/jeebles.cgi'
+          }
+        });
+        expect(resource.urls.constructor).toBe(Object)
+      })
       describe('for a collection method', function() {
         it ('should use the url when the action is dispatched', function() {
           var resource = new LSD.Resource({
@@ -255,11 +263,11 @@ describe("LSD.Type.Resource", function() {
               }
             }
           });
-          var result = resource.dispatch('/customers/destroy_of_the_worlds');
+          var result = resource.dispatch('/customers/destroyer_of_the_worlds');
           expect(result.url).toEqual('/jeebles.cgi')
           expect(result.method).toEqual('get');
           expect(result.action).toEqual('show');
-          expect(result.id).toEqual('destroy_of_the_worlds');
+          expect(result.id).toEqual('destroyer_of_the_worlds');
         })
         describe('and url has a method name in it', function() {
           describe('and its value is not specified', function() {
@@ -271,12 +279,12 @@ describe("LSD.Type.Resource", function() {
                   }
                 }
               });
-              var result = resource.dispatch('/customers/destroy_of_the_worlds');
+              var result = resource.dispatch('/customers/destroyer_of_the_worlds');
               expect(result.url).toEqual('/jeebles.cgi')
               expect(result.method).toEqual('post');
               expect(result.action).toEqual('show');
-              expect(result.id).toEqual('destroy_of_the_worlds');
-              expect(result.uid).toEqual('destroy_of_the_worlds');
+              expect(result.id).toEqual('destroyer_of_the_worlds');
+              expect(result.uid).toEqual('destroyer_of_the_worlds');
             })
           });
           describe('and its value is set', function() {
@@ -290,10 +298,10 @@ describe("LSD.Type.Resource", function() {
                       }
                     }
                   });
-                  var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                  var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                   expect(result.url).toEqual('/jeebles.cgi')
                   expect(result.action).toEqual('show');
-                  expect(result.id).toEqual('destroy_of_the_worlds');
+                  expect(result.id).toEqual('destroyer_of_the_worlds');
                   expect(result.uid).toEqual('abcdef');
                 })
               })
@@ -326,10 +334,10 @@ describe("LSD.Type.Resource", function() {
                       }
                     }
                   });
-                  var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                  var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                   expect(result.url).toEqual('/jeebles.cgi')
-                  expect(result.id).toEqual('destroy_of_the_worlds');
-                  expect(result.uid).toEqual('destroy_of_the_worlds');
+                  expect(result.id).toEqual('destroyer_of_the_worlds');
+                  expect(result.uid).toEqual('destroyer_of_the_worlds');
                 })
               });
               describe('and id doesnt match the type', function() {
@@ -341,9 +349,9 @@ describe("LSD.Type.Resource", function() {
                       }
                     }
                   });
-                  var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                  var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                   expect(result.url).toEqual('/jeebles.cgi')
-                  expect(result.id).toEqual('destroy_of_the_worlds');
+                  expect(result.id).toEqual('destroyer_of_the_worlds');
                   expect(result.uid).toBeUndefined()
                 });
                 describe('but there\'s another param that matches', function() {
@@ -355,10 +363,10 @@ describe("LSD.Type.Resource", function() {
                         }
                       }
                     });
-                    var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                    var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                     expect(result.url).toEqual('/jeebles.cgi')
-                    expect(result.id).toEqual('destroy_of_the_worlds');
-                    expect(result.screen_name).toEqual('destroy_of_the_worlds');
+                    expect(result.id).toEqual('destroyer_of_the_worlds');
+                    expect(result.screen_name).toEqual('destroyer_of_the_worlds');
                     expect(result.uid).toBeUndefined()
                   });
                   describe('and some params are given after', function() {
@@ -370,10 +378,10 @@ describe("LSD.Type.Resource", function() {
                           }
                         }
                       });
-                      var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                      var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                       expect(result.url).toEqual('/jeebles.cgi')
-                      expect(result.id).toEqual('destroy_of_the_worlds');
-                      expect(result.screen_name).toEqual('destroy_of_the_worlds');
+                      expect(result.id).toEqual('destroyer_of_the_worlds');
+                      expect(result.screen_name).toEqual('destroyer_of_the_worlds');
                       expect(result.key).toEqual('123');
                       expect(result.uid).toBeUndefined()
                     });
@@ -387,10 +395,10 @@ describe("LSD.Type.Resource", function() {
                           }
                         }
                       });
-                      var result = resource.dispatch('/customers/destroy_of_the_worlds');
+                      var result = resource.dispatch('/customers/destroyer_of_the_worlds');
                       expect(result.url).toEqual('/jeebles.cgi')
-                      expect(result.id).toEqual('destroy_of_the_worlds');
-                      expect(result.screen_name).toEqual('destroy_of_the_worlds');
+                      expect(result.id).toEqual('destroyer_of_the_worlds');
+                      expect(result.screen_name).toEqual('destroyer_of_the_worlds');
                       expect(result.key).toEqual('123');
                       expect(result.uid).toBeUndefined()
                     });

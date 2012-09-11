@@ -419,7 +419,6 @@ describe("LSD.Struct", function() {
               }
             });
             var object = new Struct();
-            console.log(object)
             object.set('cash', 500);
             expect(object.total).toBeUndefined()
             object.set('ratio', 0.5);

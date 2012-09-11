@@ -506,7 +506,6 @@ describe('LSD.Array', function() {
       expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Jesus'}, {name: 'Jackie'}]);
       ary.splice(3, 1, {name: 'Johan'});
       expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
-      window.$spliced = true
       ary.splice(3, 1, {name: 'Johan'});
       expect(filtered.slice()).toEqual([{name: 'John'}, {name: 'Johan'}, {name: 'Jackie'}]);
       ary.splice(3, 1);
@@ -892,7 +891,7 @@ describe('LSD.Array', function() {
     })
   });
   describe('#offset', function() {
-    it ("should return proxy of a collection without making a splice", function() {
+    it ("should return proxy of a collection without slicing", function() {
       var array = LSD.Array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
       var limited = array.offset(5);
       expect(limited._offset).toEqual(5);
@@ -912,7 +911,7 @@ describe('LSD.Array', function() {
           array.shift();
           expect(filtered.slice()).toEqual([7, 9, 11]);
           array.shift();
-          //expect(filtered.slice()).toEqual([7, 9, 11]);
+          expect(filtered.slice()).toEqual([7, 9, 11]);
         })
       })
     })
