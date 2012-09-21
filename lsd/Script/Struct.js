@@ -256,9 +256,9 @@ describe("LSD.Struct", function() {
             'matches': '.matches'
           }, 'Group');
           Events.implement({
-            _delegate: function(object, name, value, memo, old, origin) {
+            _delegate: function(object, name, value, old, memo, origin) {
               if (this._properties[name]) return;
-              if (object.mix) object.mix('events', value, memo, old);
+              if (object.mix) object.mix('events', value, old, memo);
               return true;
             }
           })
@@ -280,7 +280,7 @@ describe("LSD.Struct", function() {
                 }
               }
             }
-          });
+          });  
           var found = new Widget;
           widget.matches.set('button + bar', found);
           expect(widget.events.click).toBeUndefined();
@@ -307,9 +307,9 @@ describe("LSD.Struct", function() {
             'relations': '.relations'
           }, 'Group');
           Events.implement({
-            _delegate: function(object, name, value, memo, old) {
+            _delegate: function(object, name, value, old, memo) {
               if (this._properties[name]) return;
-              object.mix('events', value, memo, old)
+              object.mix('events', value, old, memo)
               return true;
             }
           })

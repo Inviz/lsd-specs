@@ -613,12 +613,12 @@ describe('LSD.Storage', function() {
               array.shift()
               expect(getLocal(0)).toBe('of');
               expect(getLocal(1)).toBe('god');
-             expect(getLocal(2)).toBeUndefined() 
-             array.pop()
-             expect(getLocal(0)).toBe('of');
-             expect(getLocal(1)).toBeUndefined()
-             array.pop()
-             expect(getLocal(0)).toBeUndefined()
+              expect(getLocal(2)).toBeUndefined() 
+              array.pop()
+              expect(getLocal(0)).toBe('of');
+              expect(getLocal(1)).toBeUndefined()
+              array.pop()
+              expect(getLocal(0)).toBeUndefined()
             })
           })
         })
@@ -879,5 +879,187 @@ describe('LSD.Storage', function() {
     unsetLocal('1')
     unsetLocal('2')
     unsetLocal('length')
+  })
+  if (LSD.Storage.Indexed.prototype.storage) describe('Indexed', function() {
+    describe('open', function() {
+      it ('should open database invoke callback with a db reference', function() {
+        var called;
+        var storage = new LSD.Storage.Indexed;
+        storage.open(prefix, function(database) {
+          called = database;
+        });
+        waitsFor(function() {
+          return called;
+        }, 'an open database callback', 100);
+        runs(function() {
+          expect(called).toBeTruthy();
+          expect(called.name).toBe(prefix);
+        })
+      })
+    });
+    
+    describe('openStore', function() {
+      it ('should open a new transaction and invoke callback with a db store object', function() {
+        var called;
+        var storage = new LSD.Storage.Indexed;
+        storage.openStore(prefix, function(store) {
+          called = store;
+        });
+        waitsFor(function() {
+          return called;
+        }, 'an open store callback', 100);
+        runs(function() {
+          expect(called).toBeTruthy();
+          expect(called.name).toBe(prefix);
+        })
+      })
+    })
+    
+    
+    describe('openCursor', function() {
+      it ('should open a new transaction and invoke callback with a db store object', function() {
+        var called;
+        var storage = new LSD.Storage.Indexed
+        storage.openCursor(prefix, function(store) {
+          called = arguments;
+        });
+        waitsFor(function() {
+          return called;
+        }, 'an open cursor callback', 100);
+        runs(function() {
+          expect(called[1].type).toBe('success');
+          expect(called[0]).toBeFalsy()
+        })
+      })
+    })
+    
+    describe('when called with two arguments', function() {
+      describe('with a key value pair', function() {
+        it ('should add, get and unset values', function() {
+          var calls = [], callback = function() {
+            calls.push(Array.prototype.slice.call(arguments));
+          }
+          LSD.Storage.Indexed('secret', '0', prefix, callback)
+          waitsFor(function() {
+            return calls.length;
+          }, 'an put callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('0');
+            expect(call[1]).toEqual('secret');
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed.prototype.getItem('0', prefix, callback);
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'an get callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('0');
+            expect(call[1]).toEqual('secret');
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed.prototype.getAllItems(prefix, callback);
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'a cursor callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('0');
+            expect(call[1]).toEqual('secret');
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed('mistery', '1', prefix, callback)
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'an put callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('1');
+            expect(call[1]).toEqual('mistery');
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed(undefined, '0', prefix, callback);
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'a delete callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('0');
+            expect(call[1]).toBeUndefined()
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed.prototype.getItem('0', prefix, callback);
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'an get callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('0');
+            expect(call[1]).toBeUndefined()
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed(undefined, '1', prefix, callback);
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'a delete callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('1');
+            expect(call[1]).toBeUndefined()
+            expect(call[2].type).toEqual('success');
+            LSD.Storage.Indexed.prototype.getItem('1', prefix, callback);
+          })
+          waitsFor(function() {
+            return calls.length;
+          }, 'an get callback', 100);
+          runs(function() {
+            var call = calls.pop();
+            expect(call[0]).toEqual('1');
+            expect(call[1]).toBeUndefined()
+            expect(call[2].type).toEqual('success');
+          })
+        });
+      })
+      xdescribe('with a key and a callback', function() {
+        it ('should execute a callback with a value of by the given key', function() {
+          setCookie('0', '1');
+          var args, callback = function(key, value) {
+            args = [key, value]
+          }
+          expect(LSD.Storage.Cookies('0', callback)).toBe('1');
+          expect(args).toEqual(['0', '1'])
+          unsetCookie('0', '1');
+        })
+      })
+      xdescribe('with a context given as a first argument', function() {
+        it ('should import cookies into current context', function() {
+          setCookie('0', '1', prefix);
+          setCookie('1', '2', prefix);
+          var storage = {};
+          LSD.Storage.Cookies(storage, prefix);
+          expect(storage[0]).toBe('1');
+          expect(storage[1]).toBe('2');
+          unsetCookie('0', prefix);
+          unsetCookie('1', prefix);
+        })
+      })
+      xdescribe('with a callback given as a first argument', function() {
+        it ('should invoke callback with found values and treat second argument as prefix', function() {
+          var args = [], i = 0;
+          var callback = function(index, value, meta) {
+            args.push([index, value])
+            i++;
+          }
+          setCookie('1', '2', prefix);
+          setCookie('0', '1', prefix);
+          LSD.Storage.Cookies(callback, prefix);
+          expect(i).toBe(2);
+          expect(args).toEqual([['0', '1'], ['1', '2']])
+          unsetCookie('0', prefix);
+          unsetCookie('1', prefix);
+        })
+      })
+    });
   })
 })

@@ -220,27 +220,27 @@ describe("LSD.Interpolation", function() {
       </li>\
       <p>\
       Hey there ${person.name || ''}-boy! \
-      What is up for you man? How's ${person.title || ''} business is going?\
+      What is up for you man? How's ${person.title || ''} business going?\
       You may want to visit ${person.organization.name || ''}'s website at ${person.organization.url || ''}\
       </p>\
     "
     var element = document.createElement('div');
     element.innerHTML = html;
     var widget = new LSD.Element(element);
-    expect(widget.childNodes[3].textContent.replace(/[\s\t]+/g, ' ')).toEqual(' Hey there Jesus-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    expect(widget.childNodes[3].textContent.replace(/[\s\t]+/g, ' ')).toEqual(' Hey there Jesus-boy! What is up for you man? How\'s Teh Savior business going? You may want to visit Heaven\'s website at http://heaven.org ')
     widget.childNodes[1].childNodes[1].childNodes[0].change('textContent', 'Judas')
-    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Teh Savior business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Teh Savior business going? You may want to visit Heaven\'s website at http://heaven.org ')
     widget.childNodes[1].childNodes[3].change('textContent', 'Betraya')
-    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Heaven\'s website at http://heaven.org ')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business going? You may want to visit Heaven\'s website at http://heaven.org ')
     widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].childNodes[1].change('textContent', 'Hell')
-    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://heaven.org ')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business going? You may want to visit Hell\'s website at http://heaven.org ')
     widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].setAttribute('href', 'http://hell.xxx')
-    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Hell\'s website at http://hell.xxx ')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business going? You may want to visit Hell\'s website at http://hell.xxx ')
     widget.childNodes[1].microdata.organization.mix({
      name: 'Traitors, Inc',
      url: 'file://c://traitors.text'
     });
-    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business is going? You may want to visit Traitors, Inc\'s website at file://c://traitors.text ')
+    expect(widget.childNodes[3].textContent.replace(/\s+/g, ' ')).toEqual(' Hey there Judas-boy! What is up for you man? How\'s Betraya business going? You may want to visit Traitors, Inc\'s website at file://c://traitors.text ')
     expect(widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].href).toEqual('file://c://traitors.text')
     expect(widget.childNodes[1].childNodes[5].childNodes[1].childNodes[1].href).toEqual('file://c://traitors.text')
   });

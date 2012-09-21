@@ -3,15 +3,31 @@ describe("LSD.Layout", function() {
     describe("when DOM tree is used as a template", function() {
       describe("and comments are used to indicate conditional blocks", function() {
         it ("should parse comments and interpolate them", function() {
-          var element = new Element('div', {html: LSD.Test.Template.urgency});
-          $e = element
-          var widget = $w = new LSD.Element(element, {document: Factory('document')});
-          widget.variables.merge(widget.attributes);
+          var fragment = new LSD.Fragment('\
+            <!-- if a > 1 -->\
+              <!--\
+                <!- if urgency ->\
+                  <!- <h2>This is so urgent..</h2> ->\
+                <!- else ->\
+                  <h2>This is not urgent, but hell, we need this today</h2>\
+                <!- end ->\
+              -->\
+            <!-- else -->\
+              <!-- unless urgency -->\
+                <h3>That only takes 5 minutes to do! Come on, copy and paste what we have already</h3>\
+              <!-- else -->\
+                <!--\
+                  <h3>I want it right now</h3>\
+                -->\
+              <!-- end -->\
+            <!-- end -->\
+          ')
+          var parent = new LSD.Element;
+          parent.appendChild(fragment)
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
           expect(element.getElements('h3').length).toEqual(1);
-
-          widget.setAttribute('urgency', true);
+          widget.variables.set('urgency', true);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
           expect(element.getElements('h3').length).toEqual(1);
@@ -19,26 +35,26 @@ describe("LSD.Layout", function() {
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
           expect(element.getElements('h3').length).toEqual(1);
-          widget.setAttribute('urgency', true);
+          widget.variables.set('urgency', true);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
           expect(element.getElements('h3').length).toEqual(1);
           widget.removeAttribute('urgency')
           expect(element.getElement('h3').innerHTML).toEqual('That only takes 5 minutes to do! Come on, copy and paste what we have already');
           expect(element.getElements('h3').length).toEqual(1);
-          widget.setAttribute('a', 2);
+          widget.variables.set('a', 2);
           expect(element.getElement('h3')).toBeFalsy();
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is not urgent, but hell, we need this today');
-          widget.setAttribute('urgency', true);
+          widget.variables.set('urgency', true);
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is so urgent..');
           expect(element.getElement('h3')).toBeFalsy();
-          widget.setAttribute('a', 1);
+          widget.variables.set('a', 1);
           expect(element.getElement('h2')).toBeFalsy();
           expect(element.getElements('h3').length).toEqual(1);
           expect(element.getElement('h3').innerHTML).toEqual('I want it right now');
-          widget.setAttribute('a', 2);
+          widget.variables.set('a', 2);
           expect(element.getElements('h2').length).toEqual(1);
           expect(element.getElement('h2').innerHTML).toEqual('This is so urgent..');
           expect(element.getElement('h3')).toBeFalsy();

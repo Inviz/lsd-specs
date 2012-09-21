@@ -18,16 +18,122 @@ describe("LSD.Type.Resource", function() {
       expect(model.constructor).toBe(resource)
       expect(model.save).toBeTruthy()
     })
+    
+    it ('should create association objects', function() {
+      var resource = new LSD.Resource({
+        title: 'Person',
+        comments: {}
+      });
+      expect(resource.comments.constructor).toBe(LSD.Resource);
+      var model = new resource;
+      expect(model.comments.constructor).toBe(LSD.Resource)
+      var a = model.comments.build();
+      expect(a.constructor).toBe(resource.comments)
+      expect(a instanceof resource.comments).toBe(true)
+      expect(a.person).toBe(model)
+      expect(a.person_id).toBeUndefined()
+      model.set('id', 'something')
+      expect(a.person_id).toBe('something');
+      var b = model.comments.build();
+      expect(b.constructor).toBe(resource.comments)
+      expect(b instanceof resource.comments).toBe(true)
+      expect(a.person).toBe(model);
+      expect(a.person_id).toBe('something');
+      model.set('id', 'other')
+      expect(a.person_id).toBe('other');
+      expect(b.person_id).toBe('other');
+      model.unset('id', 'other')
+      expect(a.person_id).toBeUndefined()
+      expect(b.person_id).toBeUndefined()
+      //model.comments.push({  })
+    })
   })
-  describe("when .name property is given", function() {
+  describe('as 1:M association', function() {
+    describe('when added or removed from array', function() {
+      it ('should be able to erase foreign keys', function() {
+        var resource = new LSD.Resource({
+          title: 'Person',
+          comments: {}
+        })
+        var person = new resource({title: 'Bob'});
+        var comment = person.comments.build({text: 'Love it'});
+        person.comments.push(comment);
+        expect(comment.person).toBe(person);
+        expect(comment.person_id).toBeUndefined();
+        person.set('id', 'bob');
+        expect(comment.person_id).toBe('bob')
+        person.comments.push({text: 'Blargh'});
+        var last = person.comments[person.comments._length - 1];
+        expect(last instanceof resource.comments).toBe(true)
+        expect(last.text).toBe('Blargh');
+        expect(last.person_id).toBe('bob');
+        expect(last.person).toBe(person);
+        resource.set('exportKey', 'dude_id');
+        expect(last.person_id).toBeUndefined()
+        expect(last.dude_id).toBe('bob');
+        person.set('id', 'jack')
+        expect(last.dude_id).toBe('jack');
+        resource.set('title', 'dudes');
+        expect(last.person).toBeUndefined()
+        expect(last.dude).toBe(person);
+        person.comments.pop();
+        expect(last.person_id).toBeUndefined();
+        expect(last.person).toBeUndefined();
+        expect(last.dude_id).toBeUndefined();
+        expect(last.dude).toBeUndefined();
+      })
+    })
+  })
+  describe('as M:M association', function() {
+    describe('when added or removed from array', function() {
+      it ('should also add model to foreign array', function() {
+        var resources = new LSD.Resource({
+          people: {
+            groups: {
+              collection: 'people'
+            }
+          },
+          groups: {
+            people: {
+              collection: 'groups'
+            }
+          }
+        });
+        var man = new resources.people;
+        var woman = new resources.people;
+        var weightlifters = new resources.groups;
+        var photographers = new resources.groups;
+        expect(resources.people.groups.through).toBe('groups_people');
+        expect(resources.groups.people.through).toBe('groups_people');
+        man.groups.push(weightlifters);
+        expect(resources.groups.people.intermediate._length).toBe(1)
+        expect(weightlifters.people.slice()).toEqual([man])
+        expect(man.group).toBeUndefined();
+        expect(man.group_id).toBeUndefined();
+        weightlifters.people.push(woman);
+        expect(resources.groups.people.intermediate._length).toBe(2)
+        expect(weightlifters.people.slice()).toEqual([man, woman])
+        expect(woman.groups.slice()).toEqual([weightlifters])
+        expect(woman.group).toBeUndefined();
+        expect(woman.group_id).toBeUndefined();
+        //weightlifters.set('id', 'wl');
+        //expect(man.group_id).toBe('wl')
+        //photographers
+        weightlifters.people.pop();
+        expect(woman.groups.slice()).toEqual([])
+        expect(resources.groups.people.intermediate._length).toBe(1)
+      })
+    })
+  })
+  describe("when .title property is given", function() {
     it ("should affect directory", function() {
       var resource = new LSD.Resource
       expect(resource.directory).toBeFalsy()
-      resource.set('name', 'comments');
+      resource.set('title', 'comments');
       expect(resource.directory).toBe('comments')
-      resource.change('name', 'publishers');
+      resource.change('title', 'publishers');
       expect(resource.directory).toBe('publishers')
-      resource.unset('name', 'publishers');
+      resource.unset('title', 'publishers');
       expect(resource.directory).toBeFalsy()
     })
     describe("and .prefix is given", function() {
@@ -35,17 +141,17 @@ describe("LSD.Type.Resource", function() {
         var resource = new LSD.Resource
         expect(resource.directory).toBeFalsy()
         expect(resource.prefix).toBeFalsy()
-        resource.set('prefix', 'staff');
+        resource.change('prefix', 'staff');
         expect(resource.directory).toBe('staff')
-        resource.set('name', 'comments');
+        resource.change('title', 'comments');
         expect(resource.directory).toBe('staff/comments')
-        resource.change('name', 'publishers');
-        expect(resource._name).toEqual('publishers');
+        resource.change('title', 'publishers');
+        expect(resource.title).toEqual('publishers');
         expect(resource.directory).toBe('staff/publishers')
         resource.change('prefix', 'guest');
-        expect(resource._name).toEqual('publishers');
+        expect(resource.title).toEqual('publishers');
         expect(resource.directory).toBe('guest/publishers')
-        resource.unset('name', 'publishers');
+        resource.unset('title', 'publishers');
         expect(resource.directory).toBe('guest')
         resource.unset('prefix', 'guest');
         expect(resource.directory).toBeFalsy()
@@ -58,7 +164,7 @@ describe("LSD.Type.Resource", function() {
       expect(resource.url).toBeFalsy()
       resource.set('host', 'twitter.com');
       expect(resource.url).toBe('twitter.com');
-      resource.set('name', 'events');
+      resource.set('title', 'events');
       expect(resource.url).toBe('twitter.com/events');
       resource.set('host', 'login.twitter.com');
       expect(resource.url).toBe('login.twitter.com/events');
@@ -74,7 +180,7 @@ describe("LSD.Type.Resource", function() {
             customers: {}
           });
           var request = resource.match('/customers');
-          expect(request.resource._name).toEqual('customers');
+          expect(request.resource.title).toEqual('customers');
           expect(request.action).toEqual('index');
           expect(request.method).toEqual('get');
         })
@@ -86,7 +192,7 @@ describe("LSD.Type.Resource", function() {
           customers: {}
         });
         var request = resource.match('/customers/jack');
-        expect(request.resource._name).toEqual('customers');
+        expect(request.resource.title).toEqual('customers');
         expect(request.action).toEqual('show');
         expect(request.id).toEqual('jack');
         expect(request.method).toEqual('get');
@@ -100,7 +206,7 @@ describe("LSD.Type.Resource", function() {
           }
         });
         var request = resource.match('/staff/customers/jack');
-        expect(request.resource._name).toEqual('customers');
+        expect(request.resource.title).toEqual('customers');
         expect(request.action).toEqual('show');
         expect(request.id).toEqual('jack');
         expect(request.method).toEqual('get');
@@ -114,7 +220,7 @@ describe("LSD.Type.Resource", function() {
           }
         });
         var request = resource.match('/customers/jack/placements');
-        expect(request.resource._name).toEqual('placements');
+        expect(request.resource.title).toEqual('placements');
         expect(request.action).toEqual('index');
         expect(request.customer_id).toEqual('jack');
         expect(request.id).toBeUndefined();
@@ -129,7 +235,7 @@ describe("LSD.Type.Resource", function() {
           }
         });
         var request = resource.match('/customers/jack/placements/25');
-        expect(request.resource._name).toEqual('placements');
+        expect(request.resource.title).toEqual('placements');
         expect(request.action).toEqual('show');
         expect(request.customer_id).toEqual('jack');
         expect(request.id).toEqual(25);
@@ -144,7 +250,7 @@ describe("LSD.Type.Resource", function() {
           }
         });
         var request = resource.match('/customers/jack/placements/25/edit');
-        expect(request.resource._name).toEqual('placements');
+        expect(request.resource.title).toEqual('placements');
         expect(request.action).toEqual('edit');
         expect(request.customer_id).toEqual('jack');
         expect(request.id).toEqual(25);
@@ -162,7 +268,7 @@ describe("LSD.Type.Resource", function() {
             }
           });
           var request = resource.match('/staff/customers/jack/placements');
-          expect(request.resource._name).toEqual('placements');
+          expect(request.resource.title).toEqual('placements');
           expect(request.action).toEqual('index');
           expect(request.customer_id).toEqual('jack');
           expect(request.id).toBeUndefined();
@@ -179,7 +285,7 @@ describe("LSD.Type.Resource", function() {
             }
           });
           var request = resource.match('/staff/staff/customers/jack/placements/25');
-          expect(request.resource._name).toEqual('placements');
+          expect(request.resource.title).toEqual('placements');
           expect(request.action).toEqual('show');
           expect(request.customer_id).toEqual('jack');
           expect(request.id).toEqual(25);
@@ -196,7 +302,7 @@ describe("LSD.Type.Resource", function() {
             }
           });
           var request = resource.match('/staff/customers/jack/placements/25/edit');
-          expect(request.resource._name, 'customers');
+          expect(request.resource.title, 'customers');
           expect(request.action).toEqual('edit');
           expect(request.customer_id).toEqual('jack');
           expect(request.id).toEqual(25);

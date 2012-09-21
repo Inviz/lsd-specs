@@ -26,6 +26,7 @@ Configuration.sets = {
     path: 'lsd/Script/',
     files: [
       'Object',
+      'Journal',
       'Object.Group',
       'Struct',
       'Array',
@@ -35,7 +36,8 @@ Configuration.sets = {
       'Interpolation',
       'Parser',
       'Script',
-      'Data'
+      'Data',
+      'Storage'
     ]
   },
   'type': {
@@ -49,7 +51,8 @@ Configuration.sets = {
       'Attributes',
       'Resource',
       'Proxies',
-      'Styles'
+      'Styles',
+      'Request'
     ]
   },
   'node': {

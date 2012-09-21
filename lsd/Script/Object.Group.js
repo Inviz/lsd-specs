@@ -57,11 +57,11 @@ describe("LSD.Group.Array", function() {
           _construct: function(name, value) {
             return null;
           },
-          _delegate: function(object, name, value, memo, old) {
+          _delegate: function(object, name, value, old, meta) {
             if (value) for (var property in value)
-              object.mix(property, value[property] + 123, memo);
+              object.mix(property, value[property] + 123, meta);
             if (old && (!value || object._journal)) for (var property in old)
-              object.unmix(property, old[property] + 123, memo);
+              object.unmix(property, old[property] + 123, meta);
             return true;
           }
         });
@@ -118,8 +118,8 @@ describe("LSD.Group.Array", function() {
         object.set('boys', jeff);
         expect(jeff.title).toEqual('Wikid');
         values.boys.set('title', 'Underlord');
-        expect(josh.title).toEqual('Glorious');
         expect(jack.title).toEqual('Underlord');
+        expect(josh.title).toEqual('Glorious');
         expect(jeff.title).toEqual('Wikid');
         josh.unset('title', 'Glorious');
         expect(josh.title).toEqual('Underlord');
