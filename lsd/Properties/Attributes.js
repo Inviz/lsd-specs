@@ -163,43 +163,33 @@ describe("LSD.Properties.Attributes", function() {
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance._journal.checked.length).toEqual(1);
-    expect(instance._journal.selected.length).toEqual(1);
     instance.unset('selected', null);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
     expect(instance.select).toBeFalsy();
-    expect(instance._journal.checked.length).toEqual(0);
-    expect(instance._journal.selected.length).toEqual(0);
     instance.set('checked', true);
     expect(instance.checked).toBeTruthy();
     expect(instance.selected).toBeTruthy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance._journal.checked.length).toEqual(1);
-    expect(instance._journal.selected.length).toEqual(1);
     instance.set('checked', false);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance._journal.checked.length).toEqual(2);
-    expect(instance._journal.selected.length).toEqual(1);
     instance.unset('checked', false);
     expect(instance.checked).toBeTruthy();
     expect(instance.selected).toBeTruthy();
     expect(instance.check).toBeTruthy();
     expect(instance.select).toBeTruthy();
-    expect(instance._journal.checked.length).toEqual(1);
-    expect(instance._journal.selected.length).toEqual(1);
     instance.unset('checked', true);
     expect(instance.checked).toBeFalsy();
     expect(instance.selected).toBeFalsy();
     expect(instance.check).toBeFalsy();
     expect(instance.select).toBeFalsy();
     expect(instance._journal.checked.length).toEqual(0);
-    expect(instance._journal.selected.length).toEqual(0);
+    expect(instance._journal.selected).toBeUndefined()
   })
   
   it ("should make attributes type='checkbox' and checked='checked'", function() {

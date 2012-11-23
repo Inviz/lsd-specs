@@ -28,6 +28,7 @@ describe('LSD.Relation', function() {
       var parent = new LSD.Element({related: relation});
       var a = new LSD.Element('a');
       var b = new LSD.Element('b');
+      debugger
       parent.appendChild(a);
       expect(relation.slice()).toEqual([a])
       parent.appendChild(b);
@@ -62,24 +63,6 @@ describe('LSD.Relation', function() {
       expect(b.attributes.alt).toBe('oyy')
       expect(b.attributes.title).toBe('hey')
       b.set('tagName', 'a')
-      expect(b.tabindex).toBeUndefined()
-      expect(b.attributes.alt).toBeUndefined()
-      expect(b.attributes.title).toBeUndefined()
-      b.set('tagName', 'b')
-      expect(a.attributes.title).toBe('hey')
-      expect(b.attributes.title).toBe('hey')
-      parent.unset('related.attributes.title', 'hey')
-      expect(a.attributes.title).toBeUndefined()
-      expect(b.attributes.title).toBeUndefined()
-      expect(a.attributes.alt).toBe('oyy')
-      expect(b.attributes.alt).toBe('oyy')
-      relation.unset('attributes.alt', 'oyy')
-      expect(a.attributes.alt).toBeUndefined()
-      expect(b.attributes.alt).toBeUndefined()
-      expect(a.tabindex).toBe(3)
-      expect(b.tabindex).toBe(3)
-      relation.unset('tabindex', 3)
-      expect(a.tabindex).toBeUndefined()
       expect(b.tabindex).toBeUndefined()
     });
   })

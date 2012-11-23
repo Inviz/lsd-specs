@@ -157,4 +157,16 @@ describe("LSD.Data", function() {
       expect(LSD.Data.fromString('a[b][]=1&a[b][1]=2').toString()).toEqual('a[b][]=1&a[b][]=2')
     });
   });
+  describe('when used in Struct as a second class', function() {
+    it ('should be hashing keys', function() {
+      var Struct = new LSD.Struct(['Journal', 'Data']);
+      var object = new Struct;
+      object.set('a[b]', 1);
+      expect(object.a.b).toBe(1)
+      object.set('a[b]', 2);
+      expect(object.a.b).toBe(2)
+      expect(object._journal).toBe(undefined)
+      expect(object.a._journal.b.slice()).toEqual([1, 2])
+    })
+  })
 })

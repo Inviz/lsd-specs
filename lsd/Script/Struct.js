@@ -150,7 +150,7 @@ describe("LSD.Struct", function() {
           expect(post.author).toBeUndefined()
           expect(post.title).toBeUndefined()
           expect(post._owner).toBeUndefined()
-          expect(instance.person.title)
+          expect(instance.person.title).toBeUndefined()
           expect(instance.person).toEqual(animal)
           var announcement = new Post
           instance.set('post', announcement)
@@ -365,6 +365,25 @@ describe("LSD.Struct", function() {
         })
       })
     });
+    describe('when initialized with multiple ascendants', function() {
+      it ('should inherit properties from all of given objects and prefix overwriting private properties', function() {
+        var A = function() {};
+        A.prototype.a = 1;
+        A.prototype.b = 1;
+        A.prototype._hash = 1;
+        var B = function() {}
+        B.prototype.b = 2;
+        B.prototype.c = 2;
+        B.prototype._hash = 2;
+        var Struct = new LSD.Struct(['Object', A, B]);
+        var object = new Struct;
+        expect(object.a).toBe(1);
+        expect(object.b).toBe(2);
+        expect(object.c).toBe(2);
+        expect(object._hash).toBe(1);
+        expect(object.__hash).toBe(2);
+      })
+    })
     describe('when dynamic properties are defined', function() {
       describe('and the property is defined on the top level', function() {
 

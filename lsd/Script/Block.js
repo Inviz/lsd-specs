@@ -29,9 +29,9 @@ describe("LSD.Script.Block", function() {
     scope.set('Lmap', function(array, fn, bind) {
       if (fn.results == null) {
         var results = fn.results = [];
-        array.seek(fn, function(result, value, index, state) {
+        array.seek(fn, function(result, value, index, old) {
           count++;
-          if (state) results[index] = result;
+          if (value !== undefined) results[index] = result;
           else results.splice(index, 1);
         })
       }
@@ -82,9 +82,9 @@ describe("LSD.Script.Block", function() {
     scope.set('Lmap', function(array, fn, bind) {
       if (fn.results == null) {
         var results = fn.results = [];
-        array.seek(fn, function(result, value, index, state) {
+        array.seek(fn, function(result, value, index, old) {
           count++;
-          if (state) results[index] = result;
+          if (value !== undefined) results[index] = result;
           else results.splice(index, 1);
         })
       }
@@ -145,7 +145,7 @@ describe("LSD.Script.Block", function() {
       checks++;
       return object.set('checked', true)
     });
-    scope.set('uncheck', function(object, force) {
+    scope.set('uncheck', function(object) {
       unchecks++;
       return object.set('checked', false)
     });
@@ -164,7 +164,7 @@ describe("LSD.Script.Block", function() {
     expect(slaves[2].checked).toBeTruthy();
     expect(slaves[3].checked).toBeTruthy();
     
-    scope.uncheck(masters[0], true);
+    scope.uncheck(masters[0]);
     expect(masters[0].checked).toBeFalsy();
     expect(masters[1].checked).toBeFalsy();
     expect(slaves[0].checked).toBeFalsy();
@@ -185,7 +185,7 @@ describe("LSD.Script.Block", function() {
     expect(unchecks).toEqual(7);
     
     
-    scope.uncheck(slaves[0], true);
+    scope.uncheck(slaves[0]);
     expect(masters[0].checked).toBeFalsy();
     expect(masters[1].checked).toBeFalsy();
     expect(slaves[0].checked).toBeFalsy();
@@ -216,7 +216,7 @@ describe("LSD.Script.Block", function() {
     expect(slaves[2].checked).toBeTruthy();
     expect(slaves[3].checked).toBeTruthy();
     
-    scope.uncheck(slaves[3], true);
+    scope.uncheck(slaves[3]);
     expect(masters[0].checked).toBeFalsy();
     expect(masters[1].checked).toBeFalsy();
     expect(slaves[0].checked).toBeFalsy();

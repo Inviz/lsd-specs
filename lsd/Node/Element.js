@@ -210,7 +210,6 @@ describe('LSD.Element', function() {
           expect(c.sourceIndex).toEqual(1);
           a.childNodes.unshift(b); // b, c
           expect(b.previousSibling).toBe(null)
-          expect(b._journal.nextSibling[0]).toEqual(c)
           expect(b.nextSibling).toEqual(c)
           expect(b.sourceIndex).toEqual(1);
           expect(c.sourceIndex).toEqual(2);
@@ -222,8 +221,6 @@ describe('LSD.Element', function() {
           c.childNodes.push(cc) // b[bb], c[cc]
           expect(c.sourceLastIndex).toEqual(4);
           a.childNodes.unshift(f); // f, b[bb], c[cc]
-          expect(b._journal.previousSibling[0]).toEqual(f)
-          expect(b._journal.nextSibling[0]).toEqual(c)
           expect(f.sourceIndex).toEqual(1);
           expect(b.sourceIndex).toEqual(2);
           expect(b.sourceLastIndex).toEqual(3);
@@ -247,7 +244,6 @@ describe('LSD.Element', function() {
           expect(d.sourceIndex).toEqual(3);
           expect(b.previousElementSibling).toBeNull()
           expect(b.nextElementSibling).toBe(d)
-          expect(b._journal.nextElementSibling.length).toBe(1)
           a.childNodes.shift() // d
           expect(b.parentNode).toBeUndefined()
           expect(b.previousSibling).toBeNull()
@@ -586,12 +582,12 @@ describe('LSD.Element', function() {
         var parent = new LSD.Element;
         widget.appendChild(parent);
         parent.appendChild(new LSD.Textnode('Bob'));
-        expect(widget._journal.textContent.length).toEqual(1)
+        expect(widget._journal && widget._journal.textContent).toBeFalsy();
         expect(parent.textContent).toEqual('Bob');
         expect(widget.textContent).toEqual('Bob');
         widget.childNodes.unshift(new LSD.Textnode('Laughable '));
-        expect(parent._journal.textContent.length).toEqual(1)
-        expect(widget._journal.textContent.length).toEqual(1)
+        //expect(widget._journal && widget._journal.textContent).toBeFalsy();
+        expect(parent._journal && parent._journal.textContent).toBeFalsy();
         expect(parent.textContent).toEqual('Bob');
         expect(widget.textContent).toEqual('Laughable Bob');
         parent.childNodes.unshift(new LSD.Textnode('Butane '));

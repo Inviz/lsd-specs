@@ -43,17 +43,17 @@ describe('LSD.Storage', function() {
   describe('when used as a storage API', function() {
     describe('without specified adapter', function() {
       it ('should be able to choose adapter automatically', function() {
-        LSD.Storage('secret', '0');
+        LSD.Storage('0', 'secret');
         expect(getLocal('0')).toBe('secret')
-        LSD.Storage(undefined, '0')
+        LSD.Storage('0', undefined)
         expect(getLocal('0')).toBeUndefined()
       })
     })
     if (cookies) describe('with specified adapter', function() {
       it ('should be able to set and unset values using that adapter', function() {
-        LSD.Storage('secret', '0', null, null, null, null, 'Cookies');
+        LSD.Storage('0', 'secret', null, null, null, null, 'Cookies');
         expect(getCookie('0')).toBe('secret')
-        LSD.Storage(undefined, '0', null, null, null, null, 'Cookies');
+        LSD.Storage('0', undefined, null, null, null, null, 'Cookies');
         expect(getCookie('0')).toBeUndefined()
       })
     })
@@ -210,9 +210,9 @@ describe('LSD.Storage', function() {
         describe('with a key value pair', function() {
           it ('should set and unset cookies', function() {
             expect(getCookie('0')).toBeUndefined()
-            LSD.Storage.Cookies('secret', '0')
+            LSD.Storage.Cookies('0', 'secret')
             expect(getCookie('0')).toBe('secret')
-            LSD.Storage.Cookies(undefined, '0')
+            LSD.Storage.Cookies('0')
             expect(getCookie('0')).toBeUndefined();
           });
         })
@@ -222,7 +222,7 @@ describe('LSD.Storage', function() {
             var args, callback = function(key, value) {
               args = [key, value]
             }
-            expect(LSD.Storage.Cookies('0', callback)).toBe('1');
+            expect(LSD.Storage.Cookies.get('0', callback)).toBe('1');
             expect(args).toEqual(['0', '1'])
             unsetCookie('0', '1');
           })
@@ -263,19 +263,19 @@ describe('LSD.Storage', function() {
               var args, callback = function(key, value) {
                 args = [key, value]
               }
-              LSD.Storage.Cookies('1', '0', callback);
+              LSD.Storage.Cookies('0', '1', callback);
               expect(getCookie(0)).toBe('1')
               expect(args).toEqual(['0', '1'])
-              expect(LSD.Storage.Cookies(undefined, '0', callback)).toBe(undefined);
+              expect(LSD.Storage.Cookies('0', undefined, callback)).toBe(undefined);
               expect(args).toEqual(['0', undefined])
               expect(getCookie(0)).toBeUndefined()
             })
           })
           describe('and a prefix', function() {
             it ('should set and unset values and invoke the callback', function() {
-              LSD.Storage.Cookies('1', '0', prefix);
+              LSD.Storage.Cookies('0', '1', prefix);
               expect(getCookie(0, prefix)).toBe('1')
-              expect(LSD.Storage.Cookies(undefined, '0', prefix)).toBe(undefined);
+              expect(LSD.Storage.Cookies('0', undefined, prefix)).toBe(undefined);
               expect(getCookie(0, prefix)).toBeUndefined()
             })
           })
@@ -289,10 +289,10 @@ describe('LSD.Storage', function() {
                 var args, callback = function(key, value) {
                   args = [key, value]
                 }
-                LSD.Storage.Cookies('1', '0', prefix, callback);
+                LSD.Storage.Cookies('0', '1', prefix, callback);
                 expect(getCookie(0, prefix)).toBe('1')
                 expect(args).toEqual(['0', '1'])
-                LSD.Storage.Cookies(undefined, '0', prefix, callback);
+                LSD.Storage.Cookies('0', undefined, prefix, callback);
                 expect(args).toEqual(['0', undefined])
                 expect(getCookie(0, prefix)).toBeUndefined()
               })
@@ -300,11 +300,11 @@ describe('LSD.Storage', function() {
             describe('and native array given as context', function() {
               it ('should set a value by that key in that context', function() {
                 var storage = [];
-                LSD.Storage.Cookies('1', '0', prefix, storage);
+                LSD.Storage.Cookies('0', '1', prefix, storage);
                 expect(storage[0]).toBe('1');
                 expect(storage.length).toBe(1);
                 unsetCookie('0', prefix);
-                LSD.Storage.Cookies(undefined, '0', prefix, storage);
+                LSD.Storage.Cookies('0', undefined, prefix, storage);
                 expect(storage[0]).toBeUndefined()
                 expect(storage.length).toBe(0);
               })
@@ -312,11 +312,11 @@ describe('LSD.Storage', function() {
             describe('and native object given as context', function() {
               it ('should set a value by that key in that context', function() {
                 var storage = {};
-                LSD.Storage.Cookies('1', '0', prefix, storage);
+                LSD.Storage.Cookies('0', '1', prefix, storage);
                 expect(storage[0]).toBe('1');
                 expect(storage.length).toBeUndefined();
                 unsetCookie('0', prefix);
-                LSD.Storage.Cookies(undefined, '0', prefix, storage);
+                LSD.Storage.Cookies('0', undefined, prefix, storage);
                 expect(storage[0]).toBeUndefined()
                 expect(storage.length).toBeUndefined();
               })
@@ -544,7 +544,7 @@ describe('LSD.Storage', function() {
           it ('should get locals', function() {
             setLocal('0', '1');
             setLocal('length', 1);
-            expect(LSD.Storage.Local('0')).toBe('1');
+            expect(LSD.Storage.Local.get('0')).toBe('1');
             unsetLocal('0')
             unsetLocal('length');
           })
@@ -574,7 +574,7 @@ describe('LSD.Storage', function() {
               setLocal('1', '2', prefix);
               setLocal('length', 2, prefix);
               var storage = [];
-              LSD.Storage.Local(storage, prefix);
+              LSD.Storage.Local.get(storage, prefix);
               expect(storage[0]).toBe('1');
               expect(storage[1]).toBe('2');
               expect(storage.length).toBe(2);
@@ -589,7 +589,7 @@ describe('LSD.Storage', function() {
               setLocal('1', '2', prefix);
               setLocal('length', 2, prefix);
               var storage = {};
-              LSD.Storage.Local(storage, prefix);
+              LSD.Storage.Local.get(storage, prefix);
               expect(storage[0]).toBe('1');
               expect(storage[1]).toBe('2');
               unsetLocal('0', prefix);
@@ -628,9 +628,9 @@ describe('LSD.Storage', function() {
       describe('with a key value pair', function() {
         it ('should set and unset locals', function() {
           expect(getLocal('0')).toBeUndefined()
-          LSD.Storage.Local('secret', '0')
+          LSD.Storage.Local('0', 'secret')
           expect(getLocal('0')).toBe('secret')
-          LSD.Storage.Local(undefined, '0')
+          LSD.Storage.Local('0')
           expect(getLocal('0')).toBeUndefined();
         });
       })
@@ -640,7 +640,7 @@ describe('LSD.Storage', function() {
           var args, callback = function(key, value) {
             args = [key, value]
           }
-          expect(LSD.Storage.Local('0', callback)).toBe('1');
+          expect(LSD.Storage.Local.get('0', callback)).toBe('1');
           expect(args).toEqual(['0', '1'])
           unsetLocal('0', '1');
         })
@@ -651,7 +651,7 @@ describe('LSD.Storage', function() {
           setLocal('1', '2', prefix);
           setLocal('length', 2, prefix);
           var storage = {};
-          LSD.Storage.Local(storage, prefix);
+          LSD.Storage.Local.get(storage, prefix);
           expect(storage[0]).toBe('1');
           expect(storage[1]).toBe('2');
           unsetLocal('0', prefix);
@@ -669,7 +669,7 @@ describe('LSD.Storage', function() {
           setLocal('1', '2', prefix);
           setLocal('0', '1', prefix);
           setLocal('length', 2, prefix);
-          LSD.Storage.Local(callback, prefix);
+          LSD.Storage.Local.get(callback, prefix);
           expect(i).toBe(2);
           expect(args).toEqual([['0', '1'], ['1', '2']])
           unsetLocal('0', prefix);
@@ -685,19 +685,19 @@ describe('LSD.Storage', function() {
             var args, callback = function(key, value) {
               args = [key, value]
             }
-            LSD.Storage.Local('1', '0', callback);
+            LSD.Storage.Local('0', '1', callback);
             expect(getLocal(0)).toBe('1')
             expect(args).toEqual(['0', '1'])
-            expect(LSD.Storage.Local(undefined, '0', callback)).toBe(undefined);
+            expect(LSD.Storage.Local('0', undefined, callback)).toBe(undefined);
             expect(args).toEqual(['0', undefined])
             expect(getLocal(0)).toBeUndefined()
           })
         })
         describe('and a prefix', function() {
           it ('should set and unset values and invoke the callback', function() {
-            LSD.Storage.Local('1', '0', prefix);
+            LSD.Storage.Local('0', '1', prefix);
             expect(getLocal(0, prefix)).toBe('1')
-            expect(LSD.Storage.Local(undefined, '0', prefix)).toBe(undefined);
+            expect(LSD.Storage.Local('0', undefined, prefix)).toBe(undefined);
             expect(getLocal(0, prefix)).toBeUndefined()
           })
         })
@@ -711,10 +711,10 @@ describe('LSD.Storage', function() {
               var args, callback = function(key, value) {
                 args = [key, value]
               }
-              LSD.Storage.Local('1', '0', prefix, callback);
+              LSD.Storage.Local('0', '1', prefix, callback);
               expect(getLocal(0, prefix)).toBe('1')
               expect(args).toEqual(['0', '1'])
-              LSD.Storage.Local(undefined, '0', prefix, callback);
+              LSD.Storage.Local('0', undefined, prefix, callback);
               expect(args).toEqual(['0', undefined])
               expect(getLocal(0, prefix)).toBeUndefined()
             })
@@ -722,11 +722,11 @@ describe('LSD.Storage', function() {
           describe('and native array given as context', function() {
             it ('should set a value by that key in that context', function() {
               var storage = [];
-              LSD.Storage.Local('1', '0', prefix, storage);
+              LSD.Storage.Local('0', '1', prefix, storage);
               expect(storage[0]).toBe('1');
               expect(storage.length).toBe(1);
               unsetLocal('0', prefix);
-              LSD.Storage.Local(undefined, '0', prefix, storage);
+              LSD.Storage.Local('0', undefined, prefix, storage);
               expect(storage[0]).toBeUndefined()
               expect(storage.length).toBe(0);
             })
@@ -734,11 +734,11 @@ describe('LSD.Storage', function() {
           describe('and native object given as context', function() {
             it ('should set a value by that key in that context', function() {
               var storage = {};
-              LSD.Storage.Local('1', '0', prefix, storage);
+              LSD.Storage.Local('0', '1', prefix, storage);
               expect(storage[0]).toBe('1');
               expect(storage.length).toBeUndefined();
               unsetLocal('0', prefix);
-              LSD.Storage.Local(undefined, '0', prefix, storage);
+              LSD.Storage.Local('0', undefined, prefix, storage);
               expect(storage[0]).toBeUndefined()
               expect(storage.length).toBeUndefined();
             })
@@ -850,6 +850,7 @@ describe('LSD.Storage', function() {
             setLocal(0, 'dance');
             setLocal(1, 'god');
             setLocal('length', 2)
+            debugger
             LSD.Storage.Local(array);
             expect(array[0]).toBe('songs');
             expect(array[1]).toBe('god');

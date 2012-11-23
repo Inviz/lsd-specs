@@ -6,7 +6,7 @@ describe("LSD.Properties.Proxies", function() {
         var target = new LSD.Element;
         var element = new LSD.Element;
         var textnode = new LSD.Textnode, textnode2 = new LSD.Textnode, textnode3 = new LSD.Textnode;
-        container.proxies.set('text', target);
+        container.mix('proxies', {text: target})
         container.childNodes.push(element, textnode);
         expect(container.childNodes.slice()).toEqual([element]);
         expect(target.childNodes.slice()).toEqual([textnode]);
@@ -24,7 +24,7 @@ describe("LSD.Properties.Proxies", function() {
         var target = new LSD.Element;
         var element = new LSD.Element;
         var textnode = new LSD.Textnode, textnode2 = new LSD.Textnode, textnode3 = new LSD.Textnode;
-        container.proxies.set('3', target);
+        container.mix('proxies', {3: target})
         container.childNodes.push(element, textnode);
         expect(container.childNodes.slice()).toEqual([element]);
         expect(target.childNodes.slice()).toEqual([textnode]);
@@ -42,7 +42,7 @@ describe("LSD.Properties.Proxies", function() {
         var target = new LSD.Element;
         var element = new LSD.Element, element2 = new LSD.Element, element3 = new LSD.Element;
         var textnode = new LSD.Textnode
-        container.proxies.set('element', target);
+        container.mix('proxies', {element: target})
         container.childNodes.push(element, textnode);
         expect(container.childNodes.slice()).toEqual([textnode]);
         expect(target.childNodes.slice()).toEqual([element]);
@@ -60,7 +60,7 @@ describe("LSD.Properties.Proxies", function() {
         var target = new LSD.Element;
         var element = new LSD.Element, element2 = new LSD.Element;
         var textnode = new LSD.Textnode
-        container.proxies.set('1', target);
+        container.mix('proxies', {1: target})
         container.childNodes.push(element, textnode);
         expect(container.childNodes.slice()).toEqual([textnode]);
         expect(target.childNodes.slice()).toEqual([element]);
